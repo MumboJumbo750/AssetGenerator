@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "local-config.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["comfyui"],
+  "properties": {
+    "dataRoot": {
+      "type": "string",
+      "description": "Optional override for where `data/` lives (defaults to repo root)."
+    },
+    "comfyui": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["baseUrl"],
+      "properties": {
+        "baseUrl": { "type": "string", "minLength": 1 },
+        "apiKey": { "type": "string" },
+        "pythonBin": {
+          "type": "string",
+          "description": "Optional path to the ComfyUI venv python for dependency verification (e.g. C:/path/to/venv/Scripts/python.exe)."
+        }
+      }
+    },
+    "paths": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "modelsRoot": { "type": "string" },
+        "checkpointsRoot": { "type": "string" },
+        "lorasRoot": { "type": "string" }
+      }
+    }
+  }
+}

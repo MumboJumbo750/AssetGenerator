@@ -1,0 +1,83 @@
+:root {
+  color-scheme: dark;
+  --ag-bg: #05060d;
+  --ag-bg-2: #0b0f1f;
+  --ag-surface: #0f172a;
+  --ag-surface-2: #121c3a;
+  --ag-border: #25315a;
+  --ag-text: #e6f0ff;
+  --ag-muted: #9fb0d9;
+  --ag-accent: #7c4dff;
+  --ag-accent-2: #00e5ff;
+  --ag-success: #39ffb4;
+  --ag-warning: #ffb454;
+  --ag-danger: #ff4d6d;
+  --ag-glow: 0 0 16px rgba(124, 77, 255, 0.45);
+  --ag-glow-cyan: 0 0 16px rgba(0, 229, 255, 0.45);
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: radial-gradient(circle at 15% 20%, rgba(0, 229, 255, 0.12), transparent 45%),
+    radial-gradient(circle at 80% 10%, rgba(124, 77, 255, 0.12), transparent 40%),
+    linear-gradient(180deg, var(--ag-bg), var(--ag-bg-2));
+  color: var(--ag-text);
+}
+
+.mantine-AppShell-header,
+.mantine-AppShell-navbar {
+  background: rgba(10, 14, 30, 0.7);
+  border-color: var(--ag-border);
+  backdrop-filter: blur(12px);
+}
+
+.mantine-AppShell-main {
+  background: transparent;
+}
+
+pre.log {
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: rgba(6, 8, 20, 0.75);
+  color: var(--ag-text);
+  border: 1px solid rgba(124, 77, 255, 0.2);
+  font-size: 12px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+
+.ag-checkerboard {
+  position: relative;
+  border-radius: 12px;
+  border: 1px solid var(--ag-border);
+  overflow: hidden;
+  background-color: rgba(10, 14, 30, 0.6);
+  background-image:
+    linear-gradient(45deg, rgba(255, 255, 255, 0.08) 25%, transparent 25%),
+    linear-gradient(-45deg, rgba(255, 255, 255, 0.08) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, rgba(255, 255, 255, 0.08) 75%),
+    linear-gradient(-45deg, transparent 75%, rgba(255, 255, 255, 0.08) 75%);
+  background-size: 28px 28px;
+  background-position: 0 0, 0 14px, 14px -14px, -14px 0px;
+}
+
+.ag-preview-surface {
+  height: 320px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ag-preview-image {
+  max-width: 100%;
+  max-height: 100%;
+  transform-origin: center center;
+  image-rendering: auto;
+}

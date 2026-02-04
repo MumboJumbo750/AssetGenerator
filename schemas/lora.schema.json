@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "lora.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "name", "createdAt", "updatedAt", "scope", "checkpointId", "assetTypes", "releases"],
+  "properties": {
+    "id": { "type": "string", "minLength": 1 },
+    "name": { "type": "string", "minLength": 1 },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "updatedAt": { "type": "string", "format": "date-time" },
+    "scope": { "type": "string", "enum": ["baseline", "project"] },
+    "checkpointId": { "type": "string", "minLength": 1 },
+    "assetTypes": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+    "recommended": { "type": "boolean", "default": false, "description": "If true, show as a default suggestion for compatible specs." },
+    "activeReleaseId": { "type": "string", "description": "Release to use by default; when absent, UI may choose latest approved." },
+    "releases": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "createdAt", "status"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "status": { "type": "string", "enum": ["candidate", "approved", "deprecated"] },
+          "localPath": { "type": "string", "description": "Deprecated: prefer `weights` to avoid committing machine-specific paths." },
+          "weights": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["kind"],
+            "properties": {
+              "kind": { "type": "string", "enum": ["repo_relative", "config_relative", "absolute", "external"] },
+              "base": { "type": "string", "enum": ["modelsRoot", "checkpointsRoot", "lorasRoot"] },
+              "path": { "type": "string" },
+              "uri": { "type": "string" },
+              "sha256": { "type": "string", "minLength": 16 }
+            },
+            "description": "How to locate LoRA weights without hardcoding absolute paths (see docs/setup/local-config.md)."
+          },
+          "sha256": { "type": "string", "minLength": 16, "description": "Optional integrity hash for the weight file." },
+          "notes": { "type": "string" },
+          "training": {
+            "type": "object",
+            "additionalProperties": true,
+            "description": "Training config + dataset manifest references for this release."
+          },
+          "evaluation": {
+            "type": "object",
+            "additionalProperties": true,
+            "description": "Eval grid outputs, scores, and QC notes."
+          }
+        }
+      }
+    }
+  }
+}

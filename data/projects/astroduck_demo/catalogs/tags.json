@@ -1,0 +1,119 @@
+{
+  "id": "tags",
+  "createdAt": "2026-02-03T00:00:00.000Z",
+  "updatedAt": "2026-02-03T00:00:00.000Z",
+  "groups": [
+    {
+      "id": "assetType",
+      "label": "Asset Type",
+      "exclusive": true,
+      "tags": [
+        {
+          "id": "assetType:ui_icon",
+          "label": "UI Icon"
+        },
+        {
+          "id": "assetType:logo",
+          "label": "Logo"
+        },
+        {
+          "id": "assetType:sprite",
+          "label": "Sprite"
+        },
+        {
+          "id": "assetType:spritesheet",
+          "label": "Spritesheet"
+        },
+        {
+          "id": "assetType:texture",
+          "label": "Texture"
+        },
+        {
+          "id": "assetType:tile",
+          "label": "Tile"
+        },
+        {
+          "id": "assetType:overlay",
+          "label": "Overlay/VFX"
+        }
+      ]
+    },
+    {
+      "id": "level",
+      "label": "Level",
+      "exclusive": true,
+      "tags": [
+        {
+          "id": "level:earth",
+          "label": "Earth"
+        },
+        {
+          "id": "level:mars",
+          "label": "Mars"
+        },
+        {
+          "id": "level:sun",
+          "label": "Sun"
+        }
+      ]
+    },
+    {
+      "id": "ui",
+      "label": "UI",
+      "exclusive": false,
+      "tags": [
+        {
+          "id": "ui:menu",
+          "label": "Menu"
+        },
+        {
+          "id": "ui:hud",
+          "label": "HUD"
+        },
+        {
+          "id": "ui:level_select",
+          "label": "Level Select"
+        },
+        {
+          "id": "ui:difficulty",
+          "label": "Difficulty"
+        }
+      ]
+    },
+    {
+      "id": "vfx",
+      "label": "VFX",
+      "exclusive": false,
+      "tags": [
+        {
+          "id": "vfx:projectile",
+          "label": "Projectile"
+        },
+        {
+          "id": "vfx:muzzle_flash",
+          "label": "Muzzle Flash"
+        },
+        {
+          "id": "vfx:impact",
+          "label": "Impact"
+        },
+        {
+          "id": "vfx:explosion",
+          "label": "Explosion"
+        },
+        {
+          "id": "vfx:warp",
+          "label": "Warp"
+        },
+        {
+          "id": "vfx:thruster",
+          "label": "Thruster"
+        },
+        {
+          "id": "vfx:shield",
+          "label": "Shield"
+        }
+      ]
+    }
+  ]
+}

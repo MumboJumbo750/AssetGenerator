@@ -1,0 +1,24 @@
+{
+  "id": "spec_astroduck_weapon_muzzle_flashes",
+  "projectId": "astroduck_demo",
+  "specListId": "specList_astroduck_demo",
+  "createdAt": "2026-02-03T00:00:00.000Z",
+  "updatedAt": "2026-02-03T00:00:00.000Z",
+  "title": "Weapon muzzle flashes (laser/plasma/spread)",
+  "assetType": "spritesheet",
+  "style": "comic",
+  "scenario": "scifi",
+  "tags": ["assetType:spritesheet", "vfx:muzzle_flash", "weapon:player", "style:comic"],
+  "output": {
+    "kind": "animation",
+    "background": "transparent_required",
+    "animation": { "fps": 18, "loop": true, "frameCount": 6 }
+  },
+  "prompt": {
+    "positive": "Comic sci-fi muzzle flashes for laser, plasma, spread shot; bright neon bursts, clean alpha, centered frames, transparent background",
+    "negative": "photo, watermark, text, messy background, blurry edges"
+  },
+  "generationParams": { "width": 512, "height": 512, "variants": 6 },
+  "status": "ready"
+}
+

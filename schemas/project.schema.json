@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "project.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "name", "createdAt", "updatedAt", "defaults"],
+  "properties": {
+    "id": { "type": "string", "minLength": 1 },
+    "name": { "type": "string", "minLength": 1 },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "updatedAt": { "type": "string", "format": "date-time" },
+    "defaults": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["style", "scenario"],
+      "properties": {
+        "style": { "type": "string" },
+        "scenario": { "type": "string" },
+        "paletteIds": { "type": "array", "items": { "type": "string" } },
+        "tagIds": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "policies": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "loraSelection": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "mode": {
+              "type": "string",
+              "enum": [
+                "manual",
+                "baseline_then_project",
+                "project_then_baseline",
+                "baseline_only",
+                "project_only"
+              ],
+              "default": "baseline_then_project"
+            },
+            "preferRecommended": { "type": "boolean", "default": true },
+            "maxActiveLoras": { "type": "integer", "minimum": 0, "default": 2 },
+            "releasePolicy": {
+              "type": "string",
+              "enum": ["active_or_latest_approved", "active_only"],
+              "default": "active_or_latest_approved",
+              "description": "How to pick which release artifact to use for a LoRA."
+            }
+          }
+        }
+      }
+    },
+    "notes": { "type": "string" }
+  }
+}

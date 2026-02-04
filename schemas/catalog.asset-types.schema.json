@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "catalog.asset-types.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "createdAt", "updatedAt", "assetTypes"],
+  "properties": {
+    "id": { "type": "string", "minLength": 1 },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "updatedAt": { "type": "string", "format": "date-time" },
+    "assetTypes": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "label"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1, "description": "Used as AssetSpec.assetType." },
+          "label": { "type": "string", "minLength": 1 },
+          "description": { "type": "string" },
+          "multiFrame": { "type": "boolean", "default": false },
+          "requiresAlpha": { "type": "boolean", "default": false },
+          "tileable": { "type": "boolean", "default": false },
+          "defaultTags": { "type": "array", "items": { "type": "string" } },
+          "defaultGenerationParams": {
+            "type": "object",
+            "additionalProperties": true,
+            "description": "Default width/height/steps/sampler/etc. Used when a spec omits generationParams."
+          },
+          "workflowTemplateId": {
+            "type": "string",
+            "description": "Optional ID/path for the ComfyUI workflow template to use for this assetType."
+          }
+        }
+      }
+    }
+  }
+}
+

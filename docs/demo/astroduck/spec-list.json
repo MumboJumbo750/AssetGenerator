@@ -1,0 +1,10 @@
+{
+  "id": "specList_astroduck_demo",
+  "projectId": "astroduck_demo",
+  "createdAt": "2026-02-03T00:00:00.000Z",
+  "updatedAt": "2026-02-03T00:00:00.000Z",
+  "title": "AstroDuck Space Shooter (demo)",
+  "text": "See docs/demo/astroduck/spec-list.md",
+  "status": "draft"
+}
+

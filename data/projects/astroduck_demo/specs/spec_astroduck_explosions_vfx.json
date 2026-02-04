@@ -1,0 +1,37 @@
+{
+  "id": "spec_astroduck_explosions_vfx",
+  "projectId": "astroduck_demo",
+  "specListId": "specList_astroduck_demo",
+  "createdAt": "2026-02-03T00:00:00.000Z",
+  "updatedAt": "2026-02-03T00:00:00.000Z",
+  "title": "Explosions + hit sparks (small/medium/large)",
+  "assetType": "spritesheet",
+  "style": "comic",
+  "scenario": "scifi",
+  "tags": [
+    "assetType:spritesheet",
+    "vfx:explosion",
+    "vfx:hit",
+    "style:comic"
+  ],
+  "output": {
+    "kind": "animation",
+    "background": "transparent_required",
+    "animation": {
+      "fps": 14,
+      "loop": false,
+      "frameCount": 10
+    }
+  },
+  "prompt": {
+    "positive": "Comic-style explosions and hit sparks, bright neon sci-fi colors, clean alpha edges, centered frames, transparent background",
+    "negative": "photo, watermark, text, smoky realistic explosion, cluttered background"
+  },
+  "generationParams": {
+    "width": 512,
+    "height": 512,
+    "variants": 10
+  },
+  "status": "ready",
+  "checkpointId": "ckpt_sd15_demo"
+}

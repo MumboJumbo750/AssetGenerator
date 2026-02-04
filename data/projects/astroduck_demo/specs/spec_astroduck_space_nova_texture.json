@@ -1,0 +1,32 @@
+{
+  "id": "spec_astroduck_space_nova_texture",
+  "projectId": "astroduck_demo",
+  "specListId": "specList_astroduck_demo",
+  "createdAt": "2026-02-03T00:00:00.000Z",
+  "updatedAt": "2026-02-03T00:00:00.000Z",
+  "title": "Space texture with nova effects (tileable)",
+  "assetType": "texture",
+  "style": "comic",
+  "scenario": "scifi",
+  "tags": [
+    "assetType:texture",
+    "tileable",
+    "space:nova",
+    "style:comic"
+  ],
+  "output": {
+    "kind": "single_image",
+    "background": "any"
+  },
+  "prompt": {
+    "positive": "Seamless tileable space texture with soft nova glow, starfield, sci-fi comic style, high readability",
+    "negative": "photo, watermark, noisy speckle, harsh seams"
+  },
+  "generationParams": {
+    "width": 1024,
+    "height": 1024,
+    "variants": 6
+  },
+  "status": "ready",
+  "checkpointId": "ckpt_sd15_demo"
+}

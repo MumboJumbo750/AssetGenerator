@@ -1,0 +1,20 @@
+{
+  "id": "spec_astroduck_achievement_badge_frames",
+  "projectId": "astroduck_demo",
+  "specListId": "specList_astroduck_demo",
+  "createdAt": "2026-02-03T00:00:00.000Z",
+  "updatedAt": "2026-02-03T00:00:00.000Z",
+  "title": "Achievement badge frames (bronze/silver/gold + ribbons)",
+  "assetType": "ui_icon",
+  "style": "comic",
+  "scenario": "scifi",
+  "tags": ["assetType:ui_icon", "ui:achievements", "style:comic"],
+  "output": { "kind": "single_image", "background": "transparent_required" },
+  "prompt": {
+    "positive": "Set of achievement badge frames in sci-fi comic style: bronze, silver, gold medals with ribbons, thick outlines, neon accents, clean edges, transparent background, no text",
+    "negative": "photo, watermark, text, cluttered background, thin unreadable lines"
+  },
+  "generationParams": { "width": 512, "height": 512, "variants": 12 },
+  "status": "ready"
+}
+

@@ -1,0 +1,51 @@
+{
+  "id": "astroduck_atlas_plan_v1",
+  "version": "1",
+  "atlases": [
+    {
+      "atlasId": "atlas_player",
+      "label": "Player",
+      "specIds": [
+        "spec_astroduck_player_ship",
+        "spec_astroduck_player_thruster_vfx",
+        "spec_astroduck_player_shield_bubble",
+        "spec_astroduck_pickups"
+      ]
+    },
+    {
+      "atlasId": "atlas_enemies",
+      "label": "Enemies",
+      "specIds": [
+        "spec_astroduck_enemy_drone",
+        "spec_astroduck_enemy_fighter",
+        "spec_astroduck_enemy_turret",
+        "spec_astroduck_boss1_cruiser",
+        "spec_astroduck_boss2_drilling_core",
+        "spec_astroduck_boss3_solar_entity"
+      ]
+    },
+    {
+      "atlasId": "atlas_vfx",
+      "label": "VFX",
+      "specIds": [
+        "spec_astroduck_weapon_projectiles",
+        "spec_astroduck_weapon_muzzle_flashes",
+        "spec_astroduck_explosions_vfx",
+        "spec_astroduck_impact_sparks",
+        "spec_astroduck_warp_effect"
+      ]
+    },
+    {
+      "atlasId": "atlas_ui",
+      "label": "UI",
+      "specIds": [
+        "spec_astroduck_menu_buttons",
+        "spec_astroduck_level_select_planets",
+        "spec_astroduck_hud_icons",
+        "spec_astroduck_difficulty_selector",
+        "spec_astroduck_achievement_badge_frames",
+        "spec_astroduck_achievement_icons"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "id": "spec_astroduck_player_shield_bubble",
+  "projectId": "astroduck_demo",
+  "specListId": "specList_astroduck_demo",
+  "createdAt": "2026-02-03T00:00:00.000Z",
+  "updatedAt": "2026-02-03T00:00:00.000Z",
+  "title": "Player shield bubble (idle + hit flash)",
+  "assetType": "spritesheet",
+  "style": "comic",
+  "scenario": "scifi",
+  "tags": ["assetType:spritesheet", "vfx:shield", "player:ship", "style:comic"],
+  "output": {
+    "kind": "animation",
+    "background": "transparent_required",
+    "animation": { "fps": 12, "loop": true, "frameCount": 8 }
+  },
+  "prompt": {
+    "positive": "Comic sci-fi shield bubble effect around a ship, subtle hex pattern, neon rim light, occasional hit flash frame, transparent background",
+    "negative": "photo, watermark, text, clutter, harsh jagged edges"
+  },
+  "generationParams": { "width": 768, "height": 768, "variants": 8 },
+  "status": "ready"
+}
+

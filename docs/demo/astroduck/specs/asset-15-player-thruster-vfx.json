@@ -1,0 +1,24 @@
+{
+  "id": "spec_astroduck_player_thruster_vfx",
+  "projectId": "astroduck_demo",
+  "specListId": "specList_astroduck_demo",
+  "createdAt": "2026-02-03T00:00:00.000Z",
+  "updatedAt": "2026-02-03T00:00:00.000Z",
+  "title": "Player thruster flame (loop)",
+  "assetType": "spritesheet",
+  "style": "comic",
+  "scenario": "scifi",
+  "tags": ["assetType:spritesheet", "vfx:thruster", "player:ship", "style:comic"],
+  "output": {
+    "kind": "animation",
+    "background": "transparent_required",
+    "animation": { "fps": 16, "loop": true, "frameCount": 8 }
+  },
+  "prompt": {
+    "positive": "Comic sci-fi thruster flame effect, bright neon blue/orange glow, clean alpha edges, centered, transparent background",
+    "negative": "photo, watermark, text, messy background, blurry edges"
+  },
+  "generationParams": { "width": 512, "height": 512, "variants": 8 },
+  "status": "ready"
+}
+

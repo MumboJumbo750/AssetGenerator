@@ -1,0 +1,66 @@
+# OS
+Thumbs.db
+Desktop.ini
+
+# Editors
+.vscode/
+.idea/
+
+# Node
+node_modules/
+dist/
+.turbo/
+
+# Build output (common)
+build/
+out/
+coverage/
+.nyc_output/
+
+# Caches
+.cache/
+.vite/
+.eslintcache
+.stylelintcache
+.parcel-cache/
+.rollup.cache/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Tooling (kept repo-local but not committed)
+tools/comfyui/ComfyUI/
+tools/comfyui/.venv/
+
+# Python
+__pycache__/
+.pytest_cache/
+.venv/
+
+# Temporary pipeline artifacts (keep final outputs under data/projects/**/files/)
+tmp/
+cache/
+
+# Runtime logs (generated locally; not committed)
+data/**/files/logs/
+data/runtime/logs/
+data/runtime/worker-heartbeat.json
+
+# Local config (machine-specific)
+config/local.json
+.env
+.env.*
+!.env.example
+
+# Optional local config variants (keep example tracked)
+config/local.*.json
+!config/local.example.json
+
+# Model weights should not be committed by default
+models/
+checkpoints/
+loras/

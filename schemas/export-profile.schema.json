@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "export-profile.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "projectId", "name", "type", "createdAt", "updatedAt", "options"],
+  "properties": {
+    "id": { "type": "string", "minLength": 1 },
+    "projectId": { "type": "string", "minLength": 1 },
+    "name": { "type": "string", "minLength": 1 },
+    "type": { "type": "string", "enum": ["pixi_kit"] },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "updatedAt": { "type": "string", "format": "date-time" },
+    "options": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "Profile-specific options (naming, scaling, trimming, padding, etc.)."
+    }
+  }
+}
+

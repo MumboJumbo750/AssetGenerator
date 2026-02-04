@@ -1,0 +1,20 @@
+{
+  "id": "spec_astroduck_achievement_icons",
+  "projectId": "astroduck_demo",
+  "specListId": "specList_astroduck_demo",
+  "createdAt": "2026-02-03T00:00:00.000Z",
+  "updatedAt": "2026-02-03T00:00:00.000Z",
+  "title": "Achievement icons set (office escape / bosses / mars / sun / no damage / collector)",
+  "assetType": "ui_icon",
+  "style": "comic",
+  "scenario": "scifi",
+  "tags": ["assetType:ui_icon", "ui:achievements", "style:comic"],
+  "output": { "kind": "single_image", "background": "transparent_required" },
+  "prompt": {
+    "positive": "Set of achievement icons in sci-fi comic style, bold silhouette, neon accents, clean edges, transparent background. Themes: office desk/escape, alien face, boss skull, mars pickaxe, sun flame, shield no-damage, magnet collector. No text.",
+    "negative": "photo, watermark, text, cluttered background, low contrast"
+  },
+  "generationParams": { "width": 512, "height": 512, "variants": 16 },
+  "status": "ready"
+}
+

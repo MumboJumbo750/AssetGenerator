@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "eval.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "loraId", "releaseId", "createdAt", "status", "prompts", "outputs"],
+  "properties": {
+    "id": { "type": "string", "minLength": 1 },
+    "loraId": { "type": "string", "minLength": 1 },
+    "releaseId": { "type": "string", "minLength": 1 },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "updatedAt": { "type": "string", "format": "date-time" },
+    "status": { "type": "string", "enum": ["pending", "running", "complete"] },
+    "prompts": { "type": "array", "items": { "type": "string" } },
+    "outputs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "prompt": { "type": "string" },
+          "images": { "type": "array", "items": { "type": "string" } },
+          "notes": { "type": "string" }
+        }
+      }
+    },
+    "notes": { "type": "string" },
+    "autoCleanup": { "type": "boolean" }
+  }
+}

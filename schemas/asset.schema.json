@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "asset.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "projectId", "specId", "createdAt", "updatedAt", "versions"],
+  "properties": {
+    "id": { "type": "string", "minLength": 1 },
+    "projectId": { "type": "string", "minLength": 1 },
+    "specId": { "type": "string", "minLength": 1 },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "updatedAt": { "type": "string", "format": "date-time" },
+    "versions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "createdAt", "generation", "variants", "status"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "status": { "type": "string", "enum": ["draft", "review", "approved", "rejected", "deprecated"] },
+          "primaryVariantId": { "type": "string", "description": "The preferred variant for downstream use (export/training) within this version." },
+          "generation": {
+            "type": "object",
+            "additionalProperties": true,
+            "description": "Resolved prompt, seed, checkpoint+LoRA versions, sampler params."
+          },
+          "variants": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["id", "originalPath"],
+              "properties": {
+                "id": { "type": "string", "minLength": 1 },
+                "originalPath": { "type": "string" },
+                "alphaPath": { "type": "string" },
+                "previewPath": { "type": "string" },
+                "tags": { "type": "array", "items": { "type": "string" } },
+                "rating": { "type": "integer", "minimum": 0, "maximum": 5 },
+                "status": { "type": "string", "enum": ["candidate", "selected", "rejected"], "default": "candidate" },
+                "reviewNote": { "type": "string", "description": "Reviewer note or decision rationale." },
+                "processing": { "type": "object", "additionalProperties": true, "description": "Derived artifact params (bg removal, trim, upscale, etc.)." }
+              }
+            }
+          }
+        }
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "source": { "type": "string" },
+        "author": { "type": "string" },
+        "license": { "type": "string" },
+        "url": { "type": "string" },
+        "notes": { "type": "string" }
+      }
+    }
+  }
+}

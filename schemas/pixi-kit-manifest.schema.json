@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pixi-kit-manifest.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "projectId", "createdAt", "updatedAt", "version", "atlases", "images", "animations", "ui"],
+  "properties": {
+    "id": { "type": "string", "minLength": 1 },
+    "projectId": { "type": "string", "minLength": 1 },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "updatedAt": { "type": "string", "format": "date-time" },
+    "version": { "type": "string", "minLength": 1, "description": "Kit format version (not app version)." },
+    "atlases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "imagePath", "dataPath"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "imagePath": { "type": "string", "minLength": 1 },
+          "dataPath": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "images": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "assetId", "path"],
+        "properties": {
+          "name": { "type": "string", "minLength": 1 },
+          "assetId": { "type": "string", "minLength": 1 },
+          "path": { "type": "string", "minLength": 1 },
+          "tags": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "animations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "assetId", "atlasId", "frames", "fps", "loop"],
+        "properties": {
+          "name": { "type": "string", "minLength": 1 },
+          "assetId": { "type": "string", "minLength": 1 },
+          "atlasId": { "type": "string", "minLength": 1 },
+          "frames": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+          "fps": { "type": "number", "minimum": 0.1 },
+          "loop": { "type": "boolean" }
+        }
+      }
+    },
+    "ui": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "type", "states"],
+        "properties": {
+          "name": { "type": "string", "minLength": 1 },
+          "type": { "type": "string", "enum": ["button", "panel", "icon"] },
+          "states": {
+            "type": "object",
+            "additionalProperties": { "type": "string" },
+            "description": "Map of state name -> texture frame key or image name."
+          }
+        }
+      }
+    }
+  }
+}
+

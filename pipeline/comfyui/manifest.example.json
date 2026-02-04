@@ -1,0 +1,23 @@
+{
+  "comfyui": {
+    "repo": "https://github.com/comfyanonymous/ComfyUI",
+    "ref": "main"
+  },
+  "customNodes": [
+    {
+      "name": "comfyui-impact-pack",
+      "repo": "https://github.com/ltdrdata/ComfyUI-Impact-Pack",
+      "ref": "main",
+      "nodes": ["ImpactPack", "ImpactBoolean"],
+      "pythonPackages": ["opencv-python"]
+    }
+  ],
+  "models": [
+    {
+      "type": "checkpoint",
+      "id": "example-checkpoint",
+      "sha256": "",
+      "notes": "Fill in your actual checkpoints/LoRAs and hashes."
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "id": "spec_astroduck_player_ship",
+  "projectId": "astroduck_demo",
+  "specListId": "specList_astroduck_demo",
+  "createdAt": "2026-02-03T00:00:00.000Z",
+  "updatedAt": "2026-02-03T00:00:00.000Z",
+  "title": "AstroDuck flight vehicle (idle + bank)",
+  "assetType": "spritesheet",
+  "style": "comic",
+  "scenario": "scifi",
+  "tags": [
+    "assetType:spritesheet",
+    "player:ship",
+    "theme:scifi",
+    "style:comic"
+  ],
+  "output": {
+    "kind": "animation",
+    "background": "transparent_required",
+    "animation": {
+      "fps": 12,
+      "loop": true,
+      "frameCount": 6
+    }
+  },
+  "prompt": {
+    "positive": "AstroDuck piloting a compact sci-fi ship, bold outlines, colorful cockpit glow, clear silhouette, comic style",
+    "negative": "photo, text, watermark, tiny details, messy background"
+  },
+  "generationParams": {
+    "width": 512,
+    "height": 512,
+    "variants": 6
+  },
+  "status": "ready",
+  "checkpointId": "ckpt_sd15_demo"
+}

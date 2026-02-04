@@ -1,0 +1,123 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "asset-spec.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "projectId",
+    "createdAt",
+    "updatedAt",
+    "assetType",
+    "title",
+    "style",
+    "scenario",
+    "prompt"
+  ],
+  "properties": {
+    "id": { "type": "string", "minLength": 1 },
+    "projectId": { "type": "string", "minLength": 1 },
+    "specListId": { "type": "string", "description": "Optional link back to the originating SpecList." },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "updatedAt": { "type": "string", "format": "date-time" },
+    "title": { "type": "string", "minLength": 1 },
+    "assetType": { "type": "string", "minLength": 1 },
+    "checkpointId": { "type": "string" },
+    "loraIds": { "type": "array", "items": { "type": "string" } },
+    "style": { "type": "string" },
+    "scenario": { "type": "string" },
+    "tags": { "type": "array", "items": { "type": "string" } },
+    "output": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Structured output requirements (used for exports and multi-frame/UI assets).",
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": ["single_image", "animation", "ui_states", "logo_set"]
+        },
+        "background": {
+          "type": "string",
+          "enum": ["transparent_required", "any"],
+          "default": "any"
+        },
+        "sizes": {
+          "type": "array",
+          "description": "Requested renditions (primarily for logo/icon export).",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["w", "h"],
+            "properties": {
+              "label": { "type": "string" },
+              "w": { "type": "integer", "minimum": 1 },
+              "h": { "type": "integer", "minimum": 1 }
+            }
+          }
+        },
+        "animation": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "name": { "type": "string" },
+            "fps": { "type": "number", "minimum": 0.1 },
+            "loop": { "type": "boolean" },
+            "frameCount": { "type": "integer", "minimum": 1 },
+            "frameNames": { "type": "array", "items": { "type": "string" }, "minItems": 1 }
+          }
+        },
+        "uiStates": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["states"],
+          "properties": {
+            "states": { "type": "array", "items": { "type": "string" }, "minItems": 1 }
+          }
+        },
+        "logoVariants": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["variants"],
+          "properties": {
+            "variants": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["id", "label"],
+                "properties": {
+                  "id": { "type": "string", "minLength": 1 },
+                  "label": { "type": "string", "minLength": 1 },
+                  "theme": { "type": "string", "description": "e.g. light/dark/mono/full_color" },
+                  "aspect": { "type": "string", "description": "e.g. square/wide/tall" },
+                  "background": { "type": "string", "enum": ["transparent", "solid"] }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "prompt": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["positive", "negative"],
+      "properties": {
+        "positive": { "type": "string" },
+        "negative": { "type": "string" },
+        "notes": { "type": "string" }
+      }
+    },
+    "generationParams": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "Size/steps/sampler/seed strategy; pipeline-specific."
+    },
+    "status": {
+      "type": "string",
+      "enum": ["draft", "ready", "deprecated"],
+      "default": "draft"
+    }
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "spec-list.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "projectId", "createdAt", "updatedAt", "title", "text", "status"],
+  "properties": {
+    "id": { "type": "string", "minLength": 1 },
+    "projectId": { "type": "string", "minLength": 1 },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "updatedAt": { "type": "string", "format": "date-time" },
+    "title": { "type": "string", "minLength": 1 },
+    "text": { "type": "string", "minLength": 1 },
+    "status": { "type": "string", "enum": ["draft", "refined", "archived"], "default": "draft" },
+    "derivedSpecIds": { "type": "array", "items": { "type": "string" } },
+    "notes": { "type": "string" }
+  }
+}
+

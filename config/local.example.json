@@ -1,0 +1,11 @@
+{
+  "comfyui": {
+    "baseUrl": "http://127.0.0.1:8188",
+    "pythonBin": "C:/path/to/ComfyUI/venv/Scripts/python.exe"
+  },
+  "paths": {
+    "modelsRoot": "D:/ai/models",
+    "checkpointsRoot": "D:/ai/models/checkpoints",
+    "lorasRoot": "D:/ai/models/loras"
+  }
+}

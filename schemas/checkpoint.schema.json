@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "checkpoint.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "name", "createdAt", "updatedAt", "supportedAssetTypes"],
+  "properties": {
+    "id": { "type": "string", "minLength": 1 },
+    "name": { "type": "string", "minLength": 1 },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "updatedAt": { "type": "string", "format": "date-time" },
+    "localPath": { "type": "string", "description": "Deprecated: prefer `weights` to avoid committing machine-specific paths." },
+    "weights": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind"],
+      "properties": {
+        "kind": { "type": "string", "enum": ["repo_relative", "config_relative", "absolute", "external"] },
+        "base": { "type": "string", "enum": ["modelsRoot", "checkpointsRoot", "lorasRoot"] },
+        "path": { "type": "string" },
+        "uri": { "type": "string" },
+        "sha256": { "type": "string", "minLength": 16 }
+      },
+      "description": "How to locate checkpoint weights without hardcoding absolute paths (see docs/setup/local-config.md)."
+    },
+    "supportedAssetTypes": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+    "promptTemplates": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "basePositive": { "type": "string" },
+        "baseNegative": { "type": "string" },
+        "perAssetType": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "positive": { "type": "string" },
+              "negative": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "defaultGenerationParams": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "Sampler/steps/CFG/size defaults; pipeline-specific."
+    }
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "export.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "projectId", "type", "status", "createdAt", "updatedAt", "input", "output"],
+  "properties": {
+    "id": { "type": "string", "minLength": 1 },
+    "projectId": { "type": "string", "minLength": 1 },
+    "type": { "type": "string", "enum": ["pixi_kit"] },
+    "status": { "type": "string", "enum": ["draft", "running", "succeeded", "failed"] },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "updatedAt": { "type": "string", "format": "date-time" },
+    "input": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["assetIds"],
+      "properties": {
+        "assetIds": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+        "atlasIds": { "type": "array", "items": { "type": "string" } },
+        "profileId": { "type": "string", "minLength": 1, "description": "References data/projects/<projectId>/export-profiles/<profileId>.json" },
+        "profileSnapshot": { "type": "object", "additionalProperties": true, "description": "Optional frozen copy of profile options used for this run." }
+      }
+    },
+    "output": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["exportPath", "manifestPath"],
+      "properties": {
+        "exportPath": { "type": "string", "minLength": 1 },
+        "manifestPath": { "type": "string", "minLength": 1 }
+      }
+    },
+    "error": { "type": "string" }
+  }
+}

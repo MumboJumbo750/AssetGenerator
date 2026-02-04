@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "job.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "projectId", "type", "status", "createdAt", "updatedAt", "input"],
+  "properties": {
+    "id": { "type": "string", "minLength": 1 },
+    "projectId": { "type": "string", "minLength": 1 },
+    "type": { "type": "string", "enum": ["generate", "bg_remove", "atlas_pack", "export"] },
+    "status": { "type": "string", "enum": ["queued", "running", "succeeded", "failed", "canceled"] },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "updatedAt": { "type": "string", "format": "date-time" },
+    "input": { "type": "object", "additionalProperties": true },
+    "output": { "type": "object", "additionalProperties": true },
+    "error": { "type": "string" },
+    "logPath": { "type": "string" }
+  }
+}
+

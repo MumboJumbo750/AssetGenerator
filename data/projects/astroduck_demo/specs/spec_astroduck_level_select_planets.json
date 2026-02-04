@@ -1,0 +1,39 @@
+{
+  "id": "spec_astroduck_level_select_planets",
+  "projectId": "astroduck_demo",
+  "specListId": "specList_astroduck_demo",
+  "createdAt": "2026-02-03T00:00:00.000Z",
+  "updatedAt": "2026-02-03T00:00:00.000Z",
+  "title": "Level select planets (Earth/Mars/Sun) with states",
+  "assetType": "ui_icon",
+  "style": "comic",
+  "scenario": "scifi",
+  "tags": [
+    "assetType:ui_icon",
+    "ui:level_select",
+    "state:default",
+    "style:comic"
+  ],
+  "output": {
+    "kind": "ui_states",
+    "background": "transparent_required",
+    "uiStates": {
+      "states": [
+        "default",
+        "hover",
+        "locked"
+      ]
+    }
+  },
+  "prompt": {
+    "positive": "Comic sci-fi planet buttons: Earth, Mars, Sun as round icons, neon rim light, clean silhouettes, no text labels, transparent background",
+    "negative": "photo, watermark, text, clutter, low contrast"
+  },
+  "generationParams": {
+    "width": 512,
+    "height": 512,
+    "variants": 9
+  },
+  "status": "ready",
+  "checkpointId": "ckpt_sd15_demo"
+}

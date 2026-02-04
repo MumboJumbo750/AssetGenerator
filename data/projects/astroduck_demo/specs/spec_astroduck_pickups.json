@@ -1,0 +1,31 @@
+{
+  "id": "spec_astroduck_pickups",
+  "projectId": "astroduck_demo",
+  "specListId": "specList_astroduck_demo",
+  "createdAt": "2026-02-03T00:00:00.000Z",
+  "updatedAt": "2026-02-03T00:00:00.000Z",
+  "title": "Pickups (health/energy/weapon upgrade/score coin)",
+  "assetType": "sprite",
+  "style": "comic",
+  "scenario": "scifi",
+  "tags": [
+    "assetType:sprite",
+    "pickup",
+    "style:comic"
+  ],
+  "output": {
+    "kind": "single_image",
+    "background": "transparent_required"
+  },
+  "prompt": {
+    "positive": "Sci-fi comic pickups: health capsule, energy cell, weapon upgrade chip, glowing coin/points; clean silhouette, transparent background",
+    "negative": "photo, watermark, text, busy background"
+  },
+  "generationParams": {
+    "width": 512,
+    "height": 512,
+    "variants": 8
+  },
+  "status": "ready",
+  "checkpointId": "ckpt_sd15_demo"
+}

@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "dataset-manifest.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "scope", "createdAt", "updatedAt", "items"],
+  "properties": {
+    "id": { "type": "string", "minLength": 1 },
+    "scope": { "type": "string", "enum": ["baseline", "project"] },
+    "projectId": { "type": "string", "minLength": 1 },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "updatedAt": { "type": "string", "format": "date-time" },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "source": { "type": "string" },
+        "author": { "type": "string" },
+        "license": { "type": "string" },
+        "url": { "type": "string" },
+        "notes": { "type": "string" }
+      }
+    },
+    "selection": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "How this dataset was selected (tag query, filters, etc.)."
+    },
+    "items": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["assetId", "assetVersionId", "variantId", "path"],
+        "properties": {
+          "assetId": { "type": "string", "minLength": 1 },
+          "assetVersionId": { "type": "string", "minLength": 1 },
+          "variantId": { "type": "string", "minLength": 1 },
+          "path": { "type": "string", "minLength": 1 },
+          "caption": { "type": "string" },
+          "tags": { "type": "array", "items": { "type": "string" } },
+          "sha256": { "type": "string", "minLength": 16 }
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": { "scope": { "const": "project" } },
+        "required": ["scope"]
+      },
+      "then": { "required": ["projectId"] }
+    }
+  ]
+}

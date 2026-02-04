@@ -1,0 +1,39 @@
+{
+  "id": "spec_astroduck_difficulty_selector",
+  "projectId": "astroduck_demo",
+  "specListId": "specList_astroduck_demo",
+  "createdAt": "2026-02-03T00:00:00.000Z",
+  "updatedAt": "2026-02-03T00:00:00.000Z",
+  "title": "Difficulty selector UI (easy/normal/hard) states",
+  "assetType": "ui_icon",
+  "style": "comic",
+  "scenario": "scifi",
+  "tags": [
+    "assetType:ui_icon",
+    "ui:difficulty",
+    "style:comic"
+  ],
+  "output": {
+    "kind": "ui_states",
+    "background": "transparent_required",
+    "uiStates": {
+      "states": [
+        "easy",
+        "normal",
+        "hard",
+        "selected"
+      ]
+    }
+  },
+  "prompt": {
+    "positive": "Sci-fi comic difficulty selector UI elements, neon panels, clean shapes, no text labels, transparent background",
+    "negative": "photo, watermark, text, cluttered background"
+  },
+  "generationParams": {
+    "width": 512,
+    "height": 256,
+    "variants": 8
+  },
+  "status": "ready",
+  "checkpointId": "ckpt_sd15_demo"
+}
