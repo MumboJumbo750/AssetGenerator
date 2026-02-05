@@ -52,6 +52,8 @@ function schemaForDataPath(absolutePath) {
   if (rel.match(/^data\/projects\/[^/]+\/export-profiles\/[^/]+\.json$/)) return "export-profile.schema.json";
   if (rel.match(/^data\/projects\/[^/]+\/exports\/[^/]+\.json$/)) return "export.schema.json";
   if (rel.match(/^data\/projects\/[^/]+\/jobs\/[^/]+\.json$/)) return "job.schema.json";
+  if (rel.match(/^data\/projects\/[^/]+\/automation-rules\/[^/]+\.json$/)) return "automation-rule.schema.json";
+  if (rel.match(/^data\/projects\/[^/]+\/automation-runs\/[^/]+\.json$/)) return "automation-run.schema.json";
 
   return "__UNKNOWN__";
 }

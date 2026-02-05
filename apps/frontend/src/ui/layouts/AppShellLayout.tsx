@@ -77,8 +77,13 @@ export function AppShellLayout() {
       <AppShell.Header>
         <Group h="100%" px="lg" justify="space-between">
           <Group gap="md">
-            <Title order={3}>AssetGenerator</Title>
-            <Badge variant="light" color="indigo">
+            <Stack gap={0}>
+              <Title order={3}>AssetGenerator</Title>
+              <Text size="xs" c="dimmed">
+                Orbital Pipeline Studio
+              </Text>
+            </Stack>
+            <Badge variant="light" color="aurora">
               Checkpoint J
             </Badge>
           </Group>
@@ -111,13 +116,13 @@ export function AppShellLayout() {
               {systemStatus && (
                 <>
                   <Group gap={6}>
-                    <Badge color={systemStatus.seeded.astroduckDemo ? "green" : "yellow"} variant="light">
+                    <Badge color={systemStatus.seeded.astroduckDemo ? "green" : "ember"} variant="light">
                       {systemStatus.seeded.astroduckDemo ? "Seeded" : "Not seeded"}
                     </Badge>
-                    <Badge color={systemStatus.comfyui.ok ? "green" : "red"} variant="light">
+                    <Badge color={systemStatus.comfyui.ok ? "green" : "ember"} variant="light">
                       ComfyUI {systemStatus.comfyui.ok ? "OK" : "Down"}
                     </Badge>
-                    <Badge color={systemStatus.worker.ok ? "green" : "red"} variant="light">
+                    <Badge color={systemStatus.worker.ok ? "green" : "ember"} variant="light">
                       Worker {systemStatus.worker.ok ? "OK" : "Down"}
                     </Badge>
                   </Group>

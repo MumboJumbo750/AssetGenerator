@@ -1,0 +1,195 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "baseline-profile.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "projectId",
+    "name",
+    "version",
+    "global",
+    "assetTypeProfiles",
+    "validatorPolicy",
+    "routingPolicy",
+    "createdAt",
+    "updatedAt"
+  ],
+  "properties": {
+    "id": { "type": "string", "minLength": 1 },
+    "projectId": { "type": "string", "minLength": 1 },
+    "name": { "type": "string", "minLength": 1 },
+    "version": { "type": "integer", "minimum": 1 },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "updatedAt": { "type": "string", "format": "date-time" },
+    "global": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["noDropShadows", "background", "alphaEdgeClean", "allowPerspective"],
+      "properties": {
+        "noDropShadows": { "type": "boolean" },
+        "background": {
+          "type": "string",
+          "enum": ["white_or_transparent", "transparent_only", "white_only", "any"]
+        },
+        "alphaEdgeClean": { "type": "string", "enum": ["required", "preferred", "off"] },
+        "allowPerspective": { "type": "boolean" }
+      }
+    },
+    "assetTypeProfiles": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": { "$ref": "#/$defs/assetTypeProfile" }
+    },
+    "validatorPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "shadowCheck",
+        "backgroundCheck",
+        "stateCompletenessCheck",
+        "stateAlignmentCheck",
+        "edgeCleanlinessCheck"
+      ],
+      "properties": {
+        "shadowCheck": { "$ref": "#/$defs/thresholdCheck" },
+        "backgroundCheck": { "$ref": "#/$defs/backgroundCheck" },
+        "stateCompletenessCheck": { "$ref": "#/$defs/thresholdCheck" },
+        "stateAlignmentCheck": { "$ref": "#/$defs/alignmentCheck" },
+        "edgeCleanlinessCheck": { "$ref": "#/$defs/thresholdCheck" }
+      }
+    },
+    "routingPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["onPass", "onFail", "onUncertain"],
+      "properties": {
+        "onPass": {
+          "type": "string",
+          "enum": ["auto_advance", "manual_review", "queue_decision_sprint"]
+        },
+        "onFail": {
+          "type": "string",
+          "enum": ["auto_regenerate", "manual_review", "queue_decision_sprint", "reject"]
+        },
+        "onUncertain": {
+          "type": "string",
+          "enum": ["queue_decision_sprint", "manual_review", "auto_regenerate"]
+        }
+      }
+    },
+    "specOverrides": {
+      "type": "object",
+      "additionalProperties": { "$ref": "#/$defs/specOverride" }
+    }
+  },
+  "$defs": {
+    "assetTypeProfile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "lighting",
+        "tileableEdges",
+        "requiredStates",
+        "stateAlignment",
+        "paddingPx",
+        "promptHints",
+        "negativePromptHints"
+      ],
+      "properties": {
+        "lighting": { "type": "string", "enum": ["flat", "soft", "dramatic", "any"] },
+        "tileableEdges": { "type": "string", "enum": ["required", "optional", "off"] },
+        "requiredStates": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "enum": [
+              "default",
+              "hover",
+              "pressed",
+              "disabled",
+              "open",
+              "focused",
+              "selected",
+              "active",
+              "checked",
+              "unchecked"
+            ]
+          }
+        },
+        "stateAlignment": { "type": "string", "enum": ["exact", "aligned", "n/a"] },
+        "paddingPx": { "type": "integer", "minimum": 0, "maximum": 256 },
+        "promptHints": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "negativePromptHints": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "validatorOverrides": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "shadowCheck": { "$ref": "#/$defs/thresholdCheck" },
+            "backgroundCheck": { "$ref": "#/$defs/backgroundCheck" },
+            "stateCompletenessCheck": { "$ref": "#/$defs/thresholdCheck" },
+            "stateAlignmentCheck": { "$ref": "#/$defs/alignmentCheck" },
+            "edgeCleanlinessCheck": { "$ref": "#/$defs/thresholdCheck" }
+          }
+        }
+      }
+    },
+    "thresholdCheck": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["enabled", "threshold"],
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "threshold": { "type": "number", "minimum": 0, "maximum": 1 }
+      }
+    },
+    "backgroundCheck": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["enabled", "mode", "threshold"],
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "mode": { "type": "string", "enum": ["white_or_transparent", "transparent_only", "white_only", "any"] },
+        "threshold": { "type": "number", "minimum": 0, "maximum": 1 }
+      }
+    },
+    "alignmentCheck": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["enabled", "maxPixelDrift"],
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "maxPixelDrift": { "type": "integer", "minimum": 0, "maximum": 64 }
+      }
+    },
+    "specOverride": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["reason"],
+      "properties": {
+        "reason": { "type": "string", "minLength": 3 },
+        "global": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "noDropShadows": { "type": "boolean" },
+            "background": {
+              "type": "string",
+              "enum": ["white_or_transparent", "transparent_only", "white_only", "any"]
+            },
+            "alphaEdgeClean": { "type": "string", "enum": ["required", "preferred", "off"] },
+            "allowPerspective": { "type": "boolean" }
+          }
+        },
+        "assetTypeProfile": { "$ref": "#/$defs/assetTypeProfile" }
+      }
+    }
+  }
+}

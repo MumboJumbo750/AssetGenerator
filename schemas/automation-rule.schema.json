@@ -21,7 +21,7 @@
       "properties": {
         "type": {
           "type": "string",
-          "enum": ["spec_refined", "asset_approved", "atlas_ready", "schedule", "manual"]
+          "enum": ["spec_refined", "asset_approved", "atlas_ready", "lora_release_activated", "schedule", "manual"]
         },
         "schedule": {
           "type": "object",
@@ -44,7 +44,15 @@
         "properties": {
           "type": {
             "type": "string",
-            "enum": ["enqueue_job", "run_eval_grid", "apply_tags", "set_status", "export"]
+            "enum": [
+              "enqueue_job",
+              "run_eval_grid",
+              "enqueue_lora_renders",
+              "apply_tags",
+              "set_status",
+              "export",
+              "auto_atlas_pack"
+            ]
           },
           "config": { "type": "object", "additionalProperties": true }
         }

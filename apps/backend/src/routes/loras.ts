@@ -12,6 +12,7 @@ import {
   updateSharedLora,
   type LoraUpdatePatch,
 } from "../services/loras";
+import { triggerAutomationEvent } from "../services/automation";
 
 export async function registerLoraRoutes(app: FastifyInstance, opts: { dataRoot: string; schemas: SchemaRegistry }) {
   const projectsRoot = path.join(opts.dataRoot, "projects");
@@ -33,8 +34,30 @@ export async function registerLoraRoutes(app: FastifyInstance, opts: { dataRoot:
     const { projectId, loraId } = req.params as { projectId: string; loraId: string };
     const patch = (req.body as LoraUpdatePatch | null) ?? {};
     try {
+      const before = await getProjectLora(projectsRoot, projectId, loraId);
+      const previousActiveReleaseId = before?.activeReleaseId ?? null;
       const updated = await updateProjectLora(projectsRoot, opts.schemas, projectId, loraId, patch);
       if (!updated) return reply.code(404).send({ error: "LoRA not found" });
+      const nextActiveReleaseId = updated.activeReleaseId ?? null;
+      if (nextActiveReleaseId && nextActiveReleaseId !== previousActiveReleaseId) {
+        const release = updated.releases.find((item) => item.id === nextActiveReleaseId);
+        await triggerAutomationEvent({
+          projectsRoot,
+          schemas: opts.schemas,
+          projectId,
+          event: {
+            type: "lora_release_activated",
+            payload: {
+              loraId: updated.id,
+              releaseId: nextActiveReleaseId,
+              releaseStatus: release?.status ?? null,
+              checkpointId: updated.checkpointId,
+              assetTypes: updated.assetTypes ?? [],
+              scope: updated.scope,
+            },
+          },
+        });
+      }
       return updated;
     } catch (err: any) {
       return reply.code(400).send({ error: err?.message ?? String(err) });

@@ -1,19 +1,21 @@
+@import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700&family=Sora:wght@400;500;600;700&display=swap");
+
 :root {
   color-scheme: dark;
-  --ag-bg: #05060d;
-  --ag-bg-2: #0b0f1f;
-  --ag-surface: #0f172a;
-  --ag-surface-2: #121c3a;
-  --ag-border: #25315a;
-  --ag-text: #e6f0ff;
-  --ag-muted: #9fb0d9;
-  --ag-accent: #7c4dff;
-  --ag-accent-2: #00e5ff;
-  --ag-success: #39ffb4;
-  --ag-warning: #ffb454;
-  --ag-danger: #ff4d6d;
-  --ag-glow: 0 0 16px rgba(124, 77, 255, 0.45);
-  --ag-glow-cyan: 0 0 16px rgba(0, 229, 255, 0.45);
+  --ag-bg: #030813;
+  --ag-bg-2: #071228;
+  --ag-surface: #0b1730;
+  --ag-surface-2: #102243;
+  --ag-border: #2a4e74;
+  --ag-text: #ebf7ff;
+  --ag-muted: #9bb7cc;
+  --ag-accent: #39cfca;
+  --ag-accent-2: #7f9fff;
+  --ag-success: #44d793;
+  --ag-warning: #f5b85a;
+  --ag-danger: #ff667d;
+  --ag-glow: 0 0 24px rgba(57, 207, 202, 0.32);
+  --ag-glow-cyan: 0 0 24px rgba(127, 159, 255, 0.3);
 }
 
 html,
@@ -24,31 +26,173 @@ body,
 
 body {
   margin: 0;
+  position: relative;
+  overflow-x: hidden;
   background:
-    radial-gradient(circle at 15% 20%, rgba(0, 229, 255, 0.12), transparent 45%),
-    radial-gradient(circle at 80% 10%, rgba(124, 77, 255, 0.12), transparent 40%),
-    linear-gradient(180deg, var(--ag-bg), var(--ag-bg-2));
+    radial-gradient(circle at 18% 16%, rgba(76, 200, 250, 0.2), transparent 33%),
+    radial-gradient(circle at 84% 8%, rgba(155, 126, 255, 0.14), transparent 30%),
+    radial-gradient(circle at 45% 78%, rgba(37, 103, 183, 0.26), transparent 44%),
+    linear-gradient(185deg, var(--ag-bg), var(--ag-bg-2));
   color: var(--ag-text);
+  font-family: "Sora", "Space Grotesk", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body::before,
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+}
+
+body::before {
+  background-image:
+    radial-gradient(circle, rgba(231, 247, 255, 0.42) 0.6px, transparent 1px),
+    radial-gradient(circle, rgba(190, 222, 255, 0.24) 0.8px, transparent 1.4px);
+  background-position:
+    0 0,
+    26px 34px;
+  background-size:
+    56px 56px,
+    88px 88px;
+  opacity: 0.46;
+  animation: ag-star-drift 80s linear infinite;
+}
+
+body::after {
+  background:
+    radial-gradient(circle at 60% 30%, rgba(35, 124, 233, 0.2), transparent 40%),
+    radial-gradient(circle at 40% 70%, rgba(56, 178, 195, 0.14), transparent 36%),
+    linear-gradient(180deg, rgba(3, 8, 19, 0.08), rgba(3, 8, 19, 0.4));
+  opacity: 0.72;
+  animation: ag-nebula-shift 26s ease-in-out infinite alternate;
+}
+
+@keyframes ag-star-drift {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-90px, 70px, 0);
+  }
+}
+
+@keyframes ag-nebula-shift {
+  from {
+    opacity: 0.58;
+    filter: saturate(1);
+  }
+  to {
+    opacity: 0.8;
+    filter: saturate(1.18);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body::before,
+  body::after {
+    animation: none;
+  }
+}
+
+.mantine-AppShell-root {
+  background: transparent;
 }
 
 .mantine-AppShell-header,
 .mantine-AppShell-navbar {
-  background: rgba(10, 14, 30, 0.7);
-  border-color: var(--ag-border);
-  backdrop-filter: blur(12px);
+  background: linear-gradient(165deg, rgba(10, 23, 47, 0.82) 0%, rgba(8, 15, 34, 0.8) 100%);
+  border-color: rgba(115, 172, 216, 0.36);
+  backdrop-filter: blur(14px);
 }
 
 .mantine-AppShell-main {
   background: transparent;
+  min-height: calc(100vh - 64px);
+}
+
+.mantine-Card-root {
+  position: relative;
+  overflow: hidden;
+}
+
+.mantine-Card-root::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(142, 208, 247, 0.05) 0%, transparent 60%),
+    radial-gradient(circle at 15% 0%, rgba(132, 189, 255, 0.16), transparent 35%);
+  pointer-events: none;
+}
+
+.mantine-Button-root:hover {
+  transform: translateY(-1px);
+  box-shadow:
+    0 10px 24px rgba(10, 39, 74, 0.44),
+    var(--ag-glow);
+}
+
+.mantine-Button-root:active {
+  transform: translateY(0);
+}
+
+.mantine-NavLink-root:hover {
+  border-color: rgba(126, 192, 236, 0.46);
+  background: rgba(35, 74, 121, 0.24);
+}
+
+.mantine-NavLink-root[data-active="true"] {
+  border-color: rgba(127, 216, 236, 0.62);
+  background: linear-gradient(180deg, rgba(56, 121, 178, 0.36) 0%, rgba(24, 67, 119, 0.32) 100%);
+  box-shadow: var(--ag-glow);
+}
+
+.mantine-TextInput-input:focus,
+.mantine-Textarea-input:focus,
+.mantine-NumberInput-input:focus,
+.mantine-Select-input:focus {
+  border-color: rgba(131, 216, 245, 0.72);
+  box-shadow:
+    0 0 0 1px rgba(131, 216, 245, 0.34),
+    var(--ag-glow);
+}
+
+.ag-surface-primary {
+  background: linear-gradient(180deg, rgba(12, 27, 52, 0.95) 0%, rgba(8, 18, 38, 0.95) 100%);
+  border: 1px solid rgba(120, 185, 225, 0.42);
+  box-shadow:
+    0 20px 46px rgba(3, 7, 20, 0.56),
+    var(--ag-glow);
+}
+
+.ag-surface-control {
+  background: linear-gradient(180deg, rgba(10, 21, 42, 0.9) 0%, rgba(8, 16, 32, 0.9) 100%);
+  border: 1px solid rgba(103, 154, 198, 0.34);
+}
+
+.ag-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(121, 178, 223, 0.45);
+  background: rgba(22, 45, 83, 0.42);
+  color: var(--ag-text);
+  font-size: 12px;
+  letter-spacing: 0.02em;
 }
 
 pre.log {
   margin: 0;
   padding: 12px 14px;
-  border-radius: 10px;
-  background: rgba(6, 8, 20, 0.75);
+  border-radius: 12px;
+  background: rgba(5, 12, 28, 0.84);
   color: var(--ag-text);
-  border: 1px solid rgba(124, 77, 255, 0.2);
+  border: 1px solid rgba(106, 164, 208, 0.35);
+  box-shadow: inset 0 0 0 1px rgba(155, 208, 238, 0.06);
   font-size: 12px;
   line-height: 1.5;
   white-space: pre-wrap;
@@ -56,21 +200,21 @@ pre.log {
 
 .ag-checkerboard {
   position: relative;
-  border-radius: 12px;
-  border: 1px solid var(--ag-border);
+  border-radius: 14px;
+  border: 1px solid rgba(116, 173, 217, 0.42);
   overflow: hidden;
-  background-color: rgba(10, 14, 30, 0.6);
+  background-color: rgba(8, 18, 36, 0.78);
   background-image:
-    linear-gradient(45deg, rgba(255, 255, 255, 0.08) 25%, transparent 25%),
-    linear-gradient(-45deg, rgba(255, 255, 255, 0.08) 25%, transparent 25%),
-    linear-gradient(45deg, transparent 75%, rgba(255, 255, 255, 0.08) 75%),
-    linear-gradient(-45deg, transparent 75%, rgba(255, 255, 255, 0.08) 75%);
+    linear-gradient(45deg, rgba(245, 252, 255, 0.08) 25%, transparent 25%),
+    linear-gradient(-45deg, rgba(245, 252, 255, 0.08) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, rgba(245, 252, 255, 0.08) 75%),
+    linear-gradient(-45deg, transparent 75%, rgba(245, 252, 255, 0.08) 75%);
   background-size: 28px 28px;
   background-position:
     0 0,
     0 14px,
     14px -14px,
-    -14px 0px;
+    -14px 0;
 }
 
 .ag-preview-surface {
@@ -85,4 +229,15 @@ pre.log {
   max-height: 100%;
   transform-origin: center center;
   image-rendering: auto;
+}
+
+@media (max-width: 768px) {
+  .mantine-AppShell-header,
+  .mantine-AppShell-navbar {
+    backdrop-filter: blur(10px);
+  }
+
+  .mantine-Card-root {
+    border-radius: 14px;
+  }
 }

@@ -1,31 +1,31 @@
 {
-    "id":  "spec_astroduck_achievement_icons",
-    "projectId":  "astroduck_demo",
-    "specListId":  "specList_astroduck_demo",
-    "createdAt":  "2026-02-03T00:00:00.000Z",
-    "updatedAt":  "2026-02-05T16:06:05.302Z",
-    "title":  "Achievement icons set (office escape / bosses / mars / sun / no damage / collector)",
-    "assetType":  "ui_icon",
-    "style":  "comic",
-    "scenario":  "scifi",
-    "tags":  [
-                 "assetType:ui_icon",
-                 "ui:achievements",
-                 "style:comic"
-             ],
-    "output":  {
-                   "kind":  "single_image",
-                   "background":  "transparent_required"
-               },
-    "prompt":  {
-                   "positive":  "sci-fi comic, bold outlines, high contrast, clean shapes, Achievement icons set: Office Escape, First Contact, Boss Breaker, Martian Miner, Sun Diver, No Damage, Collector; bold comic icons, consistent size, transparent background",
-                   "negative":  "(worst quality, low quality, illustration, 3d, 2d), open mouth, tooth, ugly face, old face, long neck, photo, watermark, clutter, tiny text"
-               },
-    "generationParams":  {
-                             "width":  512,
-                             "height":  512,
-                             "variants":  4
-                         },
-    "status":  "deprecated",
-    "checkpointId":  "copaxTimeless_xivSDXL.safetensors"
+  "id": "spec_astroduck_achievement_icons",
+  "projectId": "astroduck_demo",
+  "specListId": "specList_astroduck_demo",
+  "createdAt": "2026-02-03T00:00:00.000Z",
+  "updatedAt": "2026-02-03T00:00:00.000Z",
+  "title": "Achievement icons set (office escape / bosses / mars / sun / no damage / collector)",
+  "assetType": "ui_icon",
+  "style": "comic",
+  "scenario": "scifi",
+  "tags": [
+    "assetType:ui_icon",
+    "ui:achievements",
+    "style:comic"
+  ],
+  "output": {
+    "kind": "single_image",
+    "background": "transparent_required"
+  },
+  "prompt": {
+    "positive": "Set of achievement icons in sci-fi comic style, bold silhouette, neon accents, clean edges, transparent background. Themes: office desk/escape, alien face, boss skull, mars pickaxe, sun flame, shield no-damage, magnet collector. No text.",
+    "negative": "photo, watermark, text, cluttered background, low contrast"
+  },
+  "generationParams": {
+    "width": 512,
+    "height": 512,
+    "variants": 16
+  },
+  "status": "ready",
+  "checkpointId": "ckpt_sd15_demo"
 }

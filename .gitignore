@@ -49,6 +49,8 @@ cache/
 data/**/files/logs/
 data/runtime/logs/
 data/runtime/worker-heartbeat.json
+data/runtime/worker-locks/
+data/runtime/worker-locks/**
 
 # Local config (machine-specific)
 config/local.json

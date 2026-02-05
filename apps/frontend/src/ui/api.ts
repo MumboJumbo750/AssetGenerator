@@ -50,9 +50,22 @@ export type AutomationRule = {
   updatedAt: string;
   lastRunAt?: string;
   notes?: string;
-  trigger: { type: "spec_refined" | "asset_approved" | "atlas_ready" | "schedule" | "manual"; schedule?: unknown };
+  trigger: {
+    type: "spec_refined" | "asset_approved" | "atlas_ready" | "lora_release_activated" | "schedule" | "manual";
+    schedule?: unknown;
+  };
   conditions?: Record<string, unknown>;
-  actions: Array<{ type: "enqueue_job" | "run_eval_grid" | "apply_tags" | "set_status" | "export"; config?: unknown }>;
+  actions: Array<{
+    type:
+      | "enqueue_job"
+      | "run_eval_grid"
+      | "enqueue_lora_renders"
+      | "apply_tags"
+      | "set_status"
+      | "export"
+      | "auto_atlas_pack";
+    config?: unknown;
+  }>;
 };
 
 export type AutomationRun = {
@@ -361,6 +374,8 @@ export type AssetSpec = {
   updatedAt: string;
   title: string;
   assetType: string;
+  checkpointId?: string;
+  loraIds?: string[];
   output?: {
     kind?: "single_image" | "animation" | "ui_states" | "logo_set";
     background?: "transparent_required" | "any";

@@ -29,7 +29,14 @@ import { useAppData } from "../context/AppDataContext";
 
 type ActionDraft = {
   id: string;
-  type: "enqueue_job" | "run_eval_grid" | "apply_tags" | "set_status" | "export";
+  type:
+    | "enqueue_job"
+    | "run_eval_grid"
+    | "enqueue_lora_renders"
+    | "apply_tags"
+    | "set_status"
+    | "export"
+    | "auto_atlas_pack";
   config: string;
 };
 
@@ -37,6 +44,7 @@ const TRIGGER_OPTIONS = [
   { value: "spec_refined", label: "Spec refined" },
   { value: "asset_approved", label: "Asset approved" },
   { value: "atlas_ready", label: "Atlas ready" },
+  { value: "lora_release_activated", label: "LoRA release activated" },
   { value: "schedule", label: "Schedule" },
   { value: "manual", label: "Manual" },
 ];
@@ -44,9 +52,11 @@ const TRIGGER_OPTIONS = [
 const ACTION_OPTIONS = [
   { value: "enqueue_job", label: "Enqueue job" },
   { value: "run_eval_grid", label: "Run eval grid" },
+  { value: "enqueue_lora_renders", label: "Enqueue LoRA renders" },
   { value: "apply_tags", label: "Apply tags" },
   { value: "set_status", label: "Set status" },
   { value: "export", label: "Export" },
+  { value: "auto_atlas_pack", label: "Auto atlas pack" },
 ];
 
 const PRESETS = [
@@ -76,6 +86,24 @@ const PRESETS = [
     ruleName: "Generate on spec ready",
     triggerType: "spec_refined" as const,
     actions: [{ type: "enqueue_job" as const, config: '{ "type": "generate", "input": { "specId": "<specId>" } }' }],
+  },
+  {
+    id: "lora-activated-render",
+    label: "LoRA activated -> render",
+    description: "When a LoRA release is activated, run smoke eval prompts and queue compatible renders.",
+    ruleName: "LoRA activation autopilot",
+    triggerType: "lora_release_activated" as const,
+    actions: [
+      {
+        type: "run_eval_grid" as const,
+        config:
+          '{ "prompts": ["clean ui icon set, consistent style", "pixel sprite character, front view"], "templateId": "txt2img", "variants": 2 }',
+      },
+      {
+        type: "enqueue_lora_renders" as const,
+        config: '{ "templateId": "txt2img", "limit": 20, "statuses": ["draft", "ready"], "requireApproved": true }',
+      },
+    ],
   },
 ];
 
@@ -236,11 +264,11 @@ export function AutomationPage() {
 
   return (
     <Stack>
-        <Group justify="space-between">
-          <Group>
-            <Title order={2}>Automation</Title>
-            <HelpTip label="Workflow automation basics" topicId="workflow-automation" />
-          </Group>
+      <Group justify="space-between">
+        <Group>
+          <Title order={2}>Automation</Title>
+          <HelpTip label="Workflow automation basics" topicId="workflow-automation" />
+        </Group>
         <Group>
           <Button variant="light" onClick={() => refresh()} disabled={!isReady || loading}>
             Refresh
@@ -334,9 +362,7 @@ export function AutomationPage() {
               label="Trigger type"
               data={TRIGGER_OPTIONS}
               value={triggerType}
-              onChange={(value) =>
-                setTriggerType((value ?? "asset_approved") as AutomationRule["trigger"]["type"])
-              }
+              onChange={(value) => setTriggerType((value ?? "asset_approved") as AutomationRule["trigger"]["type"])}
             />
             {triggerType === "schedule" && (
               <Stack gap="xs">
@@ -376,7 +402,12 @@ export function AutomationPage() {
                         })
                       }
                     />
-                    <Button variant="light" color="red" onClick={() => removeAction(action.id)} disabled={actions.length <= 1}>
+                    <Button
+                      variant="light"
+                      color="red"
+                      onClick={() => removeAction(action.id)}
+                      disabled={actions.length <= 1}
+                    >
                       Remove
                     </Button>
                   </Group>
@@ -385,9 +416,7 @@ export function AutomationPage() {
                     value={action.config}
                     onChange={(event) => updateAction(action.id, { config: event.currentTarget.value })}
                     minRows={3}
-                    error={
-                      actionErrors.find((entry) => entry.id === action.id)?.result.ok ? undefined : "Invalid JSON"
-                    }
+                    error={actionErrors.find((entry) => entry.id === action.id)?.result.ok ? undefined : "Invalid JSON"}
                   />
                 </Stack>
               </Card>

@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "baseline-validation-result.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "projectId", "assetId", "versionId", "status", "checks", "decision", "createdAt"],
+  "properties": {
+    "id": { "type": "string", "minLength": 1 },
+    "projectId": { "type": "string", "minLength": 1 },
+    "assetId": { "type": "string", "minLength": 1 },
+    "versionId": { "type": "string", "minLength": 1 },
+    "specId": { "type": "string", "minLength": 1 },
+    "assetType": { "type": "string", "minLength": 1 },
+    "status": {
+      "type": "string",
+      "enum": ["pass", "fail", "uncertain", "mixed"]
+    },
+    "checks": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/checkResult" }
+    },
+    "decision": {
+      "type": "string",
+      "enum": ["auto_advance", "auto_regenerate", "queue_decision_sprint", "manual_review", "reject"]
+    },
+    "suggestedQuestion": { "type": "string" },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "meta": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  },
+  "$defs": {
+    "checkResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "status"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "enum": [
+            "shadowCheck",
+            "backgroundCheck",
+            "stateCompletenessCheck",
+            "stateAlignmentCheck",
+            "edgeCleanlinessCheck",
+            "custom"
+          ]
+        },
+        "status": {
+          "type": "string",
+          "enum": ["pass", "fail", "uncertain", "skipped"]
+        },
+        "score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "threshold": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "missing": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "details": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "message": { "type": "string" }
+      }
+    }
+  }
+}

@@ -5,6 +5,7 @@ import { ulid } from "ulid";
 
 import { fileExists, readJson, writeJsonAtomic } from "../lib/json";
 import type { SchemaRegistry } from "../lib/schemas";
+import { resolveLorasForGenerate } from "./loraResolver";
 
 export type Job = {
   id: string;
@@ -46,6 +47,28 @@ export async function createJob(opts: {
   type: Job["type"];
   input: Record<string, unknown>;
 }) {
+  let input: Record<string, unknown> = opts.input ?? {};
+  if (opts.type === "generate") {
+    const dataRoot = path.join(opts.projectsRoot, "..");
+    const resolved = await resolveLorasForGenerate({
+      projectsRoot: opts.projectsRoot,
+      dataRoot,
+      projectId: opts.projectId,
+      input,
+    });
+    if (resolved) {
+      const existingSelection =
+        input.loraSelection && typeof input.loraSelection === "object"
+          ? (input.loraSelection as Record<string, unknown>)
+          : {};
+      input = {
+        ...input,
+        ...(resolved.loras.length > 0 ? { loras: resolved.loras } : {}),
+        loraSelection: { ...existingSelection, ...resolved.loraSelection },
+      };
+    }
+  }
+
   const id = ulid();
   const createdAt = nowIso();
   const job: Job = {
@@ -55,7 +78,7 @@ export async function createJob(opts: {
     status: "queued",
     createdAt,
     updatedAt: createdAt,
-    input: opts.input ?? {},
+    input,
   };
 
   opts.schemas.validateOrThrow("job.schema.json", job);

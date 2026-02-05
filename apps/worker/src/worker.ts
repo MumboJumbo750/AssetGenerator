@@ -164,6 +164,112 @@ function summarizeJobInput(input: Record<string, any>) {
   return out;
 }
 
+type JobLoraInput = {
+  loraId?: string;
+  releaseId?: string;
+  loraName?: string;
+  weightPath?: string;
+  localPath?: string;
+  strengthModel?: number;
+  strengthClip?: number;
+  weight?: number;
+};
+
+type ResolvedJobLora = {
+  loraId?: string;
+  releaseId?: string;
+  loraName: string;
+  strengthModel: number;
+  strengthClip: number;
+};
+
+function normalizePathLike(value: string) {
+  return value.replace(/\\/g, "/");
+}
+
+function resolveJobLoras(raw: unknown): ResolvedJobLora[] {
+  if (!Array.isArray(raw)) return [];
+  const resolved: ResolvedJobLora[] = [];
+  for (const entry of raw) {
+    if (!entry || typeof entry !== "object") continue;
+    const lora = entry as JobLoraInput;
+    const loraNameRaw = String(lora.loraName ?? lora.weightPath ?? lora.localPath ?? lora.loraId ?? "").trim();
+    if (!loraNameRaw) continue;
+    const strengthModelRaw = Number(lora.strengthModel ?? lora.weight ?? 1);
+    const strengthModel = Number.isFinite(strengthModelRaw) ? strengthModelRaw : 1;
+    const strengthClipRaw = Number(lora.strengthClip ?? strengthModel);
+    const strengthClip = Number.isFinite(strengthClipRaw) ? strengthClipRaw : strengthModel;
+    resolved.push({
+      ...(lora.loraId ? { loraId: String(lora.loraId) } : {}),
+      ...(lora.releaseId ? { releaseId: String(lora.releaseId) } : {}),
+      loraName: normalizePathLike(loraNameRaw),
+      strengthModel,
+      strengthClip,
+    });
+  }
+  return resolved;
+}
+
+function applyLoraChainToWorkflow(opts: { workflow: any; baseNodeId: string; loras: ResolvedJobLora[] }) {
+  const { workflow, baseNodeId, loras } = opts;
+  if (!workflow?.[baseNodeId]?.inputs || loras.length === 0) return { addedNodes: 0, applied: 0 };
+
+  const baseNode = workflow[baseNodeId];
+  const baseInputs = baseNode.inputs ?? {};
+
+  const first = loras[0];
+  baseInputs.lora_name = first.loraName;
+  baseInputs.strength_model = first.strengthModel;
+  baseInputs.strength_clip = first.strengthClip;
+
+  let prevNodeId = String(baseNodeId);
+  const addedNodeIds: string[] = [];
+  const nextNodeId = () => {
+    const max = Object.keys(workflow)
+      .map((key) => Number(key))
+      .filter((num) => Number.isFinite(num))
+      .reduce((acc, num) => Math.max(acc, num), 0);
+    return String(max + 1);
+  };
+
+  for (let idx = 1; idx < loras.length; idx += 1) {
+    const lora = loras[idx];
+    const nodeId = nextNodeId();
+    workflow[nodeId] = {
+      class_type: baseNode.class_type,
+      inputs: {
+        ...baseInputs,
+        model: [prevNodeId, 0],
+        clip: [prevNodeId, 1],
+        lora_name: lora.loraName,
+        strength_model: lora.strengthModel,
+        strength_clip: lora.strengthClip,
+      },
+    };
+    addedNodeIds.push(nodeId);
+    prevNodeId = nodeId;
+  }
+
+  if (addedNodeIds.length > 0) {
+    for (const [nodeId, node] of Object.entries<any>(workflow)) {
+      if (nodeId === String(baseNodeId) || addedNodeIds.includes(nodeId)) continue;
+      if (!node?.inputs || typeof node.inputs !== "object") continue;
+      for (const [inputKey, inputValue] of Object.entries<any>(node.inputs)) {
+        if (
+          Array.isArray(inputValue) &&
+          inputValue.length >= 2 &&
+          String(inputValue[0]) === String(baseNodeId) &&
+          (inputValue[1] === 0 || inputValue[1] === 1)
+        ) {
+          node.inputs[inputKey] = [prevNodeId, inputValue[1]];
+        }
+      }
+    }
+  }
+
+  return { addedNodes: addedNodeIds.length, applied: loras.length };
+}
+
 function resolveTemplateValue(
   value: unknown,
   ctx: { input: Record<string, any>; output: Record<string, any>; projectId: string; jobId: string },
@@ -276,6 +382,9 @@ async function processGenerateJob(opts: {
   const specPath = path.join(opts.dataRoot, "projects", job.projectId, "specs", `${specId}.json`);
   if (!(await fileExists(specPath))) throw new Error(`Spec not found: ${specPath}`);
   const spec = await readJson<AssetSpec>(specPath);
+  const resolvedLoras = resolveJobLoras(job.input.loras);
+  const loraSelection =
+    job.input.loraSelection && typeof job.input.loraSelection === "object" ? job.input.loraSelection : null;
 
   let workflow = job.input.workflow;
   if (!workflow) {
@@ -372,6 +481,34 @@ async function processGenerateJob(opts: {
       const stopAt = clipSkipVal > 0 ? -clipSkipVal : clipSkipVal;
       apply("clip_skip", stopAt);
     }
+    const primaryLora = resolvedLoras[0];
+    if (primaryLora) {
+      apply("lora_name", primaryLora.loraName);
+      apply("lora_strength_model", primaryLora.strengthModel);
+      apply("lora_strength_clip", primaryLora.strengthClip);
+    }
+    if (resolvedLoras.length > 0) {
+      const loraNodeId = bindings?.lora_name?.node ? String(bindings.lora_name.node) : "";
+      if (loraNodeId && workflow?.[loraNodeId]?.inputs) {
+        const chainResult = applyLoraChainToWorkflow({ workflow, baseNodeId: loraNodeId, loras: resolvedLoras });
+        if (chainResult.applied > 0) {
+          await opts.log?.info("lora_chain_applied", {
+            applied: chainResult.applied,
+            addedNodes: chainResult.addedNodes,
+          });
+        }
+      } else {
+        await opts.log?.warn("lora_binding_missing", {
+          templateId,
+          reason: "bindings.lora_name is not defined",
+          loras: resolvedLoras.map((item) => ({
+            loraId: item.loraId ?? null,
+            releaseId: item.releaseId ?? null,
+            loraName: item.loraName,
+          })),
+        });
+      }
+    }
     apply("positive", positive);
     apply("negative", negative);
     apply("width", width);
@@ -463,6 +600,18 @@ async function processGenerateJob(opts: {
       workflow: job.input.workflow,
       // Keeping prompt examples here for traceability; the true resolved prompt should also be stored once we add templates.
       promptExample: { positive: spec.prompt.positive, negative: spec.prompt.negative },
+      ...(resolvedLoras.length > 0
+        ? {
+            loras: resolvedLoras.map((item) => ({
+              loraId: item.loraId ?? null,
+              releaseId: item.releaseId ?? null,
+              loraName: item.loraName,
+              strengthModel: item.strengthModel,
+              strengthClip: item.strengthClip,
+            })),
+          }
+        : {}),
+      ...(loraSelection ? { loraSelection } : {}),
       ...(sequenceId ? { sequenceId } : {}),
       ...(Number.isFinite(frameIndex) ? { frameIndex } : {}),
       ...(Number.isFinite(frameCount) ? { frameCount } : {}),

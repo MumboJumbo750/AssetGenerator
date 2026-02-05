@@ -322,6 +322,8 @@ async function seedAstroDuckDemo(opts, dataRoot) {
   await fs.mkdir(assetsDir, { recursive: true });
   await fs.mkdir(jobsDir, { recursive: true });
   await fs.mkdir(filesDir, { recursive: true });
+  const automationRulesDir = path.join(projectDir, "automation-rules");
+  await fs.mkdir(automationRulesDir, { recursive: true });
 
   await writeJson(path.join(projectDir, "project.json"), project);
   await writeJson(path.join(catalogsDir, "asset-types.json"), catalogs.assetTypes);
@@ -341,6 +343,27 @@ async function seedAstroDuckDemo(opts, dataRoot) {
     if (!spec?.id) continue;
     await writeJson(path.join(specsDir, `${spec.id}.json`), spec);
   }
+
+  // Automation rule: auto atlas-pack when all animation frames are approved.
+  const autoAtlasPackRule = {
+    id: "rule_auto_atlas_pack",
+    projectId: opts.projectId,
+    name: "Auto atlas-pack on animation approval",
+    description:
+      "When an asset is approved, check if it belongs to an animation spec " +
+      "and all frames are now approved. If so, enqueue an atlas_pack job automatically.",
+    enabled: true,
+    createdAt: SEED_TIME,
+    updatedAt: SEED_TIME,
+    trigger: { type: "asset_approved" },
+    actions: [
+      {
+        type: "auto_atlas_pack",
+        config: { padding: 2, maxSize: 2048, trim: true },
+      },
+    ],
+  };
+  await writeJson(path.join(automationRulesDir, `${autoAtlasPackRule.id}.json`), autoAtlasPackRule);
 
   console.log(`[seed] Created ${projectRoot}`);
   console.log(`[seed] Wrote specs=${specs.length} specListId=${specList.id}`);

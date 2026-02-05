@@ -13,5 +13,8 @@
   "cfg": { "node": "3", "input": "cfg" },
   "sampler_name": { "node": "3", "input": "sampler_name" },
   "scheduler": { "node": "3", "input": "scheduler" },
+  "lora_name": { "node": "12", "input": "lora_name" },
+  "lora_strength_model": { "node": "12", "input": "strength_model" },
+  "lora_strength_clip": { "node": "12", "input": "strength_clip" },
   "filename_prefix": { "node": "9", "input": "filename_prefix" }
 }

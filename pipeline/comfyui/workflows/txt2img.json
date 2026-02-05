@@ -8,7 +8,7 @@
       "sampler_name": "euler",
       "scheduler": "normal",
       "denoise": 1,
-      "model": ["4", 0],
+      "model": ["12", 0],
       "positive": ["5", 0],
       "negative": ["6", 0],
       "latent_image": ["7", 0]
@@ -59,7 +59,7 @@
   "11": {
     "class_type": "CLIPSetLastLayer",
     "inputs": {
-      "clip": ["4", 1],
+      "clip": ["12", 1],
       "stop_at_clip_layer": -1
     }
   },
@@ -67,6 +67,16 @@
     "class_type": "VAELoader",
     "inputs": {
       "vae_name": "PUT_VAE_NAME_HERE.safetensors"
+    }
+  },
+  "12": {
+    "class_type": "LoraLoader",
+    "inputs": {
+      "model": ["4", 0],
+      "clip": ["4", 1],
+      "lora_name": "PUT_YOUR_LORA_NAME_HERE.safetensors",
+      "strength_model": 1,
+      "strength_clip": 1
     }
   }
 }

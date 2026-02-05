@@ -53,7 +53,7 @@ export function AnimationSequenceModal(props: Props) {
       .map((version) => {
         const chosenId = selectionByVersionId[version.id];
         const chosen =
-          (chosenId && version.variants.find((v) => v.id === chosenId)) ??
+          (chosenId ? version.variants.find((v) => v.id === chosenId) : null) ??
           (version.primaryVariantId ? version.variants.find((v) => v.id === version.primaryVariantId) : null) ??
           version.variants.find((v) => v.status === "selected") ??
           version.variants[0] ??
@@ -145,7 +145,7 @@ export function AnimationSequenceModal(props: Props) {
             {orderedFrames.map((version, index) => {
               const chosenId = selectionByVersionId[version.id] ?? pickDefaultVariant(version);
               const chosen =
-                (chosenId && version.variants.find((v) => v.id === chosenId)) ??
+                (chosenId ? version.variants.find((v) => v.id === chosenId) : null) ??
                 (version.primaryVariantId ? version.variants.find((v) => v.id === version.primaryVariantId) : null) ??
                 version.variants[0] ??
                 null;

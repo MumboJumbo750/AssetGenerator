@@ -280,31 +280,34 @@ Demo:
 
 - `npm run format`
 
-## Checkpoint L (NEXT): workflow automation
+## Checkpoint L (PARTIAL): workflow automation
 
 Goal:
 
 - Reduce manual handoffs by automating common multi-step flows.
 
-Planned:
+Done:
 
-- Automation rules (if/when/then) that trigger job pipelines.
-- Triggers: spec refinement complete, asset approved, atlas ready, schedule/manual run.
-- Actions: enqueue jobs (generate/bg remove/pack/export), run eval grids, apply tags/status updates.
-- Rule builder UI with guarded presets + dry-run preview.
-- Run history view with per-rule success/failure logs.
-- Backend storage for rules + scheduler runner (safe, idempotent).
+- Automation rule schema + CRUD (rules + runs) with per-project storage.
+- Trigger engine: `asset_approved`, `spec_refined`, `atlas_ready`, `schedule`, `manual`.
+- Condition matching (field equals / in / all / any).
+- Action executors: `enqueue_job`, `export`, `run_eval_grid`, `apply_tags`, `set_status`.
+- **`auto_atlas_pack` action**: on `asset_approved`, checks if all frames of an animation spec are approved; if so, collects ordered frame paths (preferring alpha) and enqueues an `atlas_pack` job automatically.
+- Demo rule seeded in AstroDuck project (`rule_auto_atlas_pack`).
+- Run history stored per project.
 
 Missing:
 
-- (all)
+- Rule builder UI with guarded presets + dry-run preview.
+- Run history view with per-rule success/failure logs in the frontend.
+- Schedule-based trigger runner (cron).
 
 Demo:
 
-- Auto-run bg removal + atlas pack when an asset set is approved.
+- Approve all frames of an animation spec → atlas_pack job auto-enqueued.
 
 ## Executable “next steps” (recommended sequence)
 
 If we follow the roadmap strictly, the next checkpoints to execute are:
 
-1. **Checkpoint L: workflow automation** (define triggers + actions + rule builder).
+1. **Checkpoint L: workflow automation** (rule builder UI + schedule runner + run history view).

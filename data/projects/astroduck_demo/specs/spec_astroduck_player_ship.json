@@ -3,7 +3,7 @@
   "projectId": "astroduck_demo",
   "specListId": "specList_astroduck_demo",
   "createdAt": "2026-02-03T00:00:00.000Z",
-  "updatedAt": "2026-02-05T16:33:27.913Z",
+  "updatedAt": "2026-02-03T00:00:00.000Z",
   "title": "AstroDuck flight vehicle (idle + bank)",
   "assetType": "spritesheet",
   "style": "comic",
@@ -24,14 +24,14 @@
     }
   },
   "prompt": {
-    "positive": "sci-fi comic, bold outlines, high contrast, clean shapes, AstroDuck piloting a compact sci-fi ship, duck-beak nosecone, teal/orange cockpit glow, bold comic outlines, clean silhouette, consistent lighting, transparent background, animation frames consistent",
-    "negative": "(worst quality, low quality, illustration, 3d, 2d), open mouth, tooth, ugly face, old face, long neck, photo, text, watermark, messy background, inconsistent lighting, extreme perspective"
+    "positive": "AstroDuck piloting a compact sci-fi ship, bold outlines, colorful cockpit glow, clear silhouette, comic style",
+    "negative": "photo, text, watermark, tiny details, messy background"
   },
   "generationParams": {
     "width": 512,
     "height": 512,
-    "variants": 4
+    "variants": 6
   },
-  "status": "deprecated",
-  "checkpointId": "copaxTimeless_xivSDXL.safetensors"
+  "status": "ready",
+  "checkpointId": "ckpt_sd15_demo"
 }

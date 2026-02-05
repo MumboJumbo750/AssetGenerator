@@ -10,3 +10,4 @@ export * from "./exportProfiles";
 export * from "./loras";
 export * from "./evals";
 export * from "./automation";
+export * from "./loraResolver";

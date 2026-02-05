@@ -14,6 +14,8 @@ export type AssetSpec = {
   updatedAt: string;
   title: string;
   assetType: string;
+  checkpointId?: string;
+  loraIds?: string[];
   output?: {
     kind?: "single_image" | "animation" | "ui_states" | "logo_set";
     background?: "transparent_required" | "any";
@@ -68,6 +70,8 @@ export async function createSpec(opts: {
     updatedAt: createdAt,
     title: opts.spec?.title ?? `Spec ${id}`,
     assetType: opts.spec?.assetType ?? "ui_icon",
+    checkpointId: opts.spec?.checkpointId,
+    loraIds: Array.isArray(opts.spec?.loraIds) ? opts.spec?.loraIds : undefined,
     style: opts.spec?.style ?? "cartoon",
     scenario: opts.spec?.scenario ?? "fantasy",
     prompt: {
@@ -98,6 +102,8 @@ export async function updateSpec(opts: {
 
   if (typeof opts.patch?.title === "string") spec.title = opts.patch.title;
   if (typeof opts.patch?.assetType === "string") spec.assetType = opts.patch.assetType;
+  if (typeof opts.patch?.checkpointId === "string") spec.checkpointId = opts.patch.checkpointId;
+  if (Array.isArray(opts.patch?.loraIds)) spec.loraIds = opts.patch.loraIds;
   if (typeof opts.patch?.style === "string") spec.style = opts.patch.style;
   if (typeof opts.patch?.scenario === "string") spec.scenario = opts.patch.scenario;
   if (opts.patch?.prompt) spec.prompt = { ...spec.prompt, ...opts.patch.prompt };

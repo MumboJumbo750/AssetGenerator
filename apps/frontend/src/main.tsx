@@ -7,57 +7,59 @@ import { App } from "./ui/App";
 import "./ui/styles.css";
 
 const theme = createTheme({
-  fontFamily: "Space Grotesk, Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif",
+  fontFamily: "Sora, Space Grotesk, Segoe UI, Tahoma, Geneva, Verdana, sans-serif",
   headings: {
-    fontFamily: "Space Grotesk, Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif",
+    fontFamily: "Orbitron, Sora, Space Grotesk, Segoe UI, sans-serif",
+    fontWeight: "600",
   },
-  primaryColor: "neon",
-  defaultRadius: "md",
+  primaryColor: "aurora",
+  defaultRadius: "lg",
   colors: {
-    neon: [
-      "#f3efff",
-      "#d9ccff",
-      "#c2a9ff",
-      "#ad86ff",
-      "#9b6bff",
-      "#8754ff",
-      "#7c4dff",
-      "#6a3fe6",
-      "#5b34c4",
-      "#4b2b9f",
+    aurora: [
+      "#e8fffe",
+      "#bdf8f4",
+      "#91f0ea",
+      "#65e7e0",
+      "#43ddd8",
+      "#2dd3cf",
+      "#21b8b5",
+      "#199693",
+      "#117472",
+      "#095150",
     ],
-    cyan: [
-      "#e6fcff",
-      "#c3f6ff",
-      "#9fedff",
-      "#7ae2ff",
-      "#4fd6ff",
-      "#2ecbff",
-      "#14c2ff",
-      "#00b0e6",
-      "#0097c4",
-      "#007aa0",
+    plasma: [
+      "#eff2ff",
+      "#d8defc",
+      "#c0caf7",
+      "#a8b6f2",
+      "#90a2ed",
+      "#788ee8",
+      "#5f74cc",
+      "#49599f",
+      "#333f73",
+      "#1f2647",
     ],
-    magenta: [
-      "#ffe6ff",
-      "#f9c2ff",
-      "#f39cff",
-      "#ef74ff",
-      "#ea4dff",
-      "#e427ff",
-      "#d80eff",
-      "#b300d6",
-      "#8c00ad",
-      "#650082",
+    ember: [
+      "#fff5ea",
+      "#ffe6c8",
+      "#ffd5a5",
+      "#ffc483",
+      "#ffb462",
+      "#f8a443",
+      "#d48834",
+      "#a56a27",
+      "#764a1b",
+      "#472a10",
     ],
   },
   components: {
     Card: {
       styles: {
         root: {
-          backgroundColor: "var(--ag-surface)",
-          border: "1px solid var(--ag-border)",
-          boxShadow: "0 0 0 1px rgba(124,77,255,0.08), 0 12px 30px rgba(0,0,0,0.35)",
+          background: "linear-gradient(180deg, rgba(14, 24, 45, 0.92) 0%, rgba(8, 16, 34, 0.92) 100%)",
+          border: "1px solid rgba(94, 145, 190, 0.34)",
+          boxShadow: "0 18px 40px rgba(3, 8, 22, 0.5), inset 0 1px 0 rgba(210, 246, 255, 0.08)",
+          backdropFilter: "blur(10px)",
         },
       },
     },
@@ -65,7 +67,21 @@ const theme = createTheme({
       styles: {
         root: {
           textTransform: "none",
-          boxShadow: "0 0 0 1px rgba(124,77,255,0.2)",
+          fontWeight: 600,
+          letterSpacing: "0.015em",
+          border: "1px solid rgba(121, 205, 229, 0.35)",
+          boxShadow: "0 0 0 1px rgba(11, 66, 97, 0.3)",
+          transition: "transform 120ms ease, box-shadow 180ms ease, border-color 180ms ease",
+        },
+      },
+    },
+    AppShell: {
+      styles: {
+        header: {
+          borderBottom: "1px solid rgba(113, 167, 208, 0.35)",
+        },
+        navbar: {
+          borderRight: "1px solid rgba(113, 167, 208, 0.35)",
         },
       },
     },
@@ -73,46 +89,75 @@ const theme = createTheme({
       styles: {
         root: {
           textTransform: "none",
-          letterSpacing: "0.02em",
+          letterSpacing: "0.03em",
+          border: "1px solid rgba(127, 183, 223, 0.3)",
+          backdropFilter: "blur(8px)",
         },
       },
     },
     NavLink: {
       styles: {
         root: {
+          borderRadius: 14,
+          border: "1px solid transparent",
+          transition: "border-color 160ms ease, background-color 160ms ease, transform 160ms ease",
+        },
+        label: {
+          fontWeight: 600,
+          letterSpacing: "0.02em",
+        },
+      },
+    },
+    Tabs: {
+      styles: {
+        tab: {
           borderRadius: 12,
+          border: "1px solid rgba(109, 162, 204, 0.2)",
+          "&[data-active]": {
+            background: "linear-gradient(180deg, rgba(44, 87, 140, 0.44) 0%, rgba(17, 52, 96, 0.42) 100%)",
+            borderColor: "rgba(120, 197, 237, 0.55)",
+          },
         },
       },
     },
     TextInput: {
       styles: {
         input: {
-          backgroundColor: "var(--ag-surface-2)",
-          borderColor: "var(--ag-border)",
+          backgroundColor: "rgba(15, 27, 49, 0.88)",
+          borderColor: "rgba(112, 165, 207, 0.35)",
+          color: "var(--ag-text)",
         },
       },
     },
     NumberInput: {
       styles: {
         input: {
-          backgroundColor: "var(--ag-surface-2)",
-          borderColor: "var(--ag-border)",
+          backgroundColor: "rgba(15, 27, 49, 0.88)",
+          borderColor: "rgba(112, 165, 207, 0.35)",
+          color: "var(--ag-text)",
         },
       },
     },
     Textarea: {
       styles: {
         input: {
-          backgroundColor: "var(--ag-surface-2)",
-          borderColor: "var(--ag-border)",
+          backgroundColor: "rgba(15, 27, 49, 0.88)",
+          borderColor: "rgba(112, 165, 207, 0.35)",
+          color: "var(--ag-text)",
         },
       },
     },
     Select: {
       styles: {
         input: {
-          backgroundColor: "var(--ag-surface-2)",
-          borderColor: "var(--ag-border)",
+          backgroundColor: "rgba(15, 27, 49, 0.88)",
+          borderColor: "rgba(112, 165, 207, 0.35)",
+          color: "var(--ag-text)",
+        },
+        dropdown: {
+          background: "rgba(8, 14, 30, 0.96)",
+          borderColor: "rgba(122, 184, 228, 0.34)",
+          backdropFilter: "blur(12px)",
         },
       },
     },

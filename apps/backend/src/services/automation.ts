@@ -5,8 +5,9 @@ import { ulid } from "ulid";
 
 import { fileExists, readJson, writeJsonAtomic } from "../lib/json";
 import type { SchemaRegistry } from "../lib/schemas";
+import { getAsset, listAssets, updateAssetVariant, updateAssetVersion } from "./assets";
 import { createJob, type Job } from "./jobs";
-import { getAsset, updateAssetVariant, updateAssetVersion } from "./assets";
+import { getSpec, listSpecs } from "./specs";
 
 export type AutomationRule = {
   id: string;
@@ -18,9 +19,22 @@ export type AutomationRule = {
   updatedAt: string;
   lastRunAt?: string;
   notes?: string;
-  trigger: { type: "spec_refined" | "asset_approved" | "atlas_ready" | "schedule" | "manual"; schedule?: unknown };
+  trigger: {
+    type: "spec_refined" | "asset_approved" | "atlas_ready" | "lora_release_activated" | "schedule" | "manual";
+    schedule?: unknown;
+  };
   conditions?: Record<string, unknown>;
-  actions: Array<{ type: "enqueue_job" | "run_eval_grid" | "apply_tags" | "set_status" | "export"; config?: unknown }>;
+  actions: Array<{
+    type:
+      | "enqueue_job"
+      | "run_eval_grid"
+      | "enqueue_lora_renders"
+      | "apply_tags"
+      | "set_status"
+      | "export"
+      | "auto_atlas_pack";
+    config?: unknown;
+  }>;
 };
 
 export type AutomationRun = {
@@ -60,9 +74,17 @@ type Conditions = { all?: Condition[]; any?: Condition[] } | Record<string, unkn
 
 type LoraRecord = {
   id: string;
+  name?: string;
+  scope?: "baseline" | "project";
   checkpointId: string;
+  activeReleaseId?: string;
   assetTypes?: string[];
-  releases?: Array<{ id: string }>;
+  releases?: Array<{
+    id: string;
+    status?: "candidate" | "approved" | "deprecated";
+    localPath?: string;
+    weights?: { path?: string };
+  }>;
 };
 
 async function loadLoraRecord(opts: { projectsRoot: string; dataRoot: string; projectId: string; loraId: string }) {
@@ -71,6 +93,23 @@ async function loadLoraRecord(opts: { projectsRoot: string; dataRoot: string; pr
   const sharedPath = path.join(opts.dataRoot, "shared", "loras", `${opts.loraId}.json`);
   if (await fileExists(sharedPath)) return readJson<LoraRecord>(sharedPath);
   return null;
+}
+
+function asStringArray(value: unknown) {
+  if (!Array.isArray(value)) return [];
+  return value.map((item) => (typeof item === "string" ? item.trim() : "")).filter((item) => item.length > 0);
+}
+
+function normalizePathLike(value: string) {
+  return value.replace(/\\/g, "/");
+}
+
+function resolveLoraWeightPath(release: { localPath?: string; weights?: { path?: string } }) {
+  const weightPath = typeof release.weights?.path === "string" ? release.weights.path.trim() : "";
+  if (weightPath) return normalizePathLike(weightPath);
+  const localPath = typeof release.localPath === "string" ? release.localPath.trim() : "";
+  if (localPath) return normalizePathLike(localPath);
+  return "";
 }
 
 async function ensureDir(root: string) {
@@ -142,7 +181,10 @@ export async function updateAutomationRule(opts: {
   projectId: string;
   ruleId: string;
   patch: Partial<
-    Pick<AutomationRule, "name" | "description" | "enabled" | "trigger" | "actions" | "conditions" | "notes" | "lastRunAt">
+    Pick<
+      AutomationRule,
+      "name" | "description" | "enabled" | "trigger" | "actions" | "conditions" | "notes" | "lastRunAt"
+    >
   >;
 }) {
   const filePath = path.join(opts.projectsRoot, opts.projectId, "automation-rules", `${opts.ruleId}.json`);
@@ -311,10 +353,7 @@ export async function executeAutomationRun(opts: {
     steps: run.steps ?? [],
   };
   opts.schemas.validateOrThrow("automation-run.schema.json", nextRun);
-  await writeJsonAtomic(
-    path.join(opts.projectsRoot, opts.projectId, "automation-runs", `${opts.runId}.json`),
-    nextRun,
-  );
+  await writeJsonAtomic(path.join(opts.projectsRoot, opts.projectId, "automation-runs", `${opts.runId}.json`), nextRun);
 
   for (const action of rule.actions) {
     const stepId = ulid();
@@ -337,9 +376,7 @@ export async function executeAutomationRun(opts: {
       const config = (action.config ?? {}) as { type?: Job["type"]; input?: Record<string, unknown> };
       if (!config.type) {
         nextRun.steps = nextRun.steps.map((step) =>
-          step.id === stepId
-            ? { ...step, status: "failed", endedAt: nowIso(), error: "Missing job type" }
-            : step,
+          step.id === stepId ? { ...step, status: "failed", endedAt: nowIso(), error: "Missing job type" } : step,
         );
         nextRun.status = "failed";
         nextRun.endedAt = nowIso();
@@ -353,9 +390,7 @@ export async function executeAutomationRun(opts: {
         input: config.input ?? {},
       });
       nextRun.steps = nextRun.steps.map((step) =>
-        step.id === stepId
-          ? { ...step, status: "succeeded", endedAt: nowIso(), meta: { jobId: job.id } }
-          : step,
+        step.id === stepId ? { ...step, status: "succeeded", endedAt: nowIso(), meta: { jobId: job.id } } : step,
       );
       continue;
     }
@@ -384,14 +419,13 @@ export async function executeAutomationRun(opts: {
         },
       });
       nextRun.steps = nextRun.steps.map((step) =>
-        step.id === stepId
-          ? { ...step, status: "succeeded", endedAt: nowIso(), meta: { jobId: job.id } }
-          : step,
+        step.id === stepId ? { ...step, status: "succeeded", endedAt: nowIso(), meta: { jobId: job.id } } : step,
       );
       continue;
     }
 
     if (action.type === "run_eval_grid") {
+      const eventPayload = ((run.meta as any)?.event?.payload ?? {}) as Record<string, unknown>;
       const config = (action.config ?? {}) as {
         loraId?: string;
         releaseId?: string;
@@ -404,9 +438,12 @@ export async function executeAutomationRun(opts: {
         height?: number;
         variants?: number;
         autoCleanup?: boolean;
+        strengthModel?: number;
+        strengthClip?: number;
       };
-
-      if (!config.loraId || !config.releaseId) {
+      const loraId = String(config.loraId ?? eventPayload.loraId ?? "");
+      const releaseId = String(config.releaseId ?? eventPayload.releaseId ?? "");
+      if (!loraId || !releaseId) {
         nextRun.steps = nextRun.steps.map((step) =>
           step.id === stepId
             ? { ...step, status: "failed", endedAt: nowIso(), error: "Missing loraId/releaseId" }
@@ -421,24 +458,20 @@ export async function executeAutomationRun(opts: {
         projectsRoot: opts.projectsRoot,
         dataRoot,
         projectId: opts.projectId,
-        loraId: config.loraId,
+        loraId,
       });
       if (!lora) {
         nextRun.steps = nextRun.steps.map((step) =>
-          step.id === stepId
-            ? { ...step, status: "failed", endedAt: nowIso(), error: "LoRA not found" }
-            : step,
+          step.id === stepId ? { ...step, status: "failed", endedAt: nowIso(), error: "LoRA not found" } : step,
         );
         nextRun.status = "failed";
         nextRun.endedAt = nowIso();
         break;
       }
-      const release = (lora.releases ?? []).find((r) => r.id === config.releaseId);
+      const release = (lora.releases ?? []).find((r) => r.id === releaseId);
       if (!release) {
         nextRun.steps = nextRun.steps.map((step) =>
-          step.id === stepId
-            ? { ...step, status: "failed", endedAt: nowIso(), error: "Release not found" }
-            : step,
+          step.id === stepId ? { ...step, status: "failed", endedAt: nowIso(), error: "Release not found" } : step,
         );
         nextRun.status = "failed";
         nextRun.endedAt = nowIso();
@@ -453,9 +486,7 @@ export async function executeAutomationRun(opts: {
             .filter(Boolean);
       if (!promptsList.length) {
         nextRun.steps = nextRun.steps.map((step) =>
-          step.id === stepId
-            ? { ...step, status: "failed", endedAt: nowIso(), error: "No prompts provided" }
-            : step,
+          step.id === stepId ? { ...step, status: "failed", endedAt: nowIso(), error: "No prompts provided" } : step,
         );
         nextRun.status = "failed";
         nextRun.endedAt = nowIso();
@@ -465,8 +496,8 @@ export async function executeAutomationRun(opts: {
       const evalId = config.evalId ?? ulid();
       const evalRecord = {
         id: evalId,
-        loraId: config.loraId,
-        releaseId: config.releaseId,
+        loraId,
+        releaseId,
         createdAt: nowIso(),
         updatedAt: nowIso(),
         status: "running",
@@ -479,8 +510,7 @@ export async function executeAutomationRun(opts: {
       await writeJsonAtomic(evalPath, evalRecord);
 
       const checkpointId = config.checkpointId || lora.checkpointId;
-      const assetType =
-        config.assetType || (Array.isArray(lora.assetTypes) && lora.assetTypes[0]) || "ui_icon";
+      const assetType = config.assetType || (Array.isArray(lora.assetTypes) && lora.assetTypes[0]) || "ui_icon";
       const templateId = config.templateId || "txt2img";
 
       const createdJobs: string[] = [];
@@ -492,7 +522,7 @@ export async function executeAutomationRun(opts: {
           projectId: opts.projectId,
           createdAt: nowIso(),
           updatedAt: nowIso(),
-          title: `Eval: ${config.loraId} (${i + 1})`,
+          title: `Eval: ${loraId} (${i + 1})`,
           assetType,
           checkpointId,
           style: "default",
@@ -508,6 +538,10 @@ export async function executeAutomationRun(opts: {
         opts.schemas.validateOrThrow("asset-spec.schema.json", spec);
         await writeJsonAtomic(path.join(opts.projectsRoot, opts.projectId, "specs", `${specId}.json`), spec);
 
+        const loraPath = resolveLoraWeightPath(release);
+        const strengthModel = Number(config.strengthModel ?? 1);
+        const strengthClip = Number(config.strengthClip ?? strengthModel);
+
         const job = await createJob({
           projectsRoot: opts.projectsRoot,
           schemas: opts.schemas,
@@ -518,6 +552,16 @@ export async function executeAutomationRun(opts: {
             templateId,
             checkpointName: checkpointId,
             eval: { evalId, prompt },
+            loras: [
+              {
+                loraId,
+                releaseId,
+                loraName: loraPath || loraId,
+                strengthModel: Number.isFinite(strengthModel) ? strengthModel : 1,
+                strengthClip: Number.isFinite(strengthClip) ? strengthClip : 1,
+              },
+            ],
+            loraSelection: { mode: "automation_eval", loraId, releaseId },
           },
         });
         createdJobs.push(job.id);
@@ -526,6 +570,151 @@ export async function executeAutomationRun(opts: {
       nextRun.steps = nextRun.steps.map((step) =>
         step.id === stepId
           ? { ...step, status: "succeeded", endedAt: nowIso(), meta: { evalId, jobs: createdJobs.length } }
+          : step,
+      );
+      continue;
+    }
+
+    if (action.type === "enqueue_lora_renders") {
+      const eventPayload = ((run.meta as any)?.event?.payload ?? {}) as Record<string, unknown>;
+      const config = (action.config ?? {}) as {
+        loraId?: string;
+        releaseId?: string;
+        templateId?: string;
+        checkpointId?: string;
+        assetTypes?: string[];
+        statuses?: Array<"draft" | "ready" | "deprecated">;
+        limit?: number;
+        strengthModel?: number;
+        strengthClip?: number;
+        requireApproved?: boolean;
+      };
+
+      const loraId = String(config.loraId ?? eventPayload.loraId ?? "");
+      if (!loraId) {
+        nextRun.steps = nextRun.steps.map((step) =>
+          step.id === stepId ? { ...step, status: "failed", endedAt: nowIso(), error: "Missing loraId" } : step,
+        );
+        nextRun.status = "failed";
+        nextRun.endedAt = nowIso();
+        break;
+      }
+
+      const lora = await loadLoraRecord({
+        projectsRoot: opts.projectsRoot,
+        dataRoot,
+        projectId: opts.projectId,
+        loraId,
+      });
+      if (!lora) {
+        nextRun.steps = nextRun.steps.map((step) =>
+          step.id === stepId ? { ...step, status: "failed", endedAt: nowIso(), error: "LoRA not found" } : step,
+        );
+        nextRun.status = "failed";
+        nextRun.endedAt = nowIso();
+        break;
+      }
+
+      const releaseId = String(config.releaseId ?? eventPayload.releaseId ?? lora.activeReleaseId ?? "");
+      const release = (lora.releases ?? []).find((item) => item.id === releaseId);
+      if (!release) {
+        nextRun.steps = nextRun.steps.map((step) =>
+          step.id === stepId ? { ...step, status: "failed", endedAt: nowIso(), error: "Release not found" } : step,
+        );
+        nextRun.status = "failed";
+        nextRun.endedAt = nowIso();
+        break;
+      }
+
+      const requireApproved = config.requireApproved ?? true;
+      if (requireApproved && release.status !== "approved") {
+        nextRun.steps = nextRun.steps.map((step) =>
+          step.id === stepId
+            ? {
+                ...step,
+                status: "succeeded",
+                endedAt: nowIso(),
+                meta: { skipped: true, reason: "release_not_approved", releaseStatus: release.status ?? null },
+              }
+            : step,
+        );
+        continue;
+      }
+
+      const allowedAssetTypes = Array.from(
+        new Set([
+          ...asStringArray(config.assetTypes),
+          ...asStringArray(eventPayload.assetTypes),
+          ...asStringArray(lora.assetTypes),
+        ]),
+      );
+      const checkpointId = String(config.checkpointId ?? eventPayload.checkpointId ?? lora.checkpointId ?? "");
+      const statuses = asStringArray(config.statuses).length ? asStringArray(config.statuses) : ["draft", "ready"];
+      const templateId = String(config.templateId ?? "txt2img");
+      const limitRaw = Number(config.limit ?? 20);
+      const limit = Number.isFinite(limitRaw) ? Math.max(1, Math.floor(limitRaw)) : 20;
+      const strengthModel = Number(config.strengthModel ?? 1);
+      const strengthClip = Number(config.strengthClip ?? strengthModel);
+      const loraPath = resolveLoraWeightPath(release);
+
+      const specs = await listSpecs(opts.projectsRoot, opts.projectId);
+      const compatible = specs
+        .filter((spec) => {
+          const status = String(spec.status ?? "draft");
+          if (!statuses.includes(status)) return false;
+          if (allowedAssetTypes.length > 0 && !allowedAssetTypes.includes(spec.assetType)) return false;
+          if (checkpointId && spec.checkpointId && spec.checkpointId !== checkpointId) return false;
+          return true;
+        })
+        .slice(0, limit);
+
+      const createdJobs: string[] = [];
+      const queuedSpecIds: string[] = [];
+      for (const spec of compatible) {
+        const checkpointName = String(spec.checkpointId ?? checkpointId);
+        if (!checkpointName) continue;
+
+        const job = await createJob({
+          projectsRoot: opts.projectsRoot,
+          schemas: opts.schemas,
+          projectId: opts.projectId,
+          type: "generate",
+          input: {
+            specId: spec.id,
+            templateId,
+            checkpointName,
+            loras: [
+              {
+                loraId,
+                releaseId,
+                loraName: loraPath || loraId,
+                strengthModel: Number.isFinite(strengthModel) ? strengthModel : 1,
+                strengthClip: Number.isFinite(strengthClip) ? strengthClip : 1,
+              },
+            ],
+            loraSelection: { mode: "automation_release_activation", loraId, releaseId, ruleId: rule.id },
+          },
+        });
+        createdJobs.push(job.id);
+        queuedSpecIds.push(spec.id);
+      }
+
+      nextRun.steps = nextRun.steps.map((step) =>
+        step.id === stepId
+          ? {
+              ...step,
+              status: "succeeded",
+              endedAt: nowIso(),
+              meta: {
+                loraId,
+                releaseId,
+                templateId,
+                checkpointId,
+                queuedJobs: createdJobs.length,
+                queuedSpecs: queuedSpecIds.length,
+                skippedSpecs: compatible.length - queuedSpecIds.length,
+              },
+            }
           : step,
       );
       continue;
@@ -580,9 +769,7 @@ export async function executeAutomationRun(opts: {
       });
 
       nextRun.steps = nextRun.steps.map((step) =>
-        step.id === stepId
-          ? { ...step, status: "succeeded", endedAt: nowIso(), meta: { tagCount: tags.size } }
-          : step,
+        step.id === stepId ? { ...step, status: "succeeded", endedAt: nowIso(), meta: { tagCount: tags.size } } : step,
       );
       continue;
     }
@@ -627,15 +814,143 @@ export async function executeAutomationRun(opts: {
       }
 
       nextRun.steps = nextRun.steps.map((step) =>
-        step.id === stepId ? { ...step, status: "succeeded", endedAt: nowIso(), meta: { status: config.status } } : step,
+        step.id === stepId
+          ? { ...step, status: "succeeded", endedAt: nowIso(), meta: { status: config.status } }
+          : step,
+      );
+      continue;
+    }
+
+    if (action.type === "auto_atlas_pack") {
+      // When an asset is approved, check if it belongs to an animation spec
+      // and whether ALL frames for that spec are now approved. If so,
+      // collect the frame image paths in order and enqueue an atlas_pack job.
+      const eventPayload = (run.meta as any)?.event?.payload ?? {};
+      const assetId = (action.config as any)?.assetId ?? eventPayload.assetId;
+      if (!assetId) {
+        nextRun.steps = nextRun.steps.map((step) =>
+          step.id === stepId
+            ? { ...step, status: "failed", endedAt: nowIso(), error: "Missing assetId in event payload" }
+            : step,
+        );
+        nextRun.status = "failed";
+        nextRun.endedAt = nowIso();
+        break;
+      }
+
+      const asset = await getAsset(opts.projectsRoot, opts.projectId, assetId);
+      if (!asset) {
+        nextRun.steps = nextRun.steps.map((step) =>
+          step.id === stepId ? { ...step, status: "failed", endedAt: nowIso(), error: "Asset not found" } : step,
+        );
+        nextRun.status = "failed";
+        nextRun.endedAt = nowIso();
+        break;
+      }
+
+      const spec = await getSpec(opts.projectsRoot, opts.projectId, asset.specId);
+      if (!spec || spec.output?.kind !== "animation") {
+        // Not an animation spec — nothing to do, succeed silently.
+        nextRun.steps = nextRun.steps.map((step) =>
+          step.id === stepId
+            ? { ...step, status: "succeeded", endedAt: nowIso(), meta: { skipped: true, reason: "not_animation_spec" } }
+            : step,
+        );
+        continue;
+      }
+
+      const expectedFrameCount = spec.output.animation?.frameCount ?? spec.output.animation?.frameNames?.length ?? 0;
+      if (expectedFrameCount <= 0) {
+        nextRun.steps = nextRun.steps.map((step) =>
+          step.id === stepId
+            ? { ...step, status: "succeeded", endedAt: nowIso(), meta: { skipped: true, reason: "no_frame_count" } }
+            : step,
+        );
+        continue;
+      }
+
+      // Gather all assets that share the same specId.
+      const allAssets = await listAssets(opts.projectsRoot, opts.projectId);
+      const specAssets = allAssets.filter((a) => a.specId === spec.id);
+
+      // For each asset, find the latest approved version and extract the
+      // frame index from its generation metadata.
+      type FrameInfo = { frameIndex: number; frameName: string; imagePath: string };
+      const frames: FrameInfo[] = [];
+      for (const sa of specAssets) {
+        const approvedVersion = [...sa.versions].reverse().find((v) => v.status === "approved");
+        if (!approvedVersion) continue;
+
+        const generation = (approvedVersion as any).generation as Record<string, any> | undefined;
+        const frameIndex = typeof generation?.frameIndex === "number" ? generation.frameIndex : -1;
+        const frameName = typeof generation?.frameName === "string" ? generation.frameName : `frame_${frameIndex}`;
+
+        // Prefer alphaPath (bg-removed), fall back to originalPath.
+        const variant = approvedVersion.primaryVariantId
+          ? approvedVersion.variants.find((v) => v.id === approvedVersion.primaryVariantId)
+          : approvedVersion.variants[0];
+        if (!variant) continue;
+
+        const imagePath = variant.alphaPath ?? variant.originalPath;
+        if (!imagePath) continue;
+
+        frames.push({ frameIndex, frameName, imagePath });
+      }
+
+      if (frames.length < expectedFrameCount) {
+        // Not all frames approved yet — succeed silently (will fire again on next approval).
+        nextRun.steps = nextRun.steps.map((step) =>
+          step.id === stepId
+            ? {
+                ...step,
+                status: "succeeded",
+                endedAt: nowIso(),
+                meta: { skipped: true, reason: "incomplete", approved: frames.length, expected: expectedFrameCount },
+              }
+            : step,
+        );
+        continue;
+      }
+
+      // Sort by frameIndex and build the atlas_pack input.
+      frames.sort((a, b) => a.frameIndex - b.frameIndex);
+
+      const packConfig = (action.config ?? {}) as Record<string, unknown>;
+      const atlasId = String(packConfig.atlasId ?? `${spec.id}_atlas`);
+      const framePaths = frames.map((f) => ({ key: f.frameName, path: f.imagePath }));
+
+      const job = await createJob({
+        projectsRoot: opts.projectsRoot,
+        schemas: opts.schemas,
+        projectId: opts.projectId,
+        type: "atlas_pack",
+        input: {
+          atlasId,
+          framePaths,
+          ...(packConfig.padding != null ? { padding: Number(packConfig.padding) } : {}),
+          ...(packConfig.maxSize != null ? { maxSize: Number(packConfig.maxSize) } : {}),
+          ...(packConfig.powerOfTwo != null ? { powerOfTwo: Boolean(packConfig.powerOfTwo) } : {}),
+          ...(packConfig.trim != null ? { trim: Boolean(packConfig.trim) } : {}),
+          ...(packConfig.extrude != null ? { extrude: Number(packConfig.extrude) } : {}),
+          ...(packConfig.sort != null ? { sort: String(packConfig.sort) } : {}),
+        },
+      });
+
+      nextRun.steps = nextRun.steps.map((step) =>
+        step.id === stepId
+          ? {
+              ...step,
+              status: "succeeded",
+              endedAt: nowIso(),
+              meta: { jobId: job.id, atlasId, frames: frames.length, specId: spec.id },
+            }
+          : step,
       );
       continue;
     }
 
     nextRun.steps = nextRun.steps.map((step) =>
-      step.id === stepId
-        ? { ...step, status: "failed", endedAt: nowIso(), error: "Action not implemented" }
-        : step,
+      step.id === stepId ? { ...step, status: "failed", endedAt: nowIso(), error: "Action not implemented" } : step,
     );
     nextRun.status = "failed";
     nextRun.endedAt = nowIso();
