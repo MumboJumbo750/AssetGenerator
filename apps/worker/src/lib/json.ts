@@ -3,7 +3,8 @@ import path from "node:path";
 
 export async function readJson<T>(filePath: string): Promise<T> {
   const raw = await fs.readFile(filePath, "utf8");
-  return JSON.parse(raw) as T;
+  const cleaned = raw.charCodeAt(0) === 0xfeff ? raw.slice(1) : raw;
+  return JSON.parse(cleaned) as T;
 }
 
 export async function writeJsonAtomic(filePath: string, value: unknown): Promise<void> {

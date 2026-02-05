@@ -1,0 +1,64 @@
+{
+  "id": "spec_astroduck_boss2_drilling_core_seq",
+  "projectId": "astroduck_demo",
+  "specListId": "specList_astroduck_demo",
+  "createdAt": "2026-02-05T16:38:30.561Z",
+  "updatedAt": "2026-02-05T19:52:54.686Z",
+  "title": "Boss 2: Mars drilling core (idle + attack frames) (sequence)",
+  "assetType": "spritesheet",
+  "style": "comic",
+  "scenario": "scifi",
+  "tags": [
+    "assetType:spritesheet",
+    "enemy:boss",
+    "boss:2",
+    "level:mars",
+    "style:comic"
+  ],
+  "output": {
+    "kind": "animation",
+    "background": "transparent_required",
+    "animation": {
+      "fps": 10,
+      "loop": true,
+      "frameCount": 10,
+      "frameNames": [
+        "frame_01",
+        "frame_02",
+        "frame_03",
+        "frame_04",
+        "frame_05",
+        "frame_06",
+        "frame_07",
+        "frame_08",
+        "frame_09",
+        "frame_10"
+      ],
+      "framePrompts": [
+        "idle, drill core dormant, faint glow",
+        "idle, vents pulsing, slight rotation",
+        "idle, core hum, dust particles",
+        "idle, subtle shake, warning lights",
+        "charge, drill spin-up, sparks",
+        "attack, drill spinning fast",
+        "attack, drill thrust forward",
+        "attack impact, debris burst",
+        "recover, drill slowing, smoke",
+        "cooldown, return to idle glow"
+      ]
+    }
+  },
+  "prompt": {
+    "positive": "sci-fi comic, bold outlines, high contrast, clean shapes, Boss 2 drilling core sprite, massive industrial drill, molten glow, Mars dust accents, bold comic style, transparent background, idle + attack frames consistent",
+    "negative": "(worst quality, low quality, illustration, 3d, 2d), open mouth, tooth, ugly face, old face, long neck, photo, watermark, text, messy background"
+  },
+  "generationParams": {
+    "width": 512,
+    "height": 512,
+    "variants": 4,
+    "autoBgRemove": true,
+    "steps": 22
+  },
+  "status": "ready",
+  "checkpointId": "copaxTimeless_xivSDXL.safetensors"
+}

@@ -1,0 +1,20 @@
+{
+  "id": "01KGQP2PW5Z5PF3W5K9SC3J427",
+  "projectId": "astroduck_demo",
+  "type": "generate",
+  "status": "queued",
+  "createdAt": "2026-02-05T19:57:15.525Z",
+  "updatedAt": "2026-02-05T19:57:15.525Z",
+  "input": {
+    "specId": "spec_astroduck_impact_seq",
+    "templateId": "txt2img",
+    "checkpointName": "copaxTimeless_xivSDXL.safetensors",
+    "sequenceId": "01KGQP2PVT56F44V0DEP6TDYH6",
+    "assetId": "01KGQP2PVT56F44V0DEP6TDYH6",
+    "frameIndex": 4,
+    "frameCount": 8,
+    "frameName": "frame_05",
+    "framePrompt": "impact fade, dim glow",
+    "positive": "sci-fi comic, bold outlines, high contrast, clean shapes, large impact sparks, wide burst with shards, transparent background, loopable frames, impact fade, dim glow"
+  }
+}

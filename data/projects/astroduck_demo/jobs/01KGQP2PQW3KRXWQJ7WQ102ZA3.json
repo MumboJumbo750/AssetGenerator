@@ -1,0 +1,20 @@
+{
+  "id": "01KGQP2PQW3KRXWQJ7WQ102ZA3",
+  "projectId": "astroduck_demo",
+  "type": "generate",
+  "status": "queued",
+  "createdAt": "2026-02-05T19:57:15.388Z",
+  "updatedAt": "2026-02-05T19:57:15.388Z",
+  "input": {
+    "specId": "spec_astroduck_boss2_drilling_core_seq",
+    "templateId": "txt2img",
+    "checkpointName": "copaxTimeless_xivSDXL.safetensors",
+    "sequenceId": "01KGQP2PQ8SMD5R5S6CK9ENP51",
+    "assetId": "01KGQP2PQ8SMD5R5S6CK9ENP51",
+    "frameIndex": 6,
+    "frameCount": 10,
+    "frameName": "frame_07",
+    "framePrompt": "attack, drill thrust forward",
+    "positive": "sci-fi comic, bold outlines, high contrast, clean shapes, Boss 2 drilling core sprite, massive industrial drill, molten glow, Mars dust accents, bold comic style, transparent background, idle + attack frames consistent, attack, drill thrust forward"
+  }
+}

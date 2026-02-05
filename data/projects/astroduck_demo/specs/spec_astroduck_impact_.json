@@ -1,0 +1,37 @@
+{
+  "id": "spec_astroduck_impact_",
+  "projectId": "astroduck_demo",
+  "specListId": "specList_astroduck_demo",
+  "createdAt": "2026-02-05T16:06:05.302Z",
+  "updatedAt": "2026-02-05T16:33:27.909Z",
+  "title": "Impact sparks: Large",
+  "assetType": "spritesheet",
+  "style": "comic",
+  "scenario": "scifi",
+  "tags": [
+    "assetType:spritesheet",
+    "vfx:impact",
+    "impact:large",
+    "style:comic"
+  ],
+  "output": {
+    "kind": "animation",
+    "background": "transparent_required",
+    "animation": {
+      "fps": 16,
+      "loop": true,
+      "frameCount": 8
+    }
+  },
+  "prompt": {
+    "positive": "sci-fi comic, bold outlines, high contrast, clean shapes, large impact sparks, wide burst with shards, transparent background, loopable frames",
+    "negative": "(worst quality, low quality, illustration, 3d, 2d), open mouth, tooth, ugly face, old face, long neck, photo, clutter, watermark, text"
+  },
+  "generationParams": {
+    "width": 512,
+    "height": 512,
+    "variants": 4
+  },
+  "status": "deprecated",
+  "checkpointId": "copaxTimeless_xivSDXL.safetensors"
+}

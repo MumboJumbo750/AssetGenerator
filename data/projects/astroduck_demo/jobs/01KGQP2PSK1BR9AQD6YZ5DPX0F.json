@@ -1,0 +1,20 @@
+{
+  "id": "01KGQP2PSK1BR9AQD6YZ5DPX0F",
+  "projectId": "astroduck_demo",
+  "type": "generate",
+  "status": "queued",
+  "createdAt": "2026-02-05T19:57:15.443Z",
+  "updatedAt": "2026-02-05T19:57:15.443Z",
+  "input": {
+    "specId": "spec_astroduck_enemy_drone_seq",
+    "templateId": "txt2img",
+    "checkpointName": "copaxTimeless_xivSDXL.safetensors",
+    "sequenceId": "01KGQP2PS7PQVFD862DG67TR2Y",
+    "assetId": "01KGQP2PS7PQVFD862DG67TR2Y",
+    "frameIndex": 3,
+    "frameCount": 6,
+    "frameName": "frame_04",
+    "framePrompt": "idle hover, engine flicker",
+    "positive": "sci-fi comic, bold outlines, high contrast, clean shapes, Enemy drone sprite, compact hovering bot, red/black accents, glowing eye, clean silhouette, comic style, transparent background, idle loop consistency, idle hover, engine flicker"
+  }
+}

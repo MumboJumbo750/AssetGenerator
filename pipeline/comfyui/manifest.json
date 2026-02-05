@@ -1,0 +1,39 @@
+{
+  "comfyui": {
+    "repo": "https://github.com/comfyanonymous/ComfyUI",
+    "ref": "main"
+  },
+  "customNodes": [],
+  "models": [
+    {
+      "type": "checkpoint",
+      "id": "copaxTimeless_xivSDXL.safetensors",
+      "sha256": "",
+      "notes": "Copax TimeLess SDXL"
+    },
+    {
+      "type": "checkpoint",
+      "id": "ponyDiffusionV6XL_v6StartWithThisOne.safetensors",
+      "sha256": "",
+      "notes": "Pony Diffusion V6 XL"
+    },
+    {
+      "type": "checkpoint",
+      "id": "juggernautXL_ragnarokBy.safetensors",
+      "sha256": "",
+      "notes": "Juggernaut XL"
+    },
+    {
+      "type": "checkpoint",
+      "id": "sdXL_v10VAEFix.safetensors",
+      "sha256": "",
+      "notes": "SDXL Base 1.0 (VAE Fix)"
+    },
+    {
+      "type": "vae",
+      "id": "sdxl_vae.safetensors",
+      "sha256": "",
+      "notes": "SDXL VAE"
+    }
+  ]
+}

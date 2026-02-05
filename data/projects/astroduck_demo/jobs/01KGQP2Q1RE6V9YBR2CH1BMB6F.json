@@ -1,0 +1,20 @@
+{
+  "id": "01KGQP2Q1RE6V9YBR2CH1BMB6F",
+  "projectId": "astroduck_demo",
+  "type": "generate",
+  "status": "queued",
+  "createdAt": "2026-02-05T19:57:15.704Z",
+  "updatedAt": "2026-02-05T19:57:15.704Z",
+  "input": {
+    "specId": "spec_astroduck_weapon_projectiles_seq",
+    "templateId": "txt2img",
+    "checkpointName": "copaxTimeless_xivSDXL.safetensors",
+    "sequenceId": "01KGQP2Q1BA9EE9896K12R1HDX",
+    "assetId": "01KGQP2Q1BA9EE9896K12R1HDX",
+    "frameIndex": 5,
+    "frameCount": 8,
+    "frameName": "frame_06",
+    "framePrompt": "spread projectile, pellet trails",
+    "positive": "sci-fi comic, bold outlines, high contrast, clean shapes, Set of player projectiles: laser beam, plasma orb, spread shot; bright core with glow, simple shapes, consistent scale, transparent background, spread projectile, pellet trails"
+  }
+}

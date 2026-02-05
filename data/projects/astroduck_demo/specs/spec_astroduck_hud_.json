@@ -1,0 +1,34 @@
+{
+  "id": "spec_astroduck_hud_",
+  "projectId": "astroduck_demo",
+  "specListId": "specList_astroduck_demo",
+  "createdAt": "2026-02-05T16:06:05.302Z",
+  "updatedAt": "2026-02-05T19:52:54.686Z",
+  "title": "HUD: Music off icon",
+  "assetType": "ui_icon",
+  "style": "comic",
+  "scenario": "scifi",
+  "tags": [
+    "assetType:ui_icon",
+    "ui:hud",
+    "hud:music_off_icon",
+    "style:comic"
+  ],
+  "output": {
+    "kind": "single_image",
+    "background": "transparent_required"
+  },
+  "prompt": {
+    "positive": "sci-fi comic, bold outlines, high contrast, clean shapes, music off icon, muted note with slash, transparent background",
+    "negative": "(worst quality, low quality, illustration, 3d, 2d), open mouth, tooth, ugly face, old face, long neck, photo, watermark, clutter, tiny text, low contrast"
+  },
+  "generationParams": {
+    "width": 512,
+    "height": 256,
+    "variants": 4,
+    "autoBgRemove": true,
+    "steps": 22
+  },
+  "status": "ready",
+  "checkpointId": "copaxTimeless_xivSDXL.safetensors"
+}

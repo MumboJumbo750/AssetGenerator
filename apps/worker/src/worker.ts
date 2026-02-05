@@ -76,6 +76,34 @@ function nowIso() {
   return new Date().toISOString();
 }
 
+type ComfyProgress = { value: number; max: number; percent: number };
+
+function extractComfyProgress(history: any, promptId: string): ComfyProgress | null {
+  const entry = history?.[promptId];
+  if (!entry) return null;
+  const status = entry?.status;
+  if (status?.completed === true) return { value: 1, max: 1, percent: 100 };
+  const messages: any[] = Array.isArray(status?.messages) ? status.messages : [];
+  let lastProgress: any = null;
+  for (const msg of messages) {
+    if (!Array.isArray(msg) || msg.length < 2) continue;
+    if (msg[0] === "progress" && msg[1]) lastProgress = msg[1];
+  }
+  if (!lastProgress) return null;
+  const value = Number(lastProgress.value ?? lastProgress.step ?? 0);
+  const max = Number(lastProgress.max ?? lastProgress.total ?? 0);
+  if (!Number.isFinite(value) || !Number.isFinite(max) || max <= 0) return null;
+  const percent = Math.max(0, Math.min(100, Math.round((value / max) * 100)));
+  return { value, max, percent };
+}
+
+async function updateJobOutput(filePath: string, patch: Record<string, unknown>) {
+  const job = await readJson<Job>(filePath);
+  job.output = { ...(job.output ?? {}), ...patch };
+  job.updatedAt = nowIso();
+  await writeJsonAtomic(filePath, job);
+}
+
 async function writeWorkerHeartbeat(dataRoot: string, opts: { pid: number; intervalMs: number }) {
   const outPath = path.join(dataRoot, "runtime", "worker-heartbeat.json");
   const tmp = `${outPath}.tmp`;
@@ -239,6 +267,7 @@ async function processGenerateJob(opts: {
   comfyBaseUrl: string;
   job: Job;
   log?: JsonlLogger;
+  jobFilePath?: string;
 }) {
   const { job } = opts;
   const specId = String(job.input.specId ?? "");
@@ -312,6 +341,16 @@ async function processGenerateJob(opts: {
       job.input.sampler_name ?? job.input.sampler ?? checkpoint?.defaultGenerationParams?.sampler ?? "euler",
     );
     const scheduler = String(job.input.scheduler ?? checkpoint?.defaultGenerationParams?.scheduler ?? "normal");
+    const vae = String(job.input.vae ?? spec.generationParams?.vae ?? checkpoint?.defaultGenerationParams?.vae ?? "");
+    const clipSkipRaw =
+      job.input.clip_skip ??
+      job.input.clipSkip ??
+      spec.generationParams?.clip_skip ??
+      spec.generationParams?.clipSkip ??
+      checkpoint?.defaultGenerationParams?.clip_skip ??
+      checkpoint?.defaultGenerationParams?.clipSkip ??
+      null;
+    const clipSkipVal = clipSkipRaw === "" || clipSkipRaw === null ? null : Number(clipSkipRaw);
 
     const filenamePrefix = String(job.input.filenamePrefix ?? `assetgen/${job.projectId}/${spec.id}`);
 
@@ -323,6 +362,16 @@ async function processGenerateJob(opts: {
     };
 
     apply("checkpoint", checkpointName);
+    if (vae) {
+      apply("vae", vae);
+      if (bindings?.vae?.node) {
+        apply("vae_target", [bindings.vae.node, 0]);
+      }
+    }
+    if (clipSkipVal !== null && Number.isFinite(clipSkipVal)) {
+      const stopAt = clipSkipVal > 0 ? -clipSkipVal : clipSkipVal;
+      apply("clip_skip", stopAt);
+    }
     apply("positive", positive);
     apply("negative", negative);
     apply("width", width);
@@ -338,18 +387,39 @@ async function processGenerateJob(opts: {
 
   const assetId = String(job.input.assetId ?? ulid());
   const assetVersionId = ulid();
+  const sequenceId = typeof job.input.sequenceId === "string" ? String(job.input.sequenceId) : "";
+  const frameIndexRaw = job.input.frameIndex ?? job.input.frame ?? null;
+  const frameIndex = Number(frameIndexRaw);
+  const frameCountRaw = job.input.frameCount ?? null;
+  const frameCount = Number(frameCountRaw);
+  const frameName = typeof job.input.frameName === "string" ? String(job.input.frameName) : "";
+  const framePrompt = typeof job.input.framePrompt === "string" ? String(job.input.framePrompt) : "";
 
   await opts.log?.info("comfyui_submit", { templateId: job.input.templateId ?? job.input.template ?? "txt2img" });
   const { promptId } = await submitWorkflow({ baseUrl: opts.comfyBaseUrl, workflow });
   await opts.log?.info("comfyui_submitted", { promptId });
+  if (opts.jobFilePath) {
+    await updateJobOutput(opts.jobFilePath, { promptId });
+  }
 
   // Poll history for outputs.
   const timeoutMs = Number(job.input.timeoutMs ?? 10 * 60 * 1000);
   const start = Date.now();
   let images: any[] = [];
+  let lastPercent = -1;
+  let lastProgressWrite = 0;
   while (Date.now() - start < timeoutMs) {
     const history = await getHistory({ baseUrl: opts.comfyBaseUrl, promptId });
     images = extractImagesFromHistory(history, promptId);
+    const progress = extractComfyProgress(history, promptId);
+    if (progress && opts.jobFilePath) {
+      const now = Date.now();
+      if (progress.percent !== lastPercent && now - lastProgressWrite > 750) {
+        await updateJobOutput(opts.jobFilePath, { promptId, progress });
+        lastPercent = progress.percent;
+        lastProgressWrite = now;
+      }
+    }
     if (images.length > 0) break;
     await sleep(750);
   }
@@ -393,6 +463,11 @@ async function processGenerateJob(opts: {
       workflow: job.input.workflow,
       // Keeping prompt examples here for traceability; the true resolved prompt should also be stored once we add templates.
       promptExample: { positive: spec.prompt.positive, negative: spec.prompt.negative },
+      ...(sequenceId ? { sequenceId } : {}),
+      ...(Number.isFinite(frameIndex) ? { frameIndex } : {}),
+      ...(Number.isFinite(frameCount) ? { frameCount } : {}),
+      ...(frameName ? { frameName } : {}),
+      ...(framePrompt ? { framePrompt } : {}),
     },
     variants,
   });
@@ -400,6 +475,28 @@ async function processGenerateJob(opts: {
   await upsertAsset(opts.dataRoot, job.projectId, base);
 
   await opts.log?.info("asset_written", { assetId, assetVersionId, variants: variants.length });
+
+  const wantsTransparent = spec.output?.background === "transparent_required";
+  const autoBgRemove =
+    typeof spec.generationParams?.autoBgRemove === "boolean"
+      ? Boolean(spec.generationParams.autoBgRemove)
+      : wantsTransparent;
+  if (autoBgRemove && variants.length > 0) {
+    const nextJobs = variants.map((variant) => ({
+      type: "bg_remove" as const,
+      input: { originalPath: variant.originalPath },
+    }));
+    const chained = await enqueueNextJobs({
+      dataRoot: opts.dataRoot,
+      projectId: job.projectId,
+      jobId: job.id,
+      input: { nextJobs },
+      output: {},
+    });
+    if (chained.length > 0) {
+      await opts.log?.info("auto_bg_remove_queued", { count: chained.length });
+    }
+  }
 
   const evalMeta = job.input.eval && typeof job.input.eval === "object" ? job.input.eval : null;
   if (evalMeta?.evalId) {
@@ -865,6 +962,7 @@ async function runOnce(opts: { repoRoot: string; dataRoot: string; comfyBaseUrl:
               comfyBaseUrl: opts.comfyBaseUrl,
               job: latest,
               log,
+              jobFilePath: filePath,
             });
           else if (latest.type === "bg_remove")
             output = await processBgRemoveJob({ repoRoot: opts.repoRoot, dataRoot: opts.dataRoot, job: latest, log });
@@ -885,7 +983,7 @@ async function runOnce(opts: { repoRoot: string; dataRoot: string; comfyBaseUrl:
 
           updated.status = "succeeded";
           updated.updatedAt = nowIso();
-          updated.output = output;
+          updated.output = { ...(updated.output ?? {}), ...output };
           await writeJsonAtomic(filePath, updated);
           const chained = await enqueueNextJobs({
             dataRoot: opts.dataRoot,

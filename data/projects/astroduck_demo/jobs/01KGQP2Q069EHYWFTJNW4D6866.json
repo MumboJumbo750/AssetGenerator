@@ -1,0 +1,20 @@
+{
+  "id": "01KGQP2Q069EHYWFTJNW4D6866",
+  "projectId": "astroduck_demo",
+  "type": "generate",
+  "status": "queued",
+  "createdAt": "2026-02-05T19:57:15.654Z",
+  "updatedAt": "2026-02-05T19:57:15.654Z",
+  "input": {
+    "specId": "spec_astroduck_warp_effect_seq",
+    "templateId": "txt2img",
+    "checkpointName": "copaxTimeless_xivSDXL.safetensors",
+    "sequenceId": "01KGQP2PZYY5QKJJAFF3439MET",
+    "assetId": "01KGQP2PZYY5QKJJAFF3439MET",
+    "frameIndex": 3,
+    "frameCount": 12,
+    "frameName": "frame_04",
+    "framePrompt": "warp build, brighter core",
+    "positive": "sci-fi comic, bold outlines, high contrast, clean shapes, Warp transition VFX, swirling tunnel with bright core, streaking stars, smooth gradients, loopable frames, transparent background, warp build, brighter core"
+  }
+}

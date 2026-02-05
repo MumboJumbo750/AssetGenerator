@@ -14,8 +14,9 @@ import {
   Title,
 } from "@mantine/core";
 import { Link } from "react-router-dom";
+import { ulid } from "ulid";
 
-import { createJob, createSpec, createSpecList, type AssetSpec } from "../api";
+import { createJob, createSpec, createSpecList, listCheckpoints, type AssetSpec } from "../api";
 import { HelpTip } from "../components/HelpTip";
 import { useAppData } from "../context/AppDataContext";
 import { useSpecRefinement } from "../hooks/useSpecRefinement";
@@ -83,6 +84,8 @@ export function SpecsPage() {
   const [newSpecPos, setNewSpecPos] = useState("");
   const [newSpecNeg, setNewSpecNeg] = useState("text, watermark, blurry, low quality, cluttered background");
   const [checkpointName, setCheckpointName] = useState("");
+  const [checkpointOptions, setCheckpointOptions] = useState<Array<{ value: string; label: string }>>([]);
+  const [checkpointsError, setCheckpointsError] = useState<string | null>(null);
   const [genWidth, setGenWidth] = useState(512);
   const [genHeight, setGenHeight] = useState(512);
   const [genVariants, setGenVariants] = useState(4);
@@ -142,6 +145,23 @@ export function SpecsPage() {
     if (!assetTypeOptions.includes(refineDefaultType)) setRefineDefaultType(assetTypeOptions[0]);
   }, [assetTypeOptions, newSpecType, refineDefaultType, setRefineDefaultType]);
 
+  useEffect(() => {
+    if (!selectedProjectId) return;
+    setCheckpointsError(null);
+    listCheckpoints(selectedProjectId)
+      .then((result) => {
+        const options =
+          result.checkpoints?.map((checkpoint) => ({
+            value: checkpoint.id,
+            label: checkpoint.name ? `${checkpoint.name} (${checkpoint.id})` : checkpoint.id,
+          })) ?? [];
+        setCheckpointOptions(options);
+        if (!checkpointName && options[0]) setCheckpointName(options[0].value);
+      })
+      .catch((e: any) => setCheckpointsError(e?.message ?? String(e)));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedProjectId]);
+
   const onInput = (setter: (value: string) => void) => (event: React.ChangeEvent<HTMLInputElement>) =>
     setter(event.currentTarget.value);
   const onTextarea = (setter: (value: string) => void) => (event: React.ChangeEvent<HTMLTextAreaElement>) =>
@@ -196,15 +216,15 @@ export function SpecsPage() {
     setChainError(null);
     try {
       if (!checkpointName.trim()) throw new Error("Checkpoint name is required for generation (ComfyUI ckpt_name).");
-      const input: Record<string, unknown> = {
+      const baseInput: Record<string, unknown> = {
         specId: spec.id,
         templateId: "txt2img",
         checkpointName: checkpointName.trim(),
       };
       if (!useSpecDefaults) {
-        input.width = genWidth;
-        input.height = genHeight;
-        input.variants = genVariants;
+        baseInput.width = genWidth;
+        baseInput.height = genHeight;
+        baseInput.variants = genVariants;
       }
       if (chainEnabled && nextJobs.length > 0) {
         const parsed = nextJobs.map((job, idx) => {
@@ -215,9 +235,32 @@ export function SpecsPage() {
           }
           return { type: job.type, input: inputObj as Record<string, unknown> };
         });
-        input.nextJobs = parsed;
+        baseInput.nextJobs = parsed;
       }
-      await createJob(selectedProjectId, "generate", input);
+
+      const frameNames = spec.output?.animation?.frameNames ?? [];
+      const framePrompts = spec.output?.animation?.framePrompts ?? [];
+      const frameCount = Number(spec.output?.animation?.frameCount ?? frameNames.length ?? 0);
+      const isAnimation = spec.output?.kind === "animation" || frameCount > 1;
+
+      if (isAnimation && frameCount > 1) {
+        const sequenceId = ulid();
+        for (let index = 0; index < frameCount; index += 1) {
+          const input: Record<string, unknown> = { ...baseInput };
+          input.sequenceId = sequenceId;
+          input.assetId = sequenceId;
+          input.frameIndex = index;
+          input.frameCount = frameCount;
+          if (frameNames[index]) input.frameName = frameNames[index];
+          if (framePrompts[index]) {
+            input.framePrompt = framePrompts[index];
+            input.positive = `${spec.prompt.positive}, ${framePrompts[index]}`;
+          }
+          await createJob(selectedProjectId, "generate", input);
+        }
+      } else {
+        await createJob(selectedProjectId, "generate", baseInput);
+      }
       await refreshProjectData();
     } catch (e: any) {
       const message = e?.message ?? String(e);
@@ -300,7 +343,7 @@ export function SpecsPage() {
         />
         <SpecTemplatesPanel templates={templateOptions} onApplyTemplate={applyTemplate} />
         <Group grow>
-          <TextInput
+          <Select
             label={
               <Group gap="xs">
                 <span>Checkpoint</span>
@@ -310,10 +353,14 @@ export function SpecsPage() {
                 />
               </Group>
             }
-            description="ComfyUI checkpoint name (e.g. ckpt_sd15_demo)"
-            placeholder="ckpt_name"
+            description="ComfyUI checkpoint name (base model)"
+            placeholder="Select checkpoint"
             value={checkpointName}
-            onChange={onInput(setCheckpointName)}
+            data={checkpointOptions}
+            searchable
+            allowDeselect={false}
+            onChange={onSelect(setCheckpointName, checkpointOptions[0]?.value ?? "")}
+            error={checkpointsError}
           />
           <NumberInput
             label="W"

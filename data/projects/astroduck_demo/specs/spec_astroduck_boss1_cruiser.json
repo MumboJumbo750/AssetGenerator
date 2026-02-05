@@ -3,7 +3,7 @@
   "projectId": "astroduck_demo",
   "specListId": "specList_astroduck_demo",
   "createdAt": "2026-02-03T00:00:00.000Z",
-  "updatedAt": "2026-02-03T00:00:00.000Z",
+  "updatedAt": "2026-02-05T16:33:27.904Z",
   "title": "Boss 1: alien cruiser (idle + attack frames)",
   "assetType": "spritesheet",
   "style": "comic",
@@ -25,14 +25,14 @@
     }
   },
   "prompt": {
-    "positive": "Huge alien cruiser boss sprite, sci-fi comic style, glowing cannons, strong silhouette, transparent background",
-    "negative": "photo, watermark, text, messy background, tiny details"
+    "positive": "sci-fi comic, bold outlines, high contrast, clean shapes, Boss 1 alien cruiser sprite, massive spiky silhouette, glowing cannons, green/purple accents, comic shading, transparent background, idle + attack frames consistent",
+    "negative": "(worst quality, low quality, illustration, 3d, 2d), open mouth, tooth, ugly face, old face, long neck, photo, watermark, text, messy background, tiny details"
   },
   "generationParams": {
     "width": 1024,
     "height": 768,
-    "variants": 6
+    "variants": 4
   },
-  "status": "ready",
-  "checkpointId": "ckpt_sd15_demo"
+  "status": "deprecated",
+  "checkpointId": "copaxTimeless_xivSDXL.safetensors"
 }

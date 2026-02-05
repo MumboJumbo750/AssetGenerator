@@ -48,7 +48,7 @@ export async function ensureBgVenv(repoRoot: string, log?: JsonlLogger) {
   await fs.mkdir(path.dirname(venvDir), { recursive: true });
   await runLogged(log, basePython.command, [...basePython.args, "-m", "venv", venvDir], { cwd: repoRoot });
   await runLogged(log, py, ["-m", "pip", "install", "--upgrade", "pip"], { cwd: repoRoot });
-  await runLogged(log, py, ["-m", "pip", "install", "rembg", "pillow"], { cwd: repoRoot });
+  await runLogged(log, py, ["-m", "pip", "install", "rembg[cpu]", "pillow"], { cwd: repoRoot });
   return { venvDir, python: py };
 }
 

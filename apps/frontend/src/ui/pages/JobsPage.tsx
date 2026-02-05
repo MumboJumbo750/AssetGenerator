@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Group, SimpleGrid, Stack, Text, Title } from "@mantine/core";
 
 import { HelpTip } from "../components/HelpTip";
@@ -27,6 +27,14 @@ export function JobsPage() {
     if (action === "retry") await retryJob(selectedProjectId, selectedJobId);
     await refreshProjectData(selectedProjectId);
   });
+
+  useEffect(() => {
+    if (!selectedProjectId) return;
+    const t = window.setInterval(() => {
+      refreshProjectData(selectedProjectId).catch(() => undefined);
+    }, 5000);
+    return () => window.clearInterval(t);
+  }, [selectedProjectId, refreshProjectData]);
 
   return (
     <Stack gap="lg">

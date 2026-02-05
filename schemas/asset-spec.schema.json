@@ -53,7 +53,8 @@
             "fps": { "type": "number", "minimum": 0.1 },
             "loop": { "type": "boolean" },
             "frameCount": { "type": "integer", "minimum": 1 },
-            "frameNames": { "type": "array", "items": { "type": "string" }, "minItems": 1 }
+            "frameNames": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+            "framePrompts": { "type": "array", "items": { "type": "string" }, "minItems": 1 }
           }
         },
         "uiStates": {

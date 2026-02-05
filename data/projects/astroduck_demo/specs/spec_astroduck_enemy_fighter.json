@@ -3,7 +3,7 @@
   "projectId": "astroduck_demo",
   "specListId": "specList_astroduck_demo",
   "createdAt": "2026-02-03T00:00:00.000Z",
-  "updatedAt": "2026-02-03T00:00:00.000Z",
+  "updatedAt": "2026-02-05T16:33:27.908Z",
   "title": "Enemy: alien fighter (idle loop)",
   "assetType": "spritesheet",
   "style": "comic",
@@ -24,14 +24,14 @@
     }
   },
   "prompt": {
-    "positive": "Alien fighter enemy sprite, sharp silhouette, neon engine glow, sci-fi comic style, transparent background",
-    "negative": "photo, watermark, text, messy background, tiny details"
+    "positive": "sci-fi comic, bold outlines, high contrast, clean shapes, Enemy fighter sprite, sleek alien ship, red/purple highlights, bold comic outlines, clean silhouette, transparent background, idle loop consistency",
+    "negative": "(worst quality, low quality, illustration, 3d, 2d), open mouth, tooth, ugly face, old face, long neck, photo, clutter, text, watermark, tiny details"
   },
   "generationParams": {
     "width": 512,
     "height": 512,
-    "variants": 8
+    "variants": 4
   },
-  "status": "ready",
-  "checkpointId": "ckpt_sd15_demo"
+  "status": "deprecated",
+  "checkpointId": "copaxTimeless_xivSDXL.safetensors"
 }

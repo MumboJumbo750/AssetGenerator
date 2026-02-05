@@ -24,6 +24,13 @@ Install and run ComfyUI in a way that:
 3. (Optional) Install required custom nodes:
    - `npm run comfyui:nodes`
 
+## Model setup guides
+
+- Copax TimeLess (SDXL): see [docs/setup/copax.md](copax.md)
+- Pony Diffusion V6 XL: see [docs/setup/pony-diffusion-v6-xl.md](pony-diffusion-v6-xl.md)
+- Juggernaut XL: see [docs/setup/juggernaut-xl.md](juggernaut-xl.md)
+- SD XL (base): see [docs/setup/sd-xl.md](sd-xl.md)
+
 This will:
 
 - clone ComfyUI into `tools/comfyui/ComfyUI/` (ignored by git)

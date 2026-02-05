@@ -1,0 +1,20 @@
+{
+  "id": "01KGQP2PZTK4S5HBSWMCEMX3ZN",
+  "projectId": "astroduck_demo",
+  "type": "generate",
+  "status": "queued",
+  "createdAt": "2026-02-05T19:57:15.642Z",
+  "updatedAt": "2026-02-05T19:57:15.642Z",
+  "input": {
+    "specId": "spec_astroduck_projectile_seq",
+    "templateId": "txt2img",
+    "checkpointName": "copaxTimeless_xivSDXL.safetensors",
+    "sequenceId": "01KGQP2PZCWZ6MVZXD1RAEE3R6",
+    "assetId": "01KGQP2PZCWZ6MVZXD1RAEE3R6",
+    "frameIndex": 6,
+    "frameCount": 8,
+    "frameName": "frame_07",
+    "framePrompt": "missile travel, slight wobble",
+    "positive": "sci-fi comic, bold outlines, high contrast, clean shapes, missile projectile, small rocket with flame, transparent background, loopable frames, missile travel, slight wobble"
+  }
+}

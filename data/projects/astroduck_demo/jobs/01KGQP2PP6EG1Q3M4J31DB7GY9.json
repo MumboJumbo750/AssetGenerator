@@ -1,0 +1,17 @@
+{
+  "id": "01KGQP2PP6EG1Q3M4J31DB7GY9",
+  "projectId": "astroduck_demo",
+  "type": "generate",
+  "status": "running",
+  "createdAt": "2026-02-05T19:57:15.334Z",
+  "updatedAt": "2026-02-05T20:17:20.582Z",
+  "input": {
+    "specId": "spec_astroduck_level_background_sun",
+    "templateId": "txt2img",
+    "checkpointName": "copaxTimeless_xivSDXL.safetensors"
+  },
+  "logPath": "projects/astroduck_demo/files/logs/jobs/01KGQP2PP6EG1Q3M4J31DB7GY9.jsonl",
+  "output": {
+    "promptId": "63807c66-0a1b-45a5-961f-e9013df6d252"
+  }
+}

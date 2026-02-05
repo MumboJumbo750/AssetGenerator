@@ -24,6 +24,7 @@
     "ports:status": "node scripts/ports/status.mjs",
     "ports:kill": "node scripts/ports/kill.mjs",
     "validate:data": "node scripts/validate/data.mjs",
+    "validate:bom": "node scripts/validate/bom.mjs",
     "dataset:build": "node scripts/datasets/build.mjs",
     "import:assets": "node scripts/import/assets.mjs",
     "backup:snapshot": "node scripts/backup/snapshot.mjs",

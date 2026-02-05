@@ -3,7 +3,7 @@
   "projectId": "astroduck_demo",
   "specListId": "specList_astroduck_demo",
   "createdAt": "2026-02-03T00:00:00.000Z",
-  "updatedAt": "2026-02-03T00:00:00.000Z",
+  "updatedAt": "2026-02-05T19:52:54.686Z",
   "title": "Space texture with nova effects (tileable)",
   "assetType": "texture",
   "style": "comic",
@@ -19,14 +19,15 @@
     "background": "any"
   },
   "prompt": {
-    "positive": "Seamless tileable space texture with soft nova glow, starfield, sci-fi comic style, high readability",
-    "negative": "photo, watermark, noisy speckle, harsh seams"
+    "positive": "sci-fi comic, bold outlines, high contrast, clean shapes, seamless tileable deep-space texture with nebula clouds and a single prominent nova glow, bright stars, smooth gradients, seamless",
+    "negative": "(worst quality, low quality, illustration, 3d, 2d), open mouth, tooth, ugly face, old face, long neck, seams, banding, watermark, text, noisy artifacts"
   },
   "generationParams": {
-    "width": 1024,
-    "height": 1024,
-    "variants": 6
+    "width": 512,
+    "height": 512,
+    "variants": 4,
+    "steps": 22
   },
   "status": "ready",
-  "checkpointId": "ckpt_sd15_demo"
+  "checkpointId": "copaxTimeless_xivSDXL.safetensors"
 }

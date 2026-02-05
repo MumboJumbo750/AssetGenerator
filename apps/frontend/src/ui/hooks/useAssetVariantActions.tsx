@@ -117,6 +117,31 @@ export function useAssetVariantActions(opts: {
     [opts],
   );
 
+  const onSetAllVariantsStatus = useCallback(
+    async (status: "candidate" | "selected" | "rejected") => {
+      if (!opts.projectId || !opts.selectedAsset || !opts.selectedVersion) return;
+      const variants = opts.selectedVersion.variants ?? [];
+      if (variants.length === 0) return;
+      setAssetUpdateBusy(true);
+      try {
+        for (const variant of variants) {
+          await updateAssetVariant(opts.projectId, opts.selectedAsset.id, opts.selectedVersion.id, variant.id, {
+            status,
+          });
+        }
+        if (status === "selected" && variants[0]) {
+          await setPrimaryVariant(opts.projectId, opts.selectedAsset.id, opts.selectedVersion.id, variants[0].id);
+        }
+        await opts.onRefresh();
+      } catch (e: any) {
+        opts.onError(e?.message ?? String(e));
+      } finally {
+        setAssetUpdateBusy(false);
+      }
+    },
+    [opts],
+  );
+
   return {
     assetUpdateBusy,
     updateVariant,
@@ -127,5 +152,6 @@ export function useAssetVariantActions(opts: {
     onSaveReviewNote,
     onSetPrimaryVariant,
     onSetVersionStatus,
+    onSetAllVariantsStatus,
   };
 }

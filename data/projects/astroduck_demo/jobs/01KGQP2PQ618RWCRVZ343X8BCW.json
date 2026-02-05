@@ -1,0 +1,20 @@
+{
+  "id": "01KGQP2PQ618RWCRVZ343X8BCW",
+  "projectId": "astroduck_demo",
+  "type": "generate",
+  "status": "queued",
+  "createdAt": "2026-02-05T19:57:15.366Z",
+  "updatedAt": "2026-02-05T19:57:15.366Z",
+  "input": {
+    "specId": "spec_astroduck_boss1_cruiser_seq",
+    "templateId": "txt2img",
+    "checkpointName": "copaxTimeless_xivSDXL.safetensors",
+    "sequenceId": "01KGQP2PPCHXBWNKS85TEB7JEX",
+    "assetId": "01KGQP2PPCHXBWNKS85TEB7JEX",
+    "frameIndex": 7,
+    "frameCount": 8,
+    "frameName": "frame_08",
+    "framePrompt": "cooldown, energy fade, return to idle",
+    "positive": "sci-fi comic, bold outlines, high contrast, clean shapes, Boss 1 alien cruiser sprite, massive spiky silhouette, glowing cannons, green/purple accents, comic shading, transparent background, idle + attack frames consistent, cooldown, energy fade, return to idle"
+  }
+}

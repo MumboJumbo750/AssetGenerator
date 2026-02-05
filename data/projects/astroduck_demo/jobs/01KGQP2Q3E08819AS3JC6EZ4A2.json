@@ -1,0 +1,13 @@
+{
+  "id": "01KGQP2Q3E08819AS3JC6EZ4A2",
+  "projectId": "astroduck_demo",
+  "type": "generate",
+  "status": "queued",
+  "createdAt": "2026-02-05T19:57:15.758Z",
+  "updatedAt": "2026-02-05T19:57:15.758Z",
+  "input": {
+    "specId": "spec_astroduck_menu_button_settings_default",
+    "templateId": "txt2img",
+    "checkpointName": "copaxTimeless_xivSDXL.safetensors"
+  }
+}

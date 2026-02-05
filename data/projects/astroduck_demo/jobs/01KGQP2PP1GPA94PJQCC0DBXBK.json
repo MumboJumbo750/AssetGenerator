@@ -1,0 +1,18 @@
+{
+  "id": "01KGQP2PP1GPA94PJQCC0DBXBK",
+  "projectId": "astroduck_demo",
+  "type": "generate",
+  "status": "failed",
+  "createdAt": "2026-02-05T19:57:15.329Z",
+  "updatedAt": "2026-02-05T20:17:19.033Z",
+  "input": {
+    "specId": "spec_astroduck_level_background_mars",
+    "templateId": "txt2img",
+    "checkpointName": "copaxTimeless_xivSDXL.safetensors"
+  },
+  "logPath": "projects/astroduck_demo/files/logs/jobs/01KGQP2PP1GPA94PJQCC0DBXBK.jsonl",
+  "output": {
+    "promptId": "db3f37f5-1642-47d0-acf5-43aaf69afc7f"
+  },
+  "error": "Timed out waiting for ComfyUI outputs (promptId=db3f37f5-1642-47d0-acf5-43aaf69afc7f)."
+}

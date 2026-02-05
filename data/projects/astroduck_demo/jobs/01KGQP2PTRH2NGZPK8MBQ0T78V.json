@@ -1,0 +1,20 @@
+{
+  "id": "01KGQP2PTRH2NGZPK8MBQ0T78V",
+  "projectId": "astroduck_demo",
+  "type": "generate",
+  "status": "queued",
+  "createdAt": "2026-02-05T19:57:15.480Z",
+  "updatedAt": "2026-02-05T19:57:15.480Z",
+  "input": {
+    "specId": "spec_astroduck_enemy_turret_seq",
+    "templateId": "txt2img",
+    "checkpointName": "copaxTimeless_xivSDXL.safetensors",
+    "sequenceId": "01KGQP2PT9EGQ419YANJRXHWB3",
+    "assetId": "01KGQP2PT9EGQ419YANJRXHWB3",
+    "frameIndex": 5,
+    "frameCount": 8,
+    "frameName": "frame_06",
+    "framePrompt": "fire, muzzle flash",
+    "positive": "sci-fi comic, bold outlines, high contrast, clean shapes, Enemy ground turret sprite, chunky sci-fi cannon, glowing muzzle, comic shading, transparent background, idle + shoot frames consistent, fire, muzzle flash"
+  }
+}

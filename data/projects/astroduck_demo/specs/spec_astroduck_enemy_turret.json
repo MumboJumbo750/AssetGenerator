@@ -3,7 +3,7 @@
   "projectId": "astroduck_demo",
   "specListId": "specList_astroduck_demo",
   "createdAt": "2026-02-03T00:00:00.000Z",
-  "updatedAt": "2026-02-03T00:00:00.000Z",
+  "updatedAt": "2026-02-05T16:33:27.908Z",
   "title": "Enemy: alien turret (idle + shoot)",
   "assetType": "spritesheet",
   "style": "comic",
@@ -24,14 +24,14 @@
     }
   },
   "prompt": {
-    "positive": "Alien turret sprite for Mars surface, sci-fi comic style, glowing barrel, a few shoot frames with muzzle flash, transparent background",
-    "negative": "photo, watermark, text, background"
+    "positive": "sci-fi comic, bold outlines, high contrast, clean shapes, Enemy ground turret sprite, chunky sci-fi cannon, glowing muzzle, comic shading, transparent background, idle + shoot frames consistent",
+    "negative": "(worst quality, low quality, illustration, 3d, 2d), open mouth, tooth, ugly face, old face, long neck, photo, clutter, text, watermark"
   },
   "generationParams": {
     "width": 640,
     "height": 640,
-    "variants": 8
+    "variants": 4
   },
-  "status": "ready",
-  "checkpointId": "ckpt_sd15_demo"
+  "status": "deprecated",
+  "checkpointId": "copaxTimeless_xivSDXL.safetensors"
 }

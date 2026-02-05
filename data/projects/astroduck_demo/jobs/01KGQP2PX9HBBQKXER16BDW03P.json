@@ -1,0 +1,20 @@
+{
+  "id": "01KGQP2PX9HBBQKXER16BDW03P",
+  "projectId": "astroduck_demo",
+  "type": "generate",
+  "status": "queued",
+  "createdAt": "2026-02-05T19:57:15.561Z",
+  "updatedAt": "2026-02-05T19:57:15.561Z",
+  "input": {
+    "specId": "spec_astroduck_muzzle_flash_seq",
+    "templateId": "txt2img",
+    "checkpointName": "copaxTimeless_xivSDXL.safetensors",
+    "sequenceId": "01KGQP2PX3XGYK7HFKA220KVB7",
+    "assetId": "01KGQP2PX3XGYK7HFKA220KVB7",
+    "frameIndex": 2,
+    "frameCount": 6,
+    "frameName": "frame_03",
+    "framePrompt": "flash peak, intense glow",
+    "positive": "sci-fi comic, bold outlines, high contrast, clean shapes, spread muzzle flash, short wide burst, transparent background, loopable frames, flash peak, intense glow"
+  }
+}

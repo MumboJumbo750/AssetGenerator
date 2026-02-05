@@ -1,0 +1,20 @@
+{
+  "id": "01KGQP2PVGTEFWMNW2ER9J9Y84",
+  "projectId": "astroduck_demo",
+  "type": "generate",
+  "status": "queued",
+  "createdAt": "2026-02-05T19:57:15.504Z",
+  "updatedAt": "2026-02-05T19:57:15.504Z",
+  "input": {
+    "specId": "spec_astroduck_explosions_vfx_seq",
+    "templateId": "txt2img",
+    "checkpointName": "copaxTimeless_xivSDXL.safetensors",
+    "sequenceId": "01KGQP2PTZNASBWFHZ2RZNYAAH",
+    "assetId": "01KGQP2PTZNASBWFHZ2RZNYAAH",
+    "frameIndex": 6,
+    "frameCount": 10,
+    "frameName": "frame_07",
+    "framePrompt": "large explosion, initial spark",
+    "positive": "sci-fi comic, bold outlines, high contrast, clean shapes, Small/medium/large explosion sprites, stylized comic burst, bright orange/yellow, thick outlines, multi-frame loop, transparent background, large explosion, initial spark"
+  }
+}

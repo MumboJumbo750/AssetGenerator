@@ -97,10 +97,13 @@ export function AssetsPage() {
 
   const {
     selectedAsset,
+    sequenceVersions,
     selectedVersion,
     selectedVariant,
     selectedVariantId,
     setSelectedVariantId,
+    selectedVersionId,
+    setSelectedVersionId,
     reviewNote,
     setReviewNote,
     zoom,
@@ -109,6 +112,8 @@ export function AssetsPage() {
     assets,
     selectedAssetId,
   });
+
+  const selectedSpec = selectedAsset ? (specs.find((spec) => spec.id === selectedAsset.specId) ?? null) : null;
 
   const {
     assetUpdateBusy,
@@ -119,6 +124,7 @@ export function AssetsPage() {
     onSaveReviewNote,
     onSetPrimaryVariant,
     onSetVersionStatus,
+    onSetAllVariantsStatus,
   } = useAssetVariantActions({
     projectId: selectedProjectId,
     selectedAsset: selectedAsset as Asset | null,
@@ -219,7 +225,11 @@ export function AssetsPage() {
           selectedAsset={selectedAsset}
           selectedVersion={selectedVersion}
           selectedVariant={selectedVariant}
-          selectedVariantId={selectedVariant?.id ?? ""}
+          selectedVariantId={selectedVariantId}
+          selectedSpec={selectedSpec}
+          selectedVersionId={selectedVersionId}
+          onSelectVersionId={setSelectedVersionId}
+          sequenceVersions={sequenceVersions}
           assetUpdateBusy={assetUpdateBusy}
           reviewNote={reviewNote}
           customTag={customTag}
@@ -231,6 +241,7 @@ export function AssetsPage() {
           onSelectVariantId={setSelectedVariantId}
           onSetVariantStatus={onSetVariantStatus}
           onSetVariantRating={onSetVariantRating}
+          onSetAllVariantsStatus={onSetAllVariantsStatus}
           onReviewNoteChange={setReviewNote}
           onSaveReviewNote={handleSaveReviewNote}
           onCustomTagChange={setCustomTag}

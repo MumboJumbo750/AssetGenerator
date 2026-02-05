@@ -1,0 +1,59 @@
+{
+  "id": "spec_astroduck_player_shield_bubble_seq",
+  "projectId": "astroduck_demo",
+  "specListId": "specList_astroduck_demo",
+  "createdAt": "2026-02-05T16:38:30.561Z",
+  "updatedAt": "2026-02-05T19:52:54.686Z",
+  "title": "Player shield bubble (idle + hit flash) (sequence)",
+  "assetType": "spritesheet",
+  "style": "comic",
+  "scenario": "scifi",
+  "tags": [
+    "assetType:spritesheet",
+    "vfx:shield",
+    "player:ship",
+    "style:comic"
+  ],
+  "output": {
+    "kind": "animation",
+    "background": "transparent_required",
+    "animation": {
+      "fps": 12,
+      "loop": true,
+      "frameCount": 8,
+      "frameNames": [
+        "frame_01",
+        "frame_02",
+        "frame_03",
+        "frame_04",
+        "frame_05",
+        "frame_06",
+        "frame_07",
+        "frame_08"
+      ],
+      "framePrompts": [
+        "idle bubble, soft shimmer",
+        "idle bubble, light ripple",
+        "idle bubble, faint sparkle",
+        "idle bubble, ripple left",
+        "idle bubble, ripple right",
+        "idle bubble, steady glow",
+        "hit flash, bright pulse",
+        "hit flash, fading pulse"
+      ]
+    }
+  },
+  "prompt": {
+    "positive": "sci-fi comic, bold outlines, high contrast, clean shapes, Shield bubble VFX, translucent sphere with hex pattern, neon rim light, idle loop and hit flash frames, transparent background",
+    "negative": "(worst quality, low quality, illustration, 3d, 2d), open mouth, tooth, ugly face, old face, long neck, photo, noisy texture, watermark, text"
+  },
+  "generationParams": {
+    "width": 512,
+    "height": 512,
+    "variants": 4,
+    "autoBgRemove": true,
+    "steps": 22
+  },
+  "status": "ready",
+  "checkpointId": "copaxTimeless_xivSDXL.safetensors"
+}

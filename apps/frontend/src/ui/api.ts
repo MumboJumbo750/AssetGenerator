@@ -364,7 +364,14 @@ export type AssetSpec = {
   output?: {
     kind?: "single_image" | "animation" | "ui_states" | "logo_set";
     background?: "transparent_required" | "any";
-    animation?: { name?: string; fps?: number; loop?: boolean; frameCount?: number; frameNames?: string[] };
+    animation?: {
+      name?: string;
+      fps?: number;
+      loop?: boolean;
+      frameCount?: number;
+      frameNames?: string[];
+      framePrompts?: string[];
+    };
     uiStates?: { states: string[] };
   };
   style: string;
@@ -396,6 +403,7 @@ export type Asset = {
     createdAt: string;
     status: string;
     primaryVariantId?: string;
+    generation?: Record<string, unknown>;
     variants: Array<{
       id: string;
       originalPath: string;

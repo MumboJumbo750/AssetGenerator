@@ -1,0 +1,34 @@
+{
+  "id": "spec_astroduck_difficulty_",
+  "projectId": "astroduck_demo",
+  "specListId": "specList_astroduck_demo",
+  "createdAt": "2026-02-05T16:06:05.302Z",
+  "updatedAt": "2026-02-05T19:52:54.686Z",
+  "title": "Difficulty selector: Selected",
+  "assetType": "ui_icon",
+  "style": "comic",
+  "scenario": "scifi",
+  "tags": [
+    "assetType:ui_icon",
+    "ui:difficulty",
+    "state:selected",
+    "style:comic"
+  ],
+  "output": {
+    "kind": "single_image",
+    "background": "transparent_required"
+  },
+  "prompt": {
+    "positive": "sci-fi comic, bold outlines, high contrast, clean shapes, selected difficulty button, strong glow, transparent background",
+    "negative": "(worst quality, low quality, illustration, 3d, 2d), open mouth, tooth, ugly face, old face, long neck, photo, watermark, tiny text, inconsistent style"
+  },
+  "generationParams": {
+    "width": 512,
+    "height": 512,
+    "variants": 4,
+    "autoBgRemove": true,
+    "steps": 22
+  },
+  "status": "ready",
+  "checkpointId": "copaxTimeless_xivSDXL.safetensors"
+}

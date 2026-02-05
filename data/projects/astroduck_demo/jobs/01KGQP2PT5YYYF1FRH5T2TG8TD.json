@@ -1,0 +1,20 @@
+{
+  "id": "01KGQP2PT5YYYF1FRH5T2TG8TD",
+  "projectId": "astroduck_demo",
+  "type": "generate",
+  "status": "queued",
+  "createdAt": "2026-02-05T19:57:15.461Z",
+  "updatedAt": "2026-02-05T19:57:15.461Z",
+  "input": {
+    "specId": "spec_astroduck_enemy_fighter_seq",
+    "templateId": "txt2img",
+    "checkpointName": "copaxTimeless_xivSDXL.safetensors",
+    "sequenceId": "01KGQP2PSSYMJCYZ30YNMSEWEP",
+    "assetId": "01KGQP2PSSYMJCYZ30YNMSEWEP",
+    "frameIndex": 4,
+    "frameCount": 6,
+    "frameName": "frame_05",
+    "framePrompt": "idle fly, engine glow pulse",
+    "positive": "sci-fi comic, bold outlines, high contrast, clean shapes, Enemy fighter sprite, sleek alien ship, red/purple highlights, bold comic outlines, clean silhouette, transparent background, idle loop consistency, idle fly, engine glow pulse"
+  }
+}

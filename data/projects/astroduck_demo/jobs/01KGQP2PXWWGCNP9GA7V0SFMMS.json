@@ -1,0 +1,20 @@
+{
+  "id": "01KGQP2PXWWGCNP9GA7V0SFMMS",
+  "projectId": "astroduck_demo",
+  "type": "generate",
+  "status": "queued",
+  "createdAt": "2026-02-05T19:57:15.580Z",
+  "updatedAt": "2026-02-05T19:57:15.580Z",
+  "input": {
+    "specId": "spec_astroduck_player_shield_bubble_seq",
+    "templateId": "txt2img",
+    "checkpointName": "copaxTimeless_xivSDXL.safetensors",
+    "sequenceId": "01KGQP2PXK8K29KBWD0AH0ZQCF",
+    "assetId": "01KGQP2PXK8K29KBWD0AH0ZQCF",
+    "frameIndex": 3,
+    "frameCount": 8,
+    "frameName": "frame_04",
+    "framePrompt": "idle bubble, ripple left",
+    "positive": "sci-fi comic, bold outlines, high contrast, clean shapes, Shield bubble VFX, translucent sphere with hex pattern, neon rim light, idle loop and hit flash frames, transparent background, idle bubble, ripple left"
+  }
+}

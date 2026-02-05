@@ -11,6 +11,7 @@ import { HelpPage } from "./pages/HelpPage";
 import { LogsPage } from "./pages/LogsPage";
 import { OverviewPage } from "./pages/OverviewPage";
 import { PixiPage } from "./pages/PixiPage";
+import { ReviewPage } from "./pages/ReviewPage";
 import { SpecsPage } from "./pages/SpecsPage";
 import { TrainingPage } from "./pages/TrainingPage";
 import { AdminPage } from "./pages/AdminPage";
@@ -24,6 +25,7 @@ export function App() {
           <Route element={<AppShellLayout />}>
             <Route index element={<OverviewPage />} />
             <Route path="specs" element={<SpecsPage />} />
+            <Route path="review" element={<ReviewPage />} />
             <Route path="assets" element={<AssetsPage />} />
             <Route path="atlases" element={<AtlasesPage />} />
             <Route path="exports" element={<ExportsPage />} />
