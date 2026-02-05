@@ -1,5 +1,18 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Button, Card, Checkbox, Group, NumberInput, Select, SimpleGrid, Stack, Text, TextInput, Textarea, Title } from "@mantine/core";
+import {
+  Button,
+  Card,
+  Checkbox,
+  Group,
+  NumberInput,
+  Select,
+  SimpleGrid,
+  Stack,
+  Text,
+  TextInput,
+  Textarea,
+  Title,
+} from "@mantine/core";
 import { Link } from "react-router-dom";
 
 import { createJob, createSpec, createSpecList, type AssetSpec } from "../api";
@@ -23,7 +36,7 @@ const SPEC_TEMPLATES = [
     negative: "text, watermark, blurry, low quality, cluttered background",
     width: 512,
     height: 512,
-    variants: 6
+    variants: 6,
   },
   {
     id: "tileable_texture",
@@ -34,19 +47,20 @@ const SPEC_TEMPLATES = [
     negative: "text, watermark, seams, perspective, strong shadows, blurry",
     width: 512,
     height: 512,
-    variants: 4
+    variants: 4,
   },
   {
     id: "spritesheet_character",
     label: "Spritesheet",
     assetType: "spritesheet",
     title: "Spritesheet: <character> idle/run",
-    positive: "spritesheet frames, consistent style, consistent lighting, transparent background, pixel-art or clean vector",
+    positive:
+      "spritesheet frames, consistent style, consistent lighting, transparent background, pixel-art or clean vector",
     negative: "text, watermark, blurry, inconsistent lighting, cluttered background",
     width: 768,
     height: 768,
-    variants: 4
-  }
+    variants: 4,
+  },
 ];
 
 export function SpecsPage() {
@@ -59,7 +73,7 @@ export function SpecsPage() {
     assetTypeCatalog,
     assetTypeCatalogError,
     refreshProjectData,
-    setError
+    setError,
   } = useAppData();
 
   const [specTitle, setSpecTitle] = useState("");
@@ -78,25 +92,31 @@ export function SpecsPage() {
   const [chainError, setChainError] = useState<string | null>(null);
 
   const selectedSpecList = useMemo(
-    () => (selectedSpecListId ? specLists.find((specList) => specList.id === selectedSpecListId) ?? null : null),
-    [selectedSpecListId, specLists]
+    () => (selectedSpecListId ? (specLists.find((specList) => specList.id === selectedSpecListId) ?? null) : null),
+    [selectedSpecListId, specLists],
   );
   const specListItems: SpecListItem[] = useMemo(
-    () => specLists.map((specList) => ({ id: specList.id, title: specList.title, status: specList.status, text: specList.text })),
-    [specLists]
+    () =>
+      specLists.map((specList) => ({
+        id: specList.id,
+        title: specList.title,
+        status: specList.status,
+        text: specList.text,
+      })),
+    [specLists],
   );
 
   const assetTypeOptions = useMemo(
     () => assetTypeCatalog?.assetTypes?.map((assetType) => assetType.id) ?? [],
-    [assetTypeCatalog]
+    [assetTypeCatalog],
   );
 
   const templateOptions = useMemo(
     () =>
       SPEC_TEMPLATES.filter((template) =>
-        assetTypeOptions.length === 0 ? true : assetTypeOptions.includes(template.assetType)
+        assetTypeOptions.length === 0 ? true : assetTypeOptions.includes(template.assetType),
       ),
-    [assetTypeOptions]
+    [assetTypeOptions],
   );
 
   const {
@@ -108,12 +128,12 @@ export function SpecsPage() {
     onParseSpecList,
     onRefineSpecList,
     updateRefineItem,
-    removeRefineItem
+    removeRefineItem,
   } = useSpecRefinement({
     projectId: selectedProjectId,
     assetTypeOptions,
     selectedSpecList,
-    onError: (message) => setError(message)
+    onError: (message) => setError(message),
   });
 
   useEffect(() => {
@@ -122,18 +142,14 @@ export function SpecsPage() {
     if (!assetTypeOptions.includes(refineDefaultType)) setRefineDefaultType(assetTypeOptions[0]);
   }, [assetTypeOptions, newSpecType, refineDefaultType, setRefineDefaultType]);
 
-  const onInput =
-    (setter: (value: string) => void) => (event: React.ChangeEvent<HTMLInputElement>) =>
-      setter(event.currentTarget.value);
-  const onTextarea =
-    (setter: (value: string) => void) => (event: React.ChangeEvent<HTMLTextAreaElement>) =>
-      setter(event.currentTarget.value);
-  const onSelect =
-    (setter: (value: string) => void, fallback: string) => (value: string | null) =>
-      setter(value ?? fallback);
-  const onNumber =
-    (setter: (value: number) => void, fallback: number) => (value: string | number | null) =>
-      setter(Number(value) || fallback);
+  const onInput = (setter: (value: string) => void) => (event: React.ChangeEvent<HTMLInputElement>) =>
+    setter(event.currentTarget.value);
+  const onTextarea = (setter: (value: string) => void) => (event: React.ChangeEvent<HTMLTextAreaElement>) =>
+    setter(event.currentTarget.value);
+  const onSelect = (setter: (value: string) => void, fallback: string) => (value: string | null) =>
+    setter(value ?? fallback);
+  const onNumber = (setter: (value: number) => void, fallback: number) => (value: string | number | null) =>
+    setter(Number(value) || fallback);
 
   async function onCreateSpecList() {
     if (!selectedProjectId) return;
@@ -164,7 +180,7 @@ export function SpecsPage() {
         assetType: newSpecType,
         prompt: { positive: newSpecPos, negative: newSpecNeg },
         generationParams: { width: genWidth, height: genHeight, variants: genVariants },
-        status: "ready"
+        status: "ready",
       });
       setNewSpecTitle("");
       setNewSpecPos("");
@@ -183,7 +199,7 @@ export function SpecsPage() {
       const input: Record<string, unknown> = {
         specId: spec.id,
         templateId: "txt2img",
-        checkpointName: checkpointName.trim()
+        checkpointName: checkpointName.trim(),
       };
       if (!useSpecDefaults) {
         input.width = genWidth;
@@ -299,13 +315,30 @@ export function SpecsPage() {
             value={checkpointName}
             onChange={onInput(setCheckpointName)}
           />
-          <NumberInput label="W" value={genWidth} onChange={onNumber(setGenWidth, 512)} min={64} step={64} disabled={useSpecDefaults} />
-          <NumberInput label="H" value={genHeight} onChange={onNumber(setGenHeight, 512)} min={64} step={64} disabled={useSpecDefaults} />
+          <NumberInput
+            label="W"
+            value={genWidth}
+            onChange={onNumber(setGenWidth, 512)}
+            min={64}
+            step={64}
+            disabled={useSpecDefaults}
+          />
+          <NumberInput
+            label="H"
+            value={genHeight}
+            onChange={onNumber(setGenHeight, 512)}
+            min={64}
+            step={64}
+            disabled={useSpecDefaults}
+          />
           <NumberInput
             label={
               <Group gap="xs">
                 <span>Variants</span>
-                <HelpTip label="How many variations per spec. Start with 4â€“6 while testing prompts." topicId="workflow-generation" />
+                <HelpTip
+                  label="How many variations per spec. Start with 4â€“6 while testing prompts."
+                  topicId="workflow-generation"
+                />
               </Group>
             }
             value={genVariants}
@@ -327,20 +360,28 @@ export function SpecsPage() {
           nextJobs={nextJobs}
           chainError={chainError}
           onToggleEnabled={setChainEnabled}
-          onUpdateJob={(idx, patch) => setNextJobs((items) => items.map((it, i) => (i === idx ? { ...it, ...patch } : it)))}
+          onUpdateJob={(idx, patch) =>
+            setNextJobs((items) => items.map((it, i) => (i === idx ? { ...it, ...patch } : it)))
+          }
           onRemoveJob={(idx) => setNextJobs((items) => items.filter((_, i) => i !== idx))}
           onApplyPreset={() =>
             setNextJobs([
               { type: "bg_remove", inputText: '{"originalPath":"$output.originalsDir/.."}' },
-              { type: "export", inputText: '{"assetIds":["$output.assetId"]}' }
+              { type: "export", inputText: '{"assetIds":["$output.assetId"]}' },
             ])
           }
-          onAddJob={() => setNextJobs((items) => [...items, { type: "export", inputText: '{"assetIds":["$output.assetId"]}' }])}
+          onAddJob={() =>
+            setNextJobs((items) => [...items, { type: "export", inputText: '{"assetIds":["$output.assetId"]}' }])
+          }
         />
         <Card withBorder radius="md" p="md">
           <Stack gap="md">
             <TextInput placeholder="Spec title" value={newSpecTitle} onChange={onInput(setNewSpecTitle)} />
-            <Select data={assetTypeOptions} value={newSpecType} onChange={onSelect(setNewSpecType, assetTypeOptions[0] ?? "ui_icon")} />
+            <Select
+              data={assetTypeOptions}
+              value={newSpecType}
+              onChange={onSelect(setNewSpecType, assetTypeOptions[0] ?? "ui_icon")}
+            />
             <Textarea
               placeholder="Positive prompt example"
               value={newSpecPos}
@@ -364,7 +405,10 @@ export function SpecsPage() {
               label={
                 <Group gap="xs">
                   <span>Negative prompt</span>
-                  <HelpTip label="Describe what to avoid (watermark, text, blurry, clutter)." topicId="workflow-generation" />
+                  <HelpTip
+                    label="Describe what to avoid (watermark, text, blurry, clutter)."
+                    topicId="workflow-generation"
+                  />
                 </Group>
               }
             />

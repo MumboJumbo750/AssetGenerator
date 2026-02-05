@@ -14,7 +14,7 @@ function parseArgs() {
   const out = {
     projectId: "",
     evalId: "",
-    dryRun: false
+    dryRun: false,
   };
   for (let i = 0; i < args.length; i++) {
     const a = args[i];

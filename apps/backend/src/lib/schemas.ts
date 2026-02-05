@@ -29,12 +29,9 @@ export async function loadSchemas(schemaDir: string): Promise<SchemaRegistry> {
     if (!validate) throw new Error(`Schema not loaded: ${schemaId}`);
     const ok = validate(data);
     if (ok) return;
-    const details = (validate.errors ?? [])
-      .map((e) => `${e.instancePath || "/"} ${e.message ?? "invalid"}`)
-      .join("; ");
+    const details = (validate.errors ?? []).map((e) => `${e.instancePath || "/"} ${e.message ?? "invalid"}`).join("; ");
     throw new Error(`Schema validation failed (${schemaId}): ${details}`);
   }
 
   return { ajv, validateOrThrow };
 }
-

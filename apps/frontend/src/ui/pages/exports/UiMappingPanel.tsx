@@ -37,10 +37,12 @@ export function UiMappingPanel(props: Props) {
                       data={[
                         { value: "button", label: "button" },
                         { value: "panel", label: "panel" },
-                        { value: "icon", label: "icon" }
+                        { value: "icon", label: "icon" },
                       ]}
                       value={mapping.type}
-                      onChange={(value: string | null) => props.onUpdateMapping(spec.id, { ...mapping, type: value ?? "button" })}
+                      onChange={(value: string | null) =>
+                        props.onUpdateMapping(spec.id, { ...mapping, type: value ?? "button" })
+                      }
                     />
                   </Group>
                   {states.map((state: string) => (
@@ -54,7 +56,7 @@ export function UiMappingPanel(props: Props) {
                       onChange={(value: string | null) =>
                         props.onUpdateMapping(spec.id, {
                           ...mapping,
-                          states: { ...(mapping.states ?? {}), [state]: value ?? "" }
+                          states: { ...(mapping.states ?? {}), [state]: value ?? "" },
                         })
                       }
                     />

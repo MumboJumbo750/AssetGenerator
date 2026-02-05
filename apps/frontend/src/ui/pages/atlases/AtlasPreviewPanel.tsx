@@ -50,7 +50,7 @@ export function AtlasPreviewPanel(props: Props) {
                     top: frame.rect.y * scaleY,
                     width: frame.rect.w * scaleX,
                     height: frame.rect.h * scaleY,
-                    border: "1px solid rgba(46,203,255,0.6)"
+                    border: "1px solid rgba(46,203,255,0.6)",
                   }}
                 >
                   <div
@@ -62,7 +62,7 @@ export function AtlasPreviewPanel(props: Props) {
                       height: 8,
                       borderRadius: 8,
                       background: "rgba(124,77,255,0.9)",
-                      boxShadow: "0 0 6px rgba(124,77,255,0.7)"
+                      boxShadow: "0 0 6px rgba(124,77,255,0.7)",
                     }}
                   />
                 </div>

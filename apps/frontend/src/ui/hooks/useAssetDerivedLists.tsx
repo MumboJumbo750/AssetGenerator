@@ -16,7 +16,8 @@ export function useAssetDerivedLists(opts: {
     return opts.assets.filter((asset) => {
       const latest = asset.versions?.[asset.versions.length - 1];
       const primaryId = latest?.primaryVariantId ?? latest?.variants?.[0]?.id ?? "";
-      const representative = latest?.variants?.find((variant) => variant.id === primaryId) ?? latest?.variants?.[0] ?? null;
+      const representative =
+        latest?.variants?.find((variant) => variant.id === primaryId) ?? latest?.variants?.[0] ?? null;
       const tags = representative?.tags ?? [];
       const status = representative?.status ?? "";
       const specInfo = opts.specById.get(asset.specId);
@@ -45,7 +46,7 @@ export function useAssetDerivedLists(opts: {
         assetType: specInfo?.assetType ?? null,
         versionsCount: asset.versions.length,
         latestStatus: latest?.status ?? null,
-        thumbnailPath: variant?.alphaPath ?? variant?.originalPath ?? null
+        thumbnailPath: variant?.alphaPath ?? variant?.originalPath ?? null,
       };
     });
   }, [filteredAssets, opts.specById]);

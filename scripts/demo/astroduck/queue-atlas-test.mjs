@@ -38,7 +38,7 @@ function parseArgs() {
     padding: 2,
     allowOriginal: false,
     exportId: "",
-    dryRun: false
+    dryRun: false,
   };
   for (let i = 0; i < args.length; i++) {
     const a = args[i];
@@ -93,7 +93,9 @@ async function loadSpecFrameHints(specDir, specIds) {
 async function main() {
   const { projectId, planPath, padding, allowOriginal, exportId, dryRun } = parseArgs();
   if (!projectId) {
-    console.log("Usage: npm run demo:astroduck:queue-atlases -- --project <projectId> [--allow-original] [--padding 2] [--export-id <id>] [--dry-run]");
+    console.log(
+      "Usage: npm run demo:astroduck:queue-atlases -- --project <projectId> [--allow-original] [--padding 2] [--export-id <id>] [--dry-run]",
+    );
     process.exit(1);
   }
 
@@ -170,7 +172,7 @@ async function main() {
       status: "queued",
       createdAt,
       updatedAt: createdAt,
-      input: { atlasId, padding: Number.isFinite(padding) ? padding : 2, framePaths }
+      input: { atlasId, padding: Number.isFinite(padding) ? padding : 2, framePaths },
     };
 
     const jobPath = path.join(jobsDir, `${jobId}.json`);
@@ -190,7 +192,7 @@ async function main() {
       status: "queued",
       createdAt,
       updatedAt: createdAt,
-      input: { exportId: expId, assetIds: [], atlasIds, animations: [], ui: [] }
+      input: { exportId: expId, assetIds: [], atlasIds, animations: [], ui: [] },
     };
     const jobPath = path.join(jobsDir, `${jobId}.json`);
     queued.push({ type: "export", exportId: expId, jobPath, atlases: atlasIds.length });
@@ -216,4 +218,3 @@ main().catch((err) => {
   console.error(err?.message ?? err);
   process.exit(1);
 });
-

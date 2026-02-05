@@ -8,10 +8,13 @@ import {
   getProjectCheckpoint,
   listProjectCheckpoints,
   updateProjectCheckpoint,
-  type CheckpointRecord
+  type CheckpointRecord,
 } from "../services/checkpoints";
 
-export async function registerCheckpointRoutes(app: FastifyInstance, opts: { dataRoot: string; schemas: SchemaRegistry }) {
+export async function registerCheckpointRoutes(
+  app: FastifyInstance,
+  opts: { dataRoot: string; schemas: SchemaRegistry },
+) {
   const projectsRoot = path.join(opts.dataRoot, "projects");
 
   app.get("/api/projects/:projectId/checkpoints", async (req) => {
@@ -35,7 +38,7 @@ export async function registerCheckpointRoutes(app: FastifyInstance, opts: { dat
         projectsRoot,
         schemas: opts.schemas,
         projectId,
-        checkpoint: body
+        checkpoint: body,
       });
       return reply.code(201).send(checkpoint);
     } catch (err: any) {
@@ -52,7 +55,7 @@ export async function registerCheckpointRoutes(app: FastifyInstance, opts: { dat
         schemas: opts.schemas,
         projectId,
         checkpointId,
-        patch: body
+        patch: body,
       });
       if (!checkpoint) return reply.code(404).send({ error: "Checkpoint not found" });
       return checkpoint;

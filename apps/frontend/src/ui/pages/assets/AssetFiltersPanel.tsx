@@ -36,7 +36,10 @@ export function AssetFiltersPanel(props: Props) {
         <Group justify="space-between">
           <Group gap="xs">
             <Text fw={600}>Assets</Text>
-            <HelpTip label="Assets are created by generation jobs; select one to review variants." topicId="workflow-generation" />
+            <HelpTip
+              label="Assets are created by generation jobs; select one to review variants."
+              topicId="workflow-generation"
+            />
           </Group>
           <Badge variant="light">
             {props.filteredCount}/{props.assetsCount}
@@ -91,7 +94,9 @@ export function AssetFiltersPanel(props: Props) {
               <TextInput
                 placeholder="Save filter as..."
                 value={props.savedFilterName}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) => props.onSavedFilterNameChange(event.currentTarget.value)}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                  props.onSavedFilterNameChange(event.currentTarget.value)
+                }
               />
               <Button variant="light" onClick={props.onSaveFilter} disabled={!props.savedFilterName.trim()}>
                 Save
@@ -126,14 +131,17 @@ export function AssetFiltersPanel(props: Props) {
                 label={
                   <Group gap="xs">
                     <span>Status</span>
-                    <HelpTip label="Filter by review status (candidate/selected/rejected)." topicId="filters-and-bulk-actions" />
+                    <HelpTip
+                      label="Filter by review status (candidate/selected/rejected)."
+                      topicId="filters-and-bulk-actions"
+                    />
                   </Group>
                 }
                 placeholder="Status"
                 data={[
                   { value: "candidate", label: "candidate" },
                   { value: "selected", label: "selected" },
-                  { value: "rejected", label: "rejected" }
+                  { value: "rejected", label: "rejected" },
                 ]}
                 value={props.statusFilter}
                 onChange={(value: string | null) => props.onStatusChange((value ?? null) as any)}

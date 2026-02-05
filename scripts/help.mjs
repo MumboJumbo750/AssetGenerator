@@ -25,5 +25,7 @@ console.log("- npm run ports:kill -- --port 8188     # kill pid(s) listening on 
 console.log("- npm run validate:data   # validate JSON under data/ against schemas/");
 console.log("- npm run typecheck       # TypeScript typecheck");
 console.log("- npm run dataset:build   # build a dataset manifest from approved assets");
-console.log("- npm run demo:astroduck:queue-atlases -- --project <projectId>   # queue 4 atlas_pack jobs + export job for the AstroDuck demo");
+console.log(
+  "- npm run demo:astroduck:queue-atlases -- --project <projectId>   # queue 4 atlas_pack jobs + export job for the AstroDuck demo",
+);
 console.log("- npm run seed            # create a deterministic demo project in data/");

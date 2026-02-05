@@ -31,7 +31,7 @@ export function useSpecRefinement(opts: {
       }
       return items;
     },
-    [opts.assetTypeOptions]
+    [opts.assetTypeOptions],
   );
 
   const onParseSpecList = useCallback(() => {
@@ -60,14 +60,14 @@ export function useSpecRefinement(opts: {
           title: item.title.trim(),
           assetType: item.assetType,
           specListId: opts.selectedSpecList.id,
-          status: "ready"
+          status: "ready",
         });
         created.push(spec);
       }
       if (created.length > 0) {
         await updateSpecList(opts.projectId, opts.selectedSpecList.id, {
           status: "refined",
-          derivedSpecIds: created.map((s) => s.id)
+          derivedSpecIds: created.map((s) => s.id),
         });
       }
       return created;
@@ -100,6 +100,6 @@ export function useSpecRefinement(opts: {
     onParseSpecList,
     onRefineSpecList,
     updateRefineItem,
-    removeRefineItem
+    removeRefineItem,
   };
 }

@@ -24,7 +24,8 @@ body,
 
 body {
   margin: 0;
-  background: radial-gradient(circle at 15% 20%, rgba(0, 229, 255, 0.12), transparent 45%),
+  background:
+    radial-gradient(circle at 15% 20%, rgba(0, 229, 255, 0.12), transparent 45%),
     radial-gradient(circle at 80% 10%, rgba(124, 77, 255, 0.12), transparent 40%),
     linear-gradient(180deg, var(--ag-bg), var(--ag-bg-2));
   color: var(--ag-text);
@@ -65,7 +66,11 @@ pre.log {
     linear-gradient(45deg, transparent 75%, rgba(255, 255, 255, 0.08) 75%),
     linear-gradient(-45deg, transparent 75%, rgba(255, 255, 255, 0.08) 75%);
   background-size: 28px 28px;
-  background-position: 0 0, 0 14px, 14px -14px, -14px 0px;
+  background-position:
+    0 0,
+    0 14px,
+    14px -14px,
+    -14px 0px;
 }
 
 .ag-preview-surface {

@@ -14,7 +14,7 @@ import {
   type SpecList,
   type AssetSpec,
   type AssetTypeCatalog,
-  type TagCatalog
+  type TagCatalog,
 } from "../api";
 import { fetchSystemStatus, type SystemStatus } from "../services/systemService";
 
@@ -137,7 +137,7 @@ export function AppDataProvider({ children }: { children: React.ReactNode }) {
       listSpecLists(projectId),
       listSpecs(projectId),
       listAssets(projectId),
-      listJobs(projectId)
+      listJobs(projectId),
     ]);
     setSpecLists(specLists);
     setSelectedSpecListId((prev) => {
@@ -203,7 +203,7 @@ export function AppDataProvider({ children }: { children: React.ReactNode }) {
       refreshTagCatalog,
       refreshAssetTypeCatalog,
       error,
-      setError
+      setError,
     }),
     [
       projects,
@@ -221,8 +221,8 @@ export function AppDataProvider({ children }: { children: React.ReactNode }) {
       tagCatalogError,
       assetTypeCatalog,
       assetTypeCatalogError,
-      error
-    ]
+      error,
+    ],
   );
 
   return <AppDataContext.Provider value={value}>{children}</AppDataContext.Provider>;

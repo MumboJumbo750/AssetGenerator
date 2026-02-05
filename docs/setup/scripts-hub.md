@@ -1,15 +1,18 @@
 # Script hub (`package.json`)
 
 ## Goal
+
 Run all repo tooling from a single place (no random one-off commands).
 
 The root `package.json` is the central hub for:
+
 - ComfyUI setup/start
 - backend/frontend/worker dev commands
 - validation/CI helpers
 - optional formatting hooks (Husky + lint-staged)
 
 ## Commands
+
 - `npm run help`
   - Prints the available commands.
 
@@ -136,4 +139,5 @@ The root `package.json` is the central hub for:
   - Optional: `--scope <all|project|baseline>` `--project <projectId>` `--dry-run`
 
 ## Why a repo-local Python venv?
+
 It avoids “Python mess” and keeps dependencies consistent per project while still allowing the main app stack to be Node.js/TypeScript.

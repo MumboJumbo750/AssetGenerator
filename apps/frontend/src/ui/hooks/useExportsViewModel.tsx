@@ -48,12 +48,12 @@ export function useExportsViewModel(opts: {
     () =>
       opts.uiSpecs ??
       opts.specs.filter((spec) => spec.output?.kind === "ui_states" && spec.output?.uiStates?.states?.length),
-    [opts.specs, opts.uiSpecs]
+    [opts.specs, opts.uiSpecs],
   );
 
   const animationSpecs = useMemo(
     () => opts.specs.filter((spec) => spec.output?.kind === "animation" && spec.output?.animation?.frameNames?.length),
-    [opts.specs]
+    [opts.specs],
   );
 
   const specTitleById = useMemo(() => new Map(opts.specs.map((spec) => [spec.id, spec.title])), [opts.specs]);
@@ -64,7 +64,9 @@ export function useExportsViewModel(opts: {
         const approvedVersions = asset.versions.filter((v) => v.status === "approved");
         const version = approvedVersions.length ? approvedVersions[approvedVersions.length - 1] : null;
         if (!version) return null;
-        const primary = version.primaryVariantId ? version.variants.find((v) => v.id === version.primaryVariantId) : null;
+        const primary = version.primaryVariantId
+          ? version.variants.find((v) => v.id === version.primaryVariantId)
+          : null;
         const selected = version.variants.find((v) => v.status === "selected") ?? null;
         const candidate = version.variants[0] ?? null;
         const variant = primary ?? selected ?? candidate;
@@ -85,9 +87,9 @@ export function useExportsViewModel(opts: {
     () =>
       Array.from(exportNameMap.entries()).map(([assetId, name]) => ({
         value: name,
-        label: `Image: ${name} (${assetId})`
+        label: `Image: ${name} (${assetId})`,
       })),
-    [exportNameMap]
+    [exportNameMap],
   );
 
   const atlasFrameOptions = useMemo(() => {
@@ -106,7 +108,7 @@ export function useExportsViewModel(opts: {
 
   const missingAnimationMappings = useMemo(
     () => animationSpecs.filter((spec) => !opts.animationAtlasMap[spec.id]),
-    [animationSpecs, opts.animationAtlasMap]
+    [animationSpecs, opts.animationAtlasMap],
   );
 
   const missingUiMappings = useMemo(
@@ -120,7 +122,7 @@ export function useExportsViewModel(opts: {
           return { spec, missing };
         })
         .filter(Boolean) as Array<{ spec: (typeof uiSpecs)[number]; missing: string[] }>,
-    [uiSpecs, opts.uiMappings]
+    [uiSpecs, opts.uiMappings],
   );
 
   return {
@@ -133,6 +135,6 @@ export function useExportsViewModel(opts: {
     atlasFrameOptions,
     textureOptions,
     missingAnimationMappings,
-    missingUiMappings
+    missingUiMappings,
   };
 }

@@ -21,7 +21,10 @@
           "id": { "type": "string", "minLength": 1 },
           "createdAt": { "type": "string", "format": "date-time" },
           "status": { "type": "string", "enum": ["draft", "review", "approved", "rejected", "deprecated"] },
-          "primaryVariantId": { "type": "string", "description": "The preferred variant for downstream use (export/training) within this version." },
+          "primaryVariantId": {
+            "type": "string",
+            "description": "The preferred variant for downstream use (export/training) within this version."
+          },
           "generation": {
             "type": "object",
             "additionalProperties": true,
@@ -43,7 +46,11 @@
                 "rating": { "type": "integer", "minimum": 0, "maximum": 5 },
                 "status": { "type": "string", "enum": ["candidate", "selected", "rejected"], "default": "candidate" },
                 "reviewNote": { "type": "string", "description": "Reviewer note or decision rationale." },
-                "processing": { "type": "object", "additionalProperties": true, "description": "Derived artifact params (bg removal, trim, upscale, etc.)." }
+                "processing": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "description": "Derived artifact params (bg removal, trim, upscale, etc.)."
+                }
               }
             }
           }

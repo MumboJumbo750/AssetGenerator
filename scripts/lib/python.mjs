@@ -34,6 +34,6 @@ export async function findBasePython() {
   }
 
   throw new Error(
-    "No usable Python found. Install Python 3.10+ (recommended 3.11) or set ASSETGEN_PYTHON to a python executable."
+    "No usable Python found. Install Python 3.10+ (recommended 3.11) or set ASSETGEN_PYTHON to a python executable.",
   );
 }

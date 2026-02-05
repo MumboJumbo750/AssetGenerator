@@ -1,5 +1,17 @@
 import React from "react";
-import { Badge, Button, Card, Group, Image, NumberInput, ScrollArea, Select, Stack, Text, TextInput } from "@mantine/core";
+import {
+  Badge,
+  Button,
+  Card,
+  Group,
+  Image,
+  NumberInput,
+  ScrollArea,
+  Select,
+  Stack,
+  Text,
+  TextInput,
+} from "@mantine/core";
 
 import type { AtlasRecord } from "../../api";
 
@@ -70,15 +82,27 @@ export function AtlasBuildPanel(props: Props) {
           </Stack>
         </ScrollArea>
         <Group gap="xs">
-          <NumberInput label="Padding" value={props.padding} onChange={(value) => props.onPaddingChange(Number(value) || 0)} min={0} max={32} />
-          <NumberInput label="Max size" value={props.maxSize} onChange={(value) => props.onMaxSizeChange(Number(value) || 512)} min={256} step={256} />
+          <NumberInput
+            label="Padding"
+            value={props.padding}
+            onChange={(value) => props.onPaddingChange(Number(value) || 0)}
+            min={0}
+            max={32}
+          />
+          <NumberInput
+            label="Max size"
+            value={props.maxSize}
+            onChange={(value) => props.onMaxSizeChange(Number(value) || 512)}
+            min={256}
+            step={256}
+          />
         </Group>
         <Group gap="xs">
           <Select
             label="POT"
             data={[
               { value: "true", label: "on" },
-              { value: "false", label: "off" }
+              { value: "false", label: "off" },
             ]}
             value={props.powerOfTwo ? "true" : "false"}
             onChange={(value: string | null) => props.onPowerOfTwoChange(value !== "false")}
@@ -87,12 +111,18 @@ export function AtlasBuildPanel(props: Props) {
             label="Trim"
             data={[
               { value: "true", label: "on" },
-              { value: "false", label: "off" }
+              { value: "false", label: "off" },
             ]}
             value={props.trim ? "true" : "false"}
             onChange={(value: string | null) => props.onTrimChange(value !== "false")}
           />
-          <NumberInput label="Extrude" value={props.extrude} onChange={(value) => props.onExtrudeChange(Number(value) || 0)} min={0} max={8} />
+          <NumberInput
+            label="Extrude"
+            value={props.extrude}
+            onChange={(value) => props.onExtrudeChange(Number(value) || 0)}
+            min={0}
+            max={8}
+          />
           <Select
             label="Sort"
             data={[
@@ -101,14 +131,15 @@ export function AtlasBuildPanel(props: Props) {
               { value: "w", label: "width" },
               { value: "h", label: "height" },
               { value: "name", label: "name" },
-              { value: "none", label: "none" }
+              { value: "none", label: "none" },
             ]}
             value={props.sort}
             onChange={(value: string | null) => props.onSortChange(value ?? "area")}
           />
         </Group>
         <Text size="xs" c="dimmed">
-          Use smaller padding for tighter packing; enable trim/extrude for cleaner edges; increase max size if the atlas overflows.
+          Use smaller padding for tighter packing; enable trim/extrude for cleaner edges; increase max size if the atlas
+          overflows.
         </Text>
         <TextInput
           label="Atlas ID (optional)"
@@ -134,7 +165,12 @@ export function AtlasBuildPanel(props: Props) {
                     <Group justify="space-between">
                       <Group>
                         <Image src={`/data/${frame.path}`} w={48} h={48} fit="contain" radius="sm" />
-                        <TextInput value={frame.key} onChange={(event: React.ChangeEvent<HTMLInputElement>) => props.onUpdateFrameKey(index, event.currentTarget.value)} />
+                        <TextInput
+                          value={frame.key}
+                          onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                            props.onUpdateFrameKey(index, event.currentTarget.value)
+                          }
+                        />
                       </Group>
                       <Group>
                         <Button size="xs" variant="light" onClick={() => props.onMoveFrame(index, -1)}>

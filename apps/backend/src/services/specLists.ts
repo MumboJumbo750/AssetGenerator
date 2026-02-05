@@ -54,7 +54,7 @@ export async function createSpecList(opts: {
     updatedAt: createdAt,
     title: opts.title,
     text: opts.text,
-    status: "draft"
+    status: "draft",
   };
 
   opts.schemas.validateOrThrow("spec-list.schema.json", specList);
@@ -80,7 +80,7 @@ export async function updateSpecList(opts: {
     status: (opts.patch?.status ?? current.status) as SpecList["status"],
     derivedSpecIds: Array.isArray(opts.patch?.derivedSpecIds) ? opts.patch?.derivedSpecIds : current.derivedSpecIds,
     notes: typeof opts.patch?.notes === "string" ? opts.patch.notes : current.notes,
-    updatedAt: nowIso()
+    updatedAt: nowIso(),
   };
 
   opts.schemas.validateOrThrow("spec-list.schema.json", updated);

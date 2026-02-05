@@ -55,7 +55,7 @@ export async function createJob(opts: {
     status: "queued",
     createdAt,
     updatedAt: createdAt,
-    input: opts.input ?? {}
+    input: opts.input ?? {},
   };
 
   opts.schemas.validateOrThrow("job.schema.json", job);

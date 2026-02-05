@@ -8,11 +8,7 @@ import { useAssetFilters } from "./useAssetFilters";
 import { useAssetSelectionHelpers } from "./useAssetSelectionHelpers";
 import { useSelectionSet } from "./useSelectionSet";
 
-export function useAssetsViewModel(opts: {
-  assets: Asset[];
-  specs: AssetSpec[];
-  tagCatalog: TagCatalog | null;
-}) {
+export function useAssetsViewModel(opts: { assets: Asset[]; specs: AssetSpec[]; tagCatalog: TagCatalog | null }) {
   const {
     searchQuery,
     statusFilter,
@@ -28,7 +24,7 @@ export function useAssetsViewModel(opts: {
     clearFilters,
     applyFilters,
     saveCurrentFilter,
-    removeSavedFilter
+    removeSavedFilter,
   } = useAssetFilters({ searchQuery: "", statusFilter: null, tagFilter: null, assetTypeFilter: null });
 
   const { specById, assetTypeOptions, tagOptions } = useAssetCatalogOptions(opts.specs, opts.tagCatalog);
@@ -39,20 +35,20 @@ export function useAssetsViewModel(opts: {
     searchQuery,
     statusFilter,
     tagFilter,
-    assetTypeFilter
+    assetTypeFilter,
   });
 
   const selection = useSelectionSet<string>();
   const { selectAllFiltered, clearSelection } = useAssetSelectionHelpers({
     selection,
-    filteredAssets
+    filteredAssets,
   });
 
   const { onPresetNeedsReview, onPresetSelected, onPresetRejected } = useAssetFilterPresets({
     applyFilters,
     searchQuery,
     tagFilter,
-    assetTypeFilter
+    assetTypeFilter,
   });
 
   const assetsCount = opts.assets.length;
@@ -86,6 +82,6 @@ export function useAssetsViewModel(opts: {
     filteredCount,
     selection,
     selectAllFiltered,
-    clearSelection
+    clearSelection,
   };
 }

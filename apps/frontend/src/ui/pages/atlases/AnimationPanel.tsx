@@ -79,13 +79,22 @@ export function AnimationPanel(props: Props) {
               </Stack>
             </Card>
             <Group grow>
-              <TextInput label="Animation name" value={props.animationName} onChange={(event) => props.onAnimationNameChange(event.currentTarget.value)} />
-              <NumberInput label="FPS" value={props.animationFps} onChange={(value) => props.onAnimationFpsChange(Number(value) || 1)} min={1} />
+              <TextInput
+                label="Animation name"
+                value={props.animationName}
+                onChange={(event) => props.onAnimationNameChange(event.currentTarget.value)}
+              />
+              <NumberInput
+                label="FPS"
+                value={props.animationFps}
+                onChange={(value) => props.onAnimationFpsChange(Number(value) || 1)}
+                min={1}
+              />
               <Select
                 label="Loop"
                 data={[
                   { value: "true", label: "loop" },
-                  { value: "false", label: "once" }
+                  { value: "false", label: "once" },
                 ]}
                 value={props.animationLoop ? "true" : "false"}
                 onChange={(value: string | null) => props.onAnimationLoopChange(value !== "false")}
@@ -124,7 +133,9 @@ export function AnimationPanel(props: Props) {
                     </Group>
                   </Group>
                 ))}
-                {props.animationFrames.length === 0 && <Text size="sm">Add frame ids in the order you want them played.</Text>}
+                {props.animationFrames.length === 0 && (
+                  <Text size="sm">Add frame ids in the order you want them played.</Text>
+                )}
               </Stack>
             </ScrollArea>
             <Group>
@@ -135,7 +146,10 @@ export function AnimationPanel(props: Props) {
                 value={props.animationSpecId}
                 onChange={(value: string | null) => props.onAnimationSpecIdChange(value ?? "")}
               />
-              <Button onClick={props.onSaveAnimation} disabled={!props.animationSpecId || props.animationFrames.length === 0}>
+              <Button
+                onClick={props.onSaveAnimation}
+                disabled={!props.animationSpecId || props.animationFrames.length === 0}
+              >
                 Save to spec
               </Button>
             </Group>

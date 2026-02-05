@@ -16,7 +16,9 @@ export function useApprovedAtlasCandidates(assets: Asset[]) {
         const approvedVersions = asset.versions.filter((v) => v.status === "approved");
         const version = approvedVersions.length ? approvedVersions[approvedVersions.length - 1] : null;
         if (!version) return null;
-        const primary = version.primaryVariantId ? version.variants.find((v) => v.id === version.primaryVariantId) : null;
+        const primary = version.primaryVariantId
+          ? version.variants.find((v) => v.id === version.primaryVariantId)
+          : null;
         const selected = version.variants.find((v) => v.status === "selected") ?? null;
         const candidate = version.variants[0] ?? null;
         const variant = primary ?? selected ?? candidate;

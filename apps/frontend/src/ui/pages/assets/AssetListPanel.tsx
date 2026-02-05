@@ -63,7 +63,7 @@ export function AssetListPanel(props: Props) {
                 style={{
                   cursor: "pointer",
                   borderColor: asset.id === props.selectedAssetId ? "#6d7cff" : undefined,
-                  background: props.isSelected(asset.id) ? "rgba(124, 77, 255, 0.12)" : undefined
+                  background: props.isSelected(asset.id) ? "rgba(124, 77, 255, 0.12)" : undefined,
                 }}
                 onClick={() => props.onSelectAsset(asset.id)}
               >
@@ -79,11 +79,15 @@ export function AssetListPanel(props: Props) {
                       versions={asset.versionsCount} · {asset.assetType ?? "n/a"} · {asset.latestStatus ?? "n/a"}
                     </Text>
                   </div>
-                  {asset.thumbnailPath && <Image src={`/data/${asset.thumbnailPath}`} w={64} h={64} fit="contain" radius="sm" />}
+                  {asset.thumbnailPath && (
+                    <Image src={`/data/${asset.thumbnailPath}`} w={64} h={64} fit="contain" radius="sm" />
+                  )}
                 </Group>
               </Card>
             ))}
-            {props.assetsTotal === 0 && <Text size="sm">Assets are created by the worker after generation jobs finish.</Text>}
+            {props.assetsTotal === 0 && (
+              <Text size="sm">Assets are created by the worker after generation jobs finish.</Text>
+            )}
           </Stack>
         </ScrollArea>
       </Stack>

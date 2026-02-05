@@ -16,7 +16,9 @@ type Props = {
   reviewNote: string;
   customTag: string;
   zoom: number;
-  tagCatalog: { groups: Array<{ id: string; label: string; exclusive?: boolean; tags: Array<{ id: string; label: string }> }> } | null;
+  tagCatalog: {
+    groups: Array<{ id: string; label: string; exclusive?: boolean; tags: Array<{ id: string; label: string }> }>;
+  } | null;
   tagCatalogError: string | null;
   onSetPrimaryVariant: () => void;
   onSetVersionStatus: (value: "draft" | "review" | "approved" | "rejected" | "deprecated") => void;
@@ -38,7 +40,10 @@ export function AssetReviewPanel(props: Props) {
         <Group justify="space-between">
           <Group gap="xs">
             <Text fw={600}>Review</Text>
-            <HelpTip label="Pick the best variant, tag it, and set a primary for exports/training." topicId="review-variants" />
+            <HelpTip
+              label="Pick the best variant, tag it, and set a primary for exports/training."
+              topicId="review-variants"
+            />
           </Group>
           <Button onClick={props.onSetPrimaryVariant} disabled={!props.selectedVariant || props.assetUpdateBusy}>
             Set Primary
@@ -66,7 +71,7 @@ export function AssetReviewPanel(props: Props) {
                   { value: "review", label: "review" },
                   { value: "approved", label: "approved" },
                   { value: "rejected", label: "rejected" },
-                  { value: "deprecated", label: "deprecated" }
+                  { value: "deprecated", label: "deprecated" },
                 ]}
                 value={props.selectedVersion.status}
                 onChange={(value: string | null) => props.onSetVersionStatus((value ?? "review") as any)}
@@ -95,7 +100,7 @@ export function AssetReviewPanel(props: Props) {
                 data={[
                   { value: "candidate", label: "candidate" },
                   { value: "selected", label: "selected" },
-                  { value: "rejected", label: "rejected" }
+                  { value: "rejected", label: "rejected" },
                 ]}
                 value={props.selectedVariant?.status ?? "candidate"}
                 onChange={(value: string | null) => props.onSetVariantStatus((value ?? "candidate") as any)}
@@ -123,10 +128,16 @@ export function AssetReviewPanel(props: Props) {
                 }
                 placeholder="Short rationale (e.g. clean edges, wrong lighting)"
                 value={props.reviewNote}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) => props.onReviewNoteChange(event.currentTarget.value)}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                  props.onReviewNoteChange(event.currentTarget.value)
+                }
                 style={{ flex: 1 }}
               />
-              <Button variant="light" onClick={props.onSaveReviewNote} disabled={!props.selectedVariant || props.assetUpdateBusy}>
+              <Button
+                variant="light"
+                onClick={props.onSaveReviewNote}
+                disabled={!props.selectedVariant || props.assetUpdateBusy}
+              >
                 Save note
               </Button>
             </Group>
@@ -135,16 +146,25 @@ export function AssetReviewPanel(props: Props) {
               <TextInput
                 placeholder="Add custom tag (e.g. quality:blurry)"
                 value={props.customTag}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) => props.onCustomTagChange(event.currentTarget.value)}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                  props.onCustomTagChange(event.currentTarget.value)
+                }
                 style={{ flex: 1 }}
                 label={
                   <Group gap="xs">
                     <span>Custom tag</span>
-                    <HelpTip label="Use consistent tags to filter later (quality:*, style:*, usage:*)." topicId="tags-and-catalogs" />
+                    <HelpTip
+                      label="Use consistent tags to filter later (quality:*, style:*, usage:*)."
+                      topicId="tags-and-catalogs"
+                    />
                   </Group>
                 }
               />
-              <Button variant="light" onClick={props.onAddCustomTag} disabled={!props.selectedVariant || props.assetUpdateBusy}>
+              <Button
+                variant="light"
+                onClick={props.onAddCustomTag}
+                disabled={!props.selectedVariant || props.assetUpdateBusy}
+              >
                 Add tag
               </Button>
             </Group>
@@ -168,7 +188,13 @@ export function AssetReviewPanel(props: Props) {
                             size="xs"
                             variant={active ? "filled" : "light"}
                             color={active ? "indigo" : "gray"}
-                            onClick={() => props.onToggleTag(tag.id, group.tags.map((t) => t.id), Boolean(group.exclusive))}
+                            onClick={() =>
+                              props.onToggleTag(
+                                tag.id,
+                                group.tags.map((t) => t.id),
+                                Boolean(group.exclusive),
+                              )
+                            }
                             disabled={!props.selectedVariant || props.assetUpdateBusy}
                           >
                             {tag.label}

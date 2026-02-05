@@ -42,7 +42,7 @@ export function useAssetBulkActions(opts: {
       await opts.onRefresh();
       clearSelection();
     },
-    { onError: (message) => opts.onError(message) }
+    { onError: (message) => opts.onError(message) },
   );
 
   const bulkTagAction = useAsyncAction(
@@ -66,7 +66,7 @@ export function useAssetBulkActions(opts: {
       await opts.onRefresh();
       clearSelection();
     },
-    { onError: (message) => opts.onError(message) }
+    { onError: (message) => opts.onError(message) },
   );
 
   const bulkRegenerateAction = useAsyncAction(
@@ -84,13 +84,13 @@ export function useAssetBulkActions(opts: {
           checkpointName: bulkCheckpointName.trim(),
           width: bulkWidth,
           height: bulkHeight,
-          variants: bulkVariants
+          variants: bulkVariants,
         });
       }
       await opts.onRefresh();
       clearSelection();
     },
-    { onError: (message) => opts.onError(message) }
+    { onError: (message) => opts.onError(message) },
   );
 
   const bulkBgRemoveAction = useAsyncAction(
@@ -116,13 +116,13 @@ export function useAssetBulkActions(opts: {
           originalPath: variant.originalPath,
           threshold: typeof bgThreshold === "number" ? bgThreshold : undefined,
           feather: bgFeather,
-          erode: bgErode
+          erode: bgErode,
         });
       }
       await opts.onRefresh();
       clearSelection();
     },
-    { onError: (message) => opts.onError(message) }
+    { onError: (message) => opts.onError(message) },
   );
 
   const bulkBusy =
@@ -152,6 +152,6 @@ export function useAssetBulkActions(opts: {
     bulkTagAction,
     bulkRegenerateAction,
     bulkBgRemoveAction,
-    bulkBusy
+    bulkBusy,
   };
 }

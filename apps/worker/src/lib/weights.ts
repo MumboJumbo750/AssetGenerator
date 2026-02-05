@@ -26,4 +26,3 @@ export function resolveWeightsPath(opts: {
   if (opts.legacyLocalPath) return opts.legacyLocalPath;
   return null;
 }
-

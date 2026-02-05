@@ -60,7 +60,7 @@ export async function getSystemStatus(opts: { dataRoot: string; comfyBaseUrl: st
     if (!res.ok) comfyError = `HTTP ${res.status}`;
   } catch (err: any) {
     comfyOk = false;
-    comfyError = err?.name === "AbortError" ? "timeout" : err?.message ?? String(err);
+    comfyError = err?.name === "AbortError" ? "timeout" : (err?.message ?? String(err));
   }
 
   return {
@@ -72,14 +72,14 @@ export async function getSystemStatus(opts: { dataRoot: string; comfyBaseUrl: st
       heartbeatPath: path.relative(dataRootAbs, heartbeatPath).replaceAll("\\", "/"),
       heartbeat: workerHeartbeat,
       ok: workerOk,
-      ageMs: hbAgeMs
+      ageMs: hbAgeMs,
     },
     comfyui: {
       baseUrl: comfyBaseUrlRaw,
       probeUrl: comfyUrl,
       ok: comfyOk,
       status: comfyStatus,
-      error: comfyError
-    }
+      error: comfyError,
+    },
   };
 }

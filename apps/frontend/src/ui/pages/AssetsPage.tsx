@@ -25,7 +25,7 @@ export function AssetsPage() {
     tagCatalog,
     tagCatalogError,
     refreshProjectData,
-    setError
+    setError,
   } = useAppData();
 
   const { value: customTag, setValue: setCustomTag } = useTextInput("");
@@ -56,11 +56,11 @@ export function AssetsPage() {
     filteredCount,
     selection,
     selectAllFiltered,
-    clearSelection
+    clearSelection,
   } = useAssetsViewModel({
     assets,
     specs,
-    tagCatalog
+    tagCatalog,
   });
   const {
     bulkTagId,
@@ -86,13 +86,13 @@ export function AssetsPage() {
     bulkTagAction,
     bulkRegenerateAction,
     bulkBgRemoveAction,
-    bulkBusy
+    bulkBusy,
   } = useAssetBulkActions({
     projectId: selectedProjectId,
     assets: filteredAssets,
     selection,
     onRefresh: refreshProjectData,
-    onError: (message) => setError(message)
+    onError: (message) => setError(message),
   });
 
   const {
@@ -104,10 +104,10 @@ export function AssetsPage() {
     reviewNote,
     setReviewNote,
     zoom,
-    setZoom
+    setZoom,
   } = useAssetReviewState({
     assets,
-    selectedAssetId
+    selectedAssetId,
   });
 
   const {
@@ -118,14 +118,14 @@ export function AssetsPage() {
     onSetVariantRating,
     onSaveReviewNote,
     onSetPrimaryVariant,
-    onSetVersionStatus
+    onSetVersionStatus,
   } = useAssetVariantActions({
     projectId: selectedProjectId,
     selectedAsset: selectedAsset as Asset | null,
     selectedVersion: selectedVersion as Asset["versions"][number] | null,
     selectedVariant: selectedVariant as Asset["versions"][number]["variants"][number] | null,
     onRefresh: refreshProjectData,
-    onError: (message) => setError(message)
+    onError: (message) => setError(message),
   });
 
   const { handleSaveReviewNote, handleAddCustomTag } = useAssetReviewActions({
@@ -133,7 +133,7 @@ export function AssetsPage() {
     customTag,
     setCustomTag,
     onSaveReviewNote,
-    onAddCustomTag
+    onAddCustomTag,
   });
 
   return (

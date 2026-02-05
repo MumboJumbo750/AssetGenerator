@@ -67,9 +67,9 @@ export async function packAtlas(opts: {
         ...f,
         width: trimW,
         height: trimH,
-        trimInfo: { x: minX, y: minY, w: trimW, h: trimH, sourceW: w, sourceH: h }
+        trimInfo: { x: minX, y: minY, w: trimW, h: trimH, sourceW: w, sourceH: h },
       };
-    })
+    }),
   );
 
   if (sort !== "none") {
@@ -79,15 +79,7 @@ export async function packAtlas(opts: {
     const byMaxSide = (a: any, b: any) => Math.max(b.width, b.height) - Math.max(a.width, a.height);
     const byArea = (a: any, b: any) => b.width * b.height - a.width * a.height;
     const sorter =
-      sort === "name"
-        ? byName
-        : sort === "w"
-        ? byW
-        : sort === "h"
-        ? byH
-        : sort === "maxside"
-        ? byMaxSide
-        : byArea;
+      sort === "name" ? byName : sort === "w" ? byW : sort === "h" ? byH : sort === "maxside" ? byMaxSide : byArea;
     meta = [...meta].sort(sorter);
   }
 
@@ -96,7 +88,8 @@ export async function packAtlas(opts: {
     packer.add(f.width + extrude * 2, f.height + extrude * 2, { key: f.key, absPath: f.absPath, trimInfo: f.trimInfo });
   }
   if (!packer.bins.length) throw new Error("No bins produced by packer.");
-  if (packer.bins.length > 1) throw new Error(`Atlas requires multiple pages (${packer.bins.length}); increase maxSize.`);
+  if (packer.bins.length > 1)
+    throw new Error(`Atlas requires multiple pages (${packer.bins.length}); increase maxSize.`);
   const bin = packer.bins[0];
 
   const pot = (n: number) => {
@@ -109,15 +102,20 @@ export async function packAtlas(opts: {
   const atlasH = powerOfTwo ? pot(bin.height) : bin.height;
 
   const base = sharp({
-    create: { width: atlasW, height: atlasH, channels: 4, background: { r: 0, g: 0, b: 0, alpha: 0 } }
+    create: { width: atlasW, height: atlasH, channels: 4, background: { r: 0, g: 0, b: 0, alpha: 0 } },
   });
 
   const composites = await Promise.all(
     bin.rects.map(async (r) => {
       const absPath = (r.data as any).absPath as string;
-      const trimInfo = (r.data as any).trimInfo as
-        | { x: number; y: number; w: number; h: number; sourceW: number; sourceH: number }
-        | null;
+      const trimInfo = (r.data as any).trimInfo as {
+        x: number;
+        y: number;
+        w: number;
+        h: number;
+        sourceW: number;
+        sourceH: number;
+      } | null;
       let input = Buffer.from(await fs.readFile(absPath));
       let left = r.x + extrude;
       let top = r.y + extrude;
@@ -125,14 +123,14 @@ export async function packAtlas(opts: {
       if (trimInfo) {
         input = Buffer.from(
           await sharp(input)
-          .extract({ left: trimInfo.x, top: trimInfo.y, width: trimInfo.w, height: trimInfo.h })
-          .png()
-          .toBuffer()
+            .extract({ left: trimInfo.x, top: trimInfo.y, width: trimInfo.w, height: trimInfo.h })
+            .png()
+            .toBuffer(),
         );
       }
 
       return { input, left, top };
-    })
+    }),
   );
 
   await fs.mkdir(path.dirname(opts.atlasAbsPngPath), { recursive: true });
@@ -142,9 +140,14 @@ export async function packAtlas(opts: {
     const extraComposites: Array<{ input: Buffer; left: number; top: number }> = [];
     for (const r of bin.rects) {
       const absPath = (r.data as any).absPath as string;
-      const trimInfo = (r.data as any).trimInfo as
-        | { x: number; y: number; w: number; h: number; sourceW: number; sourceH: number }
-        | null;
+      const trimInfo = (r.data as any).trimInfo as {
+        x: number;
+        y: number;
+        w: number;
+        h: number;
+        sourceW: number;
+        sourceH: number;
+      } | null;
       const buffer = Buffer.from(await fs.readFile(absPath));
       const image = sharp(buffer);
       const info = await image.metadata();
@@ -177,9 +180,14 @@ export async function packAtlas(opts: {
 
   for (const r of bin.rects) {
     const key = (r.data as any).key as string;
-    const trimInfo = (r.data as any).trimInfo as
-      | { x: number; y: number; w: number; h: number; sourceW: number; sourceH: number }
-      | null;
+    const trimInfo = (r.data as any).trimInfo as {
+      x: number;
+      y: number;
+      w: number;
+      h: number;
+      sourceW: number;
+      sourceH: number;
+    } | null;
     const trimmed = Boolean(trimInfo);
     const frameX = r.x + extrude;
     const frameY = r.y + extrude;
@@ -192,22 +200,27 @@ export async function packAtlas(opts: {
       spriteSourceSize: trimInfo
         ? { x: trimInfo.x, y: trimInfo.y, w: trimInfo.w, h: trimInfo.h }
         : { x: 0, y: 0, w: frameW, h: frameH },
-      sourceSize: trimInfo ? { w: trimInfo.sourceW, h: trimInfo.sourceH } : { w: frameW, h: frameH }
+      sourceSize: trimInfo ? { w: trimInfo.sourceW, h: trimInfo.sourceH } : { w: frameW, h: frameH },
     };
   }
 
   const pixiJson = {
     frames,
-    meta: { image: path.basename(opts.atlasAbsPngPath), scale: "1" }
+    meta: { image: path.basename(opts.atlasAbsPngPath), scale: "1" },
   };
 
   await fs.writeFile(opts.atlasAbsJsonPath, JSON.stringify(pixiJson, null, 2) + "\n", "utf8");
 
   const packedFrames: PackedFrame[] = bin.rects.map((r) => {
     const key = (r.data as any).key as string;
-    const trimInfo = (r.data as any).trimInfo as
-      | { x: number; y: number; w: number; h: number; sourceW: number; sourceH: number }
-      | null;
+    const trimInfo = (r.data as any).trimInfo as {
+      x: number;
+      y: number;
+      w: number;
+      h: number;
+      sourceW: number;
+      sourceH: number;
+    } | null;
     const frameX = r.x + extrude;
     const frameY = r.y + extrude;
     const frameW = r.width - extrude * 2;
@@ -218,7 +231,9 @@ export async function packAtlas(opts: {
       rect: { x: frameX, y: frameY, w: frameW, h: frameH },
       sourceSize: trimInfo ? { w: trimInfo.sourceW, h: trimInfo.sourceH } : { w: frameW, h: frameH },
       trimmed: Boolean(trimInfo),
-      spriteSourceSize: trimInfo ? { x: trimInfo.x, y: trimInfo.y, w: trimInfo.w, h: trimInfo.h } : { x: 0, y: 0, w: frameW, h: frameH }
+      spriteSourceSize: trimInfo
+        ? { x: trimInfo.x, y: trimInfo.y, w: trimInfo.w, h: trimInfo.h }
+        : { x: 0, y: 0, w: frameW, h: frameH },
     };
   });
 

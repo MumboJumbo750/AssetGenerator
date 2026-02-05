@@ -33,7 +33,7 @@ function parseArgs() {
     force: false,
     dryRun: false,
     projectId: "astroduck_demo",
-    projectName: "AstroDuck Space Shooter (Demo)"
+    projectName: "AstroDuck Space Shooter (Demo)",
   };
   for (let i = 0; i < args.length; i++) {
     const a = args[i];
@@ -54,17 +54,17 @@ function makeProject(opts) {
     defaults: {
       style: "comic",
       scenario: "scifi",
-      paletteIds: ["astroduck_neon"]
+      paletteIds: ["astroduck_neon"],
     },
     policies: {
       loraSelection: {
         mode: "baseline_then_project",
         preferRecommended: true,
         maxActiveLoras: 2,
-        releasePolicy: "active_or_latest_approved"
-      }
+        releasePolicy: "active_or_latest_approved",
+      },
     },
-    notes: "Seeded demo project for exercising the AssetGenerator pipeline."
+    notes: "Seeded demo project for exercising the AssetGenerator pipeline.",
   };
 }
 
@@ -78,11 +78,23 @@ function makeCatalogs() {
         { id: "ui_icon", label: "UI Icon", requiresAlpha: true, multiFrame: false, defaultTags: ["assetType:ui_icon"] },
         { id: "logo", label: "Logo", requiresAlpha: true, multiFrame: false, defaultTags: ["assetType:logo"] },
         { id: "sprite", label: "Sprite", requiresAlpha: true, multiFrame: false, defaultTags: ["assetType:sprite"] },
-        { id: "spritesheet", label: "Spritesheet", requiresAlpha: true, multiFrame: true, defaultTags: ["assetType:spritesheet"] },
+        {
+          id: "spritesheet",
+          label: "Spritesheet",
+          requiresAlpha: true,
+          multiFrame: true,
+          defaultTags: ["assetType:spritesheet"],
+        },
         { id: "texture", label: "Texture", tileable: true, multiFrame: false, defaultTags: ["assetType:texture"] },
         { id: "tile", label: "Tile", tileable: true, multiFrame: false, defaultTags: ["assetType:tile"] },
-        { id: "overlay", label: "Overlay/VFX", requiresAlpha: true, multiFrame: false, defaultTags: ["assetType:overlay"] }
-      ]
+        {
+          id: "overlay",
+          label: "Overlay/VFX",
+          requiresAlpha: true,
+          multiFrame: false,
+          defaultTags: ["assetType:overlay"],
+        },
+      ],
     },
     styles: {
       id: "styles",
@@ -92,8 +104,8 @@ function makeCatalogs() {
         { id: "comic", label: "Comic", promptTokens: ["comic style", "bold outlines", "high contrast"] },
         { id: "cartoon", label: "Cartoon", promptTokens: ["cartoon", "clean shapes"] },
         { id: "pixel_art", label: "Pixel Art", promptTokens: ["pixel art", "low-res"] },
-        { id: "realistic", label: "Realistic", promptTokens: ["realistic"] }
-      ]
+        { id: "realistic", label: "Realistic", promptTokens: ["realistic"] },
+      ],
     },
     scenarios: {
       id: "scenarios",
@@ -102,8 +114,8 @@ function makeCatalogs() {
       scenarios: [
         { id: "scifi", label: "Sci-Fi", promptTokens: ["sci-fi", "space", "neon lights"] },
         { id: "fantasy", label: "Fantasy", promptTokens: ["fantasy"] },
-        { id: "cyberpunk", label: "Cyberpunk", promptTokens: ["cyberpunk", "neon city"] }
-      ]
+        { id: "cyberpunk", label: "Cyberpunk", promptTokens: ["cyberpunk", "neon city"] },
+      ],
     },
     palettes: {
       id: "palettes",
@@ -115,9 +127,9 @@ function makeCatalogs() {
           label: "AstroDuck Neon",
           description: "High contrast comic palette with neon accents.",
           colors: ["#0B1020", "#EEF2FF", "#6D7CFF", "#00E5FF", "#FF3D71", "#FFB300", "#22C55E"],
-          promptTokens: ["neon accents", "high contrast"]
-        }
-      ]
+          promptTokens: ["neon accents", "high contrast"],
+        },
+      ],
     },
     tags: {
       id: "tags",
@@ -135,8 +147,8 @@ function makeCatalogs() {
             { id: "assetType:spritesheet", label: "Spritesheet" },
             { id: "assetType:texture", label: "Texture" },
             { id: "assetType:tile", label: "Tile" },
-            { id: "assetType:overlay", label: "Overlay/VFX" }
-          ]
+            { id: "assetType:overlay", label: "Overlay/VFX" },
+          ],
         },
         {
           id: "level",
@@ -145,8 +157,8 @@ function makeCatalogs() {
           tags: [
             { id: "level:earth", label: "Earth" },
             { id: "level:mars", label: "Mars" },
-            { id: "level:sun", label: "Sun" }
-          ]
+            { id: "level:sun", label: "Sun" },
+          ],
         },
         {
           id: "ui",
@@ -156,8 +168,8 @@ function makeCatalogs() {
             { id: "ui:menu", label: "Menu" },
             { id: "ui:hud", label: "HUD" },
             { id: "ui:level_select", label: "Level Select" },
-            { id: "ui:difficulty", label: "Difficulty" }
-          ]
+            { id: "ui:difficulty", label: "Difficulty" },
+          ],
         },
         {
           id: "vfx",
@@ -170,11 +182,11 @@ function makeCatalogs() {
             { id: "vfx:explosion", label: "Explosion" },
             { id: "vfx:warp", label: "Warp" },
             { id: "vfx:thruster", label: "Thruster" },
-            { id: "vfx:shield", label: "Shield" }
-          ]
-        }
-      ]
-    }
+            { id: "vfx:shield", label: "Shield" },
+          ],
+        },
+      ],
+    },
   };
 }
 
@@ -188,9 +200,9 @@ function makeCheckpoint(opts) {
     supportedAssetTypes: ["logo", "sprite", "spritesheet", "texture", "ui_icon", "overlay", "tile"],
     promptTemplates: {
       basePositive: "sci-fi comic style, bold outlines, high contrast, clean silhouette, {specPrompt}",
-      baseNegative: "photo, watermark, text, low contrast, blurry, cluttered background"
+      baseNegative: "photo, watermark, text, low contrast, blurry, cluttered background",
     },
-    defaultGenerationParams: { width: 512, height: 512, steps: 20, cfg: 7, sampler: "euler", scheduler: "normal" }
+    defaultGenerationParams: { width: 512, height: 512, steps: 20, cfg: 7, sampler: "euler", scheduler: "normal" },
   };
 }
 
@@ -210,10 +222,15 @@ function makeBaselineLora() {
         id: "rel_v1",
         createdAt: SEED_TIME,
         status: "approved",
-        weights: { kind: "config_relative", base: "lorasRoot", path: "baseline_2d_game_assets.safetensors", sha256: "0000000000000000" },
-        notes: "Example baseline LoRA entry; replace with your real trained LoRA."
-      }
-    ]
+        weights: {
+          kind: "config_relative",
+          base: "lorasRoot",
+          path: "baseline_2d_game_assets.safetensors",
+          sha256: "0000000000000000",
+        },
+        notes: "Example baseline LoRA entry; replace with your real trained LoRA.",
+      },
+    ],
   };
 }
 
@@ -233,10 +250,15 @@ function makeProjectLora() {
         id: "rel_v1",
         createdAt: SEED_TIME,
         status: "candidate",
-        weights: { kind: "config_relative", base: "lorasRoot", path: "astroduck_characters_v1.safetensors", sha256: "0000000000000000" },
-        notes: "Example project LoRA entry; mark approved after eval."
-      }
-    ]
+        weights: {
+          kind: "config_relative",
+          base: "lorasRoot",
+          path: "astroduck_characters_v1.safetensors",
+          sha256: "0000000000000000",
+        },
+        notes: "Example project LoRA entry; mark approved after eval.",
+      },
+    ],
   };
 }
 

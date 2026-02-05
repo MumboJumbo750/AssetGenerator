@@ -20,7 +20,7 @@ export function OverviewPage() {
     specListsCount: specLists.length,
     specsCount: specs.length,
     jobsCount: jobs.length,
-    assetsCount: assets.length
+    assetsCount: assets.length,
   });
 
   return (

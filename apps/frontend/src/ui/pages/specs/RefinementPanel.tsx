@@ -43,16 +43,25 @@ export function RefinementPanel(props: Props) {
               <Select
                 data={props.assetTypeOptions}
                 value={props.refineDefaultType}
-                onChange={(value: string | null) => props.onDefaultTypeChange(value ?? (props.assetTypeOptions[0] ?? "ui_icon"))}
+                onChange={(value: string | null) =>
+                  props.onDefaultTypeChange(value ?? props.assetTypeOptions[0] ?? "ui_icon")
+                }
               />
               <Group gap="xs">
                 <Button variant="light" onClick={props.onParseSpecList}>
                   Parse SpecList
                 </Button>
-                <HelpTip label="Parse each line into a spec. Use assetType: prefix to override." topicId="workflow-specs" />
+                <HelpTip
+                  label="Parse each line into a spec. Use assetType: prefix to override."
+                  topicId="workflow-specs"
+                />
               </Group>
               <Group gap="xs">
-                <Button onClick={props.onRefineSpecList} loading={props.refineBusy} disabled={props.refineItems.length === 0}>
+                <Button
+                  onClick={props.onRefineSpecList}
+                  loading={props.refineBusy}
+                  disabled={props.refineItems.length === 0}
+                >
                   Create Specs
                 </Button>
                 <HelpTip label="Create AssetSpecs from the parsed SpecList items." topicId="workflow-specs" />
@@ -68,12 +77,14 @@ export function RefinementPanel(props: Props) {
                       data={props.assetTypeOptions}
                       value={item.assetType}
                       onChange={(value: string | null) =>
-                        props.onUpdateItem(idx, { assetType: value ?? (props.assetTypeOptions[0] ?? "ui_icon") })
+                        props.onUpdateItem(idx, { assetType: value ?? props.assetTypeOptions[0] ?? "ui_icon" })
                       }
                     />
                     <TextInput
                       value={item.title}
-                      onChange={(event: React.ChangeEvent<HTMLInputElement>) => props.onUpdateItem(idx, { title: event.currentTarget.value })}
+                      onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                        props.onUpdateItem(idx, { title: event.currentTarget.value })
+                      }
                     />
                     <Button variant="light" color="red" onClick={() => props.onRemoveItem(idx)}>
                       Remove

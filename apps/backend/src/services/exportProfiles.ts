@@ -57,7 +57,7 @@ export async function createExportProfile(opts: {
     type: (opts.body?.type ?? "pixi_kit") as ExportProfile["type"],
     createdAt,
     updatedAt: createdAt,
-    options: opts.body?.options ?? {}
+    options: opts.body?.options ?? {},
   };
 
   opts.schemas.validateOrThrow("export-profile.schema.json", profile);

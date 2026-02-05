@@ -14,12 +14,12 @@ export default defineConfig({
     proxy: {
       "/api": {
         target: process.env.ASSETGEN_BACKEND_URL ?? "http://127.0.0.1:3030",
-        changeOrigin: true
+        changeOrigin: true,
       },
       "/data": {
         target: process.env.ASSETGEN_BACKEND_URL ?? "http://127.0.0.1:3030",
-        changeOrigin: true
-      }
-    }
-  }
+        changeOrigin: true,
+      },
+    },
+  },
 });

@@ -80,7 +80,7 @@ export async function registerJobRoutes(app: FastifyInstance, opts: { dataRoot: 
       schemas: opts.schemas,
       projectId,
       type,
-      input: body?.input ?? {}
+      input: body?.input ?? {},
     });
     return reply.code(201).send(job);
   });

@@ -17,7 +17,7 @@ function parseArgs() {
     url: "",
     notes: "",
     endpoint: "http://127.0.0.1:3030",
-    dryRun: false
+    dryRun: false,
   };
   for (let i = 0; i < args.length; i++) {
     const a = args[i];
@@ -42,7 +42,7 @@ async function main() {
   if (!args.projectId || !args.dir) {
     console.log("Usage: npm run import:assets -- --project <projectId> --dir <folder>");
     console.log(
-      "  Optional: --asset-type <type> --status <draft|review|approved> --tag <tag> (repeatable) --source <text> --author <text> --license <text> --url <url> --notes <text> --endpoint <url> --dry-run"
+      "  Optional: --asset-type <type> --status <draft|review|approved> --tag <tag> (repeatable) --source <text> --author <text> --license <text> --url <url> --notes <text> --endpoint <url> --dry-run",
     );
     process.exit(1);
   }
@@ -61,7 +61,7 @@ async function main() {
           author: args.author || undefined,
           license: args.license || undefined,
           url: args.url || undefined,
-          notes: args.notes || undefined
+          notes: args.notes || undefined,
         }
       : undefined;
 
@@ -71,7 +71,7 @@ async function main() {
     assetType: args.assetType,
     status: args.status,
     tags: args.tag.filter(Boolean),
-    provenance
+    provenance,
   }));
 
   if (args.dryRun) {
@@ -83,7 +83,7 @@ async function main() {
   const res = await fetch(`${endpoint}/api/projects/${args.projectId}/import/assets`, {
     method: "POST",
     headers: { "content-type": "application/json" },
-    body: JSON.stringify({ items })
+    body: JSON.stringify({ items }),
   });
   if (!res.ok) {
     const text = await res.text();
@@ -94,7 +94,11 @@ async function main() {
   const errors = Array.isArray(result.errors) ? result.errors.length : 0;
   console.log(`[import] Imported ${imported} assets. Errors: ${errors}`);
   if (errors) {
-    await fs.writeFile(path.join(process.cwd(), "import-errors.json"), JSON.stringify(result.errors, null, 2) + "\n", "utf8");
+    await fs.writeFile(
+      path.join(process.cwd(), "import-errors.json"),
+      JSON.stringify(result.errors, null, 2) + "\n",
+      "utf8",
+    );
     console.log("[import] Wrote import-errors.json");
   }
 }

@@ -29,7 +29,7 @@ export function AtlasesPage() {
     setAnimationName,
     setAnimationFps,
     setAnimationLoop,
-    setAnimationSpecId
+    setAnimationSpecId,
   } = useAtlasAnimationForm();
   const {
     frames: animationFrames,
@@ -37,7 +37,7 @@ export function AtlasesPage() {
     addFrame: addAnimationFrame,
     clearFrames: clearAnimationFrames,
     moveFrame: moveAnimationFrame,
-    removeFrame: removeAnimationFrame
+    removeFrame: removeAnimationFrame,
   } = useOrderedFrameList();
 
   const {
@@ -51,7 +51,7 @@ export function AtlasesPage() {
     atlasImageRef,
     imageSize,
     setImageSize,
-    onImageLoad
+    onImageLoad,
   } = useAtlasWorkspace(selectedProjectId);
 
   const {
@@ -74,25 +74,25 @@ export function AtlasesPage() {
     moveFrame,
     updateFrameKey,
     removeFrame,
-    createAtlas
+    createAtlas,
   } = useAtlasBuild({
     projectId: selectedProjectId,
     onRefreshProject: refreshProjectData,
     onRefreshAtlases: refreshAtlases,
-    onError: (message) => setError(message)
+    onError: (message) => setError(message),
   });
 
   const { saveAnimation } = useAtlasAnimationSave({
     projectId: selectedProjectId,
     onRefreshProject: refreshProjectData,
-    onError: (message) => setError(message)
+    onError: (message) => setError(message),
   });
 
   const { updatePivot } = useAtlasPivotEditor({ setSelectedAtlas });
   const { savePivots } = useAtlasPivotSave({
     selectedAtlas,
     onRefreshAtlases: refreshAtlases,
-    onError: (message) => setError(message)
+    onError: (message) => setError(message),
   });
 
   const animationCanvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -101,7 +101,7 @@ export function AtlasesPage() {
 
   useAtlasSelectionReset({
     selectedAtlasId: selectedAtlas?.id ?? null,
-    onReset: () => setAnimationFrames([])
+    onReset: () => setAnimationFrames([]),
   });
 
   useAtlasAnimationPreview({
@@ -110,7 +110,7 @@ export function AtlasesPage() {
     animationFps,
     animationLoop,
     animationCanvasRef,
-    atlasImageRef
+    atlasImageRef,
   });
 
   async function onSavePivots() {
@@ -123,7 +123,7 @@ export function AtlasesPage() {
       animationName,
       animationFps,
       animationLoop,
-      animationFrames
+      animationFrames,
     });
   }
 

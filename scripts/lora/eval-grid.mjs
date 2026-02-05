@@ -32,7 +32,7 @@ function parseArgs() {
     height: "",
     variants: "",
     dryRun: false,
-    autoCleanup: false
+    autoCleanup: false,
   };
   for (let i = 0; i < args.length; i++) {
     const a = args[i];
@@ -84,14 +84,14 @@ async function main() {
     height,
     variants,
     dryRun,
-    autoCleanup
+    autoCleanup,
   } = args;
 
   if (!projectId || !loraId || !releaseId) {
     console.log("Usage: npm run lora:eval-grid -- --project <projectId> --lora <loraId> --release <releaseId>");
-    console.log("  Prompts: --prompts \"p1|p2\" or --prompts-file <path>");
+    console.log('  Prompts: --prompts "p1|p2" or --prompts-file <path>');
     console.log(
-      "  Optional: --eval <evalId> --checkpoint <checkpointId> --template <id> --asset-type <type> --width <n> --height <n> --variants <n> --auto-cleanup"
+      "  Optional: --eval <evalId> --checkpoint <checkpointId> --template <id> --asset-type <type> --width <n> --height <n> --variants <n> --auto-cleanup",
     );
     process.exit(1);
   }
@@ -130,7 +130,7 @@ async function main() {
     status: "running",
     prompts: promptList,
     outputs: [],
-    autoCleanup: Boolean(autoCleanup)
+    autoCleanup: Boolean(autoCleanup),
   };
 
   const checkpoint = checkpointName || lora.checkpointId;
@@ -160,14 +160,14 @@ async function main() {
       scenario: "default",
       prompt: {
         positive: prompt,
-        negative: ""
+        negative: "",
       },
       generationParams: {
         ...(widthValue ? { width: widthValue } : {}),
         ...(heightValue ? { height: heightValue } : {}),
-        ...(variantsValue ? { variants: variantsValue } : {})
+        ...(variantsValue ? { variants: variantsValue } : {}),
       },
-      status: "ready"
+      status: "ready",
     };
 
     const jobId = ulid();
@@ -183,8 +183,8 @@ async function main() {
         specId,
         templateId,
         checkpointName: checkpoint,
-        eval: { evalId: evalRecordId, prompt }
-      }
+        eval: { evalId: evalRecordId, prompt },
+      },
     };
 
     createdSpecs.push({ specId, spec });

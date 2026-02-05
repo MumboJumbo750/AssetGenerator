@@ -6,7 +6,7 @@ import {
   listExportProfiles,
   updateExportProfile,
   type AtlasRecord,
-  type ExportProfile
+  type ExportProfile,
 } from "../api";
 
 const DEFAULT_PROFILE: ExportProfile["options"] = {
@@ -14,7 +14,7 @@ const DEFAULT_PROFILE: ExportProfile["options"] = {
   trim: false,
   padding: 0,
   namePrefix: "",
-  nameSuffix: ""
+  nameSuffix: "",
 };
 
 export function useExportProfiles(projectId: string) {
@@ -33,7 +33,7 @@ export function useExportProfiles(projectId: string) {
 
   const selectedProfile = useMemo(
     () => profiles.find((profile) => profile.id === selectedProfileId) ?? null,
-    [profiles, selectedProfileId]
+    [profiles, selectedProfileId],
   );
 
   const profileOptions = useMemo(
@@ -42,9 +42,9 @@ export function useExportProfiles(projectId: string) {
       trim: profileTrim,
       padding: profilePadding,
       namePrefix: profilePrefix,
-      nameSuffix: profileSuffix
+      nameSuffix: profileSuffix,
     }),
-    [profileScale, profileTrim, profilePadding, profilePrefix, profileSuffix]
+    [profileScale, profileTrim, profilePadding, profilePrefix, profileSuffix],
   );
 
   const refreshProfiles = useCallback(async () => {
@@ -84,7 +84,7 @@ export function useExportProfiles(projectId: string) {
       const created = await createExportProfile(projectId, {
         name: profileName || "Pixi Kit Profile",
         type: "pixi_kit",
-        options: profileOptions
+        options: profileOptions,
       });
       await refreshProfiles();
       setSelectedProfileId(created.id);
@@ -99,7 +99,7 @@ export function useExportProfiles(projectId: string) {
     try {
       await updateExportProfile(projectId, selectedProfile.id, {
         name: profileName,
-        options: profileOptions
+        options: profileOptions,
       });
       await refreshProfiles();
     } catch (e: any) {
@@ -130,6 +130,6 @@ export function useExportProfiles(projectId: string) {
     profileOptions,
     refreshProfiles,
     createProfile,
-    updateProfile
+    updateProfile,
   };
 }

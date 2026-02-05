@@ -3,9 +3,11 @@ import path from "node:path";
 
 import type { FastifyInstance } from "fastify";
 
+import type { SchemaRegistry } from "../lib/schemas";
 import { getAtlas, listAtlases } from "../services/atlases";
+import { triggerAutomationEvent } from "../services/automation";
 
-export async function registerAtlasRoutes(app: FastifyInstance, opts: { dataRoot: string }) {
+export async function registerAtlasRoutes(app: FastifyInstance, opts: { dataRoot: string; schemas: SchemaRegistry }) {
   const projectsRoot = path.join(opts.dataRoot, "projects");
 
   app.get("/api/projects/:projectId/atlases", async (req) => {
@@ -36,12 +38,18 @@ export async function registerAtlasRoutes(app: FastifyInstance, opts: { dataRoot
         const incoming = framesById.get(frame.id);
         if (!incoming?.pivot) return frame;
         return { ...frame, pivot: incoming.pivot };
-      })
+      }),
     };
 
     const atlasPath = path.join(projectsRoot, projectId, "atlases", `${atlasId}.json`);
     await fs.mkdir(path.dirname(atlasPath), { recursive: true });
     await fs.writeFile(atlasPath, JSON.stringify(updated, null, 2) + "\n", "utf8");
+    await triggerAutomationEvent({
+      projectsRoot,
+      schemas: opts.schemas,
+      projectId,
+      event: { type: "atlas_ready", payload: { atlasId } },
+    });
     return reply.code(200).send(updated);
   });
 }

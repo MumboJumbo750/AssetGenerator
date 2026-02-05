@@ -13,4 +13,3 @@ export function repoPath(repoRoot: string, ...segments: string[]) {
 export function toPosixPath(p: string) {
   return p.replaceAll("\\", "/");
 }
-

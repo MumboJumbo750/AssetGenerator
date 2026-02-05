@@ -45,7 +45,7 @@ function parseArgs() {
     rank: "",
     learningRate: "",
     batchSize: "",
-    epochs: ""
+    epochs: "",
   };
   for (let i = 0; i < args.length; i++) {
     const a = args[i];
@@ -141,15 +141,25 @@ async function main() {
     rank,
     learningRate,
     batchSize,
-    epochs
+    epochs,
   } = args;
 
   if (!loraId) {
-    console.log("Usage: npm run lora:train -- --lora <loraId> --dataset <datasetId|path> [--project <projectId>] [--scope project|baseline]");
-    console.log("  Optional: --release <releaseId> --status <candidate|approved|deprecated> --set-active --notes <text>");
-    console.log("  Config: --config <json> or --config-file <path> and/or --resolution/--steps/--rank/--lr/--batch/--epochs");
-    console.log("  Adapter: --adapter <manual|kohya_ss> [--run] [--adapter-args <jsonArray>] [--accelerate-config <path>]");
-    console.log("  Weights: --weights-kind <repo_relative|config_relative|absolute|external> --weights-base <modelsRoot|checkpointsRoot|lorasRoot> --weights-path <path> --weights-uri <uri>");
+    console.log(
+      "Usage: npm run lora:train -- --lora <loraId> --dataset <datasetId|path> [--project <projectId>] [--scope project|baseline]",
+    );
+    console.log(
+      "  Optional: --release <releaseId> --status <candidate|approved|deprecated> --set-active --notes <text>",
+    );
+    console.log(
+      "  Config: --config <json> or --config-file <path> and/or --resolution/--steps/--rank/--lr/--batch/--epochs",
+    );
+    console.log(
+      "  Adapter: --adapter <manual|kohya_ss> [--run] [--adapter-args <jsonArray>] [--accelerate-config <path>]",
+    );
+    console.log(
+      "  Weights: --weights-kind <repo_relative|config_relative|absolute|external> --weights-base <modelsRoot|checkpointsRoot|lorasRoot> --weights-path <path> --weights-uri <uri>",
+    );
     process.exit(1);
   }
   if (scope !== "project" && scope !== "baseline") {
@@ -213,7 +223,7 @@ async function main() {
     rank: toNumber(rank),
     learningRate: toNumber(learningRate),
     batchSize: toNumber(batchSize),
-    epochs: toNumber(epochs)
+    epochs: toNumber(epochs),
   };
   for (const [key, value] of Object.entries(numericConfig)) {
     if (value !== undefined) config[key] = value;
@@ -230,12 +240,12 @@ async function main() {
         id: datasetManifest?.id ?? null,
         scope: datasetManifest?.scope ?? null,
         projectId: datasetManifest?.projectId ?? null,
-        path: datasetPath
+        path: datasetPath,
       },
       selection: datasetManifest?.selection ?? null,
-      config
+      config,
     },
-    evaluation: { status: "pending" }
+    evaluation: { status: "pending" },
   };
 
   if (weightsKind) {
@@ -244,7 +254,7 @@ async function main() {
       base: weightsBase || undefined,
       path: weightsPath || undefined,
       uri: weightsUri || undefined,
-      sha256: sha256 || undefined
+      sha256: sha256 || undefined,
     };
   }
 
@@ -273,7 +283,7 @@ async function main() {
         if (!Array.isArray(parsed)) throw new Error("adapter-args must be a JSON array");
         extraArgs = parsed.map(String);
       } catch (err) {
-        console.error("--adapter-args must be a JSON array, e.g. \"[\\\"--foo\\\", \\\"bar\\\"]\"");
+        console.error('--adapter-args must be a JSON array, e.g. "[\\"--foo\\", \\"bar\\"]"');
         process.exit(1);
       }
     }
@@ -284,8 +294,17 @@ async function main() {
       const acceleratePath = path.isAbsolute(accelerateConfig) ? accelerateConfig : path.resolve(accelerateConfig);
       await run(
         pythonInVenv,
-        ["-m", "accelerate.commands.launch", "--config_file", acceleratePath, trainScript, "--config_file", configPath, ...extraArgs],
-        { cwd: kohyaDir, env }
+        [
+          "-m",
+          "accelerate.commands.launch",
+          "--config_file",
+          acceleratePath,
+          trainScript,
+          "--config_file",
+          configPath,
+          ...extraArgs,
+        ],
+        { cwd: kohyaDir, env },
       );
     } else {
       await run(pythonInVenv, [trainScript, "--config_file", configPath, ...extraArgs], { cwd: kohyaDir, env });

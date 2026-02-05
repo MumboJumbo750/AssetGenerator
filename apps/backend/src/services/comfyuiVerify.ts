@@ -20,7 +20,14 @@ type LoraRecord = {
   releases?: Array<{ id: string; weights?: WeightsRef; localPath?: string }>;
 };
 
-type FileCheck = { id: string; path: string | null; exists: boolean; reason?: string; hashExpected?: string; hashMatch?: boolean };
+type FileCheck = {
+  id: string;
+  path: string | null;
+  exists: boolean;
+  reason?: string;
+  hashExpected?: string;
+  hashMatch?: boolean;
+};
 type CustomNodeCheck = { name: string; matched: boolean };
 type PythonCheck = { package: string; installed: boolean };
 type CustomNodeManifest = { name: string; repo: string; ref: string; nodes: string[]; pythonPackages: string[] };
@@ -81,7 +88,7 @@ async function checkWeightsFiles(opts: {
         repoRoot: opts.repoRoot,
         local: opts.local,
         weights: checkpoint.weights,
-        legacyLocalPath: checkpoint.localPath
+        legacyLocalPath: checkpoint.localPath,
       });
       if (!resolved) {
         checkpoints.push({ id: checkpoint.id, path: null, exists: false, reason: "missing_path_or_root" });
@@ -118,7 +125,7 @@ async function checkWeightsFiles(opts: {
       repoRoot: opts.repoRoot,
       local: opts.local,
       weights: release.weights,
-      legacyLocalPath: release.localPath
+      legacyLocalPath: release.localPath,
     });
     if (!resolved) {
       loras.push({ id: lora.id, path: null, exists: false, reason: "missing_path_or_root" });
@@ -184,7 +191,12 @@ async function listPythonPackages(pythonBin: string): Promise<string[] | null> {
   });
 }
 
-export async function verifyComfyUi(opts: { dataRoot: string; repoRoot: string; comfyBaseUrl: string; local: LocalConfig | null }) {
+export async function verifyComfyUi(opts: {
+  dataRoot: string;
+  repoRoot: string;
+  comfyBaseUrl: string;
+  local: LocalConfig | null;
+}) {
   const dataRootAbs = path.resolve(opts.dataRoot);
   const repoRootAbs = path.resolve(opts.repoRoot);
 
@@ -209,7 +221,7 @@ export async function verifyComfyUi(opts: { dataRoot: string; repoRoot: string; 
     if (!res.ok) comfyError = `HTTP ${res.status}`;
   } catch (err: any) {
     comfyOk = false;
-    comfyError = err?.name === "AbortError" ? "timeout" : err?.message ?? String(err);
+    comfyError = err?.name === "AbortError" ? "timeout" : (err?.message ?? String(err));
   }
 
   const manifestPath = path.join(repoRootAbs, "pipeline", "comfyui", "manifest.json");
@@ -220,19 +232,19 @@ export async function verifyComfyUi(opts: { dataRoot: string; repoRoot: string; 
 
   const workflowFiles = [
     path.join(repoRootAbs, "pipeline", "comfyui", "workflows", "txt2img.json"),
-    path.join(repoRootAbs, "pipeline", "comfyui", "workflows", "txt2img.bindings.json")
+    path.join(repoRootAbs, "pipeline", "comfyui", "workflows", "txt2img.bindings.json"),
   ];
   const workflowChecks = await Promise.all(
     workflowFiles.map(async (filePath) => ({
       path: filePath,
-      exists: await fileExists(filePath)
-    }))
+      exists: await fileExists(filePath),
+    })),
   );
 
   const roots = {
     modelsRoot: opts.local?.paths?.modelsRoot ?? null,
     checkpointsRoot: opts.local?.paths?.checkpointsRoot ?? null,
-    lorasRoot: opts.local?.paths?.lorasRoot ?? null
+    lorasRoot: opts.local?.paths?.lorasRoot ?? null,
   };
   const missingRoots = Object.entries(roots)
     .filter(([, value]) => !value)
@@ -241,22 +253,21 @@ export async function verifyComfyUi(opts: { dataRoot: string; repoRoot: string; 
   const { checkpoints, loras } = await checkWeightsFiles({
     repoRoot: repoRootAbs,
     dataRoot: dataRootAbs,
-    local: opts.local
+    local: opts.local,
   });
 
   let customNodes: CustomNodeCheck[] = [];
   let pythonRequirements: PythonCheck[] = [];
   let manifestIssues: string[] = [];
-  const expectedNodes: CustomNodeManifest[] =
-    Array.isArray(manifest?.customNodes)
-      ? manifest.customNodes.map((n: any) => ({
-          name: String(n?.name ?? ""),
-          repo: String(n?.repo ?? ""),
-          ref: String(n?.ref ?? ""),
-          nodes: Array.isArray(n?.nodes) ? n.nodes.map((x: any) => String(x)) : [],
-          pythonPackages: Array.isArray(n?.pythonPackages) ? n.pythonPackages.map((x: any) => String(x)) : []
-        }))
-      : [];
+  const expectedNodes: CustomNodeManifest[] = Array.isArray(manifest?.customNodes)
+    ? manifest.customNodes.map((n: any) => ({
+        name: String(n?.name ?? ""),
+        repo: String(n?.repo ?? ""),
+        ref: String(n?.ref ?? ""),
+        nodes: Array.isArray(n?.nodes) ? n.nodes.map((x: any) => String(x)) : [],
+        pythonPackages: Array.isArray(n?.pythonPackages) ? n.pythonPackages.map((x: any) => String(x)) : [],
+      }))
+    : [];
 
   for (const node of expectedNodes) {
     if (!node.name || !node.repo || !node.ref) {
@@ -283,7 +294,8 @@ export async function verifyComfyUi(opts: { dataRoot: string; repoRoot: string; 
         objectInfoCategories = Array.from(categories).slice(0, 25);
 
         customNodes = expectedNodes.map((node) => {
-          const matched = node.nodes.length > 0 ? node.nodes.every((nodeId: string) => nodeKeys.includes(nodeId)) : false;
+          const matched =
+            node.nodes.length > 0 ? node.nodes.every((nodeId: string) => nodeKeys.includes(nodeId)) : false;
           return { name: node.name, matched };
         });
       } else {
@@ -292,7 +304,7 @@ export async function verifyComfyUi(opts: { dataRoot: string; repoRoot: string; 
       }
     } catch (err: any) {
       objectInfoOk = false;
-      objectInfoError = err?.name === "AbortError" ? "timeout" : err?.message ?? String(err);
+      objectInfoError = err?.name === "AbortError" ? "timeout" : (err?.message ?? String(err));
     }
   }
 
@@ -320,18 +332,18 @@ export async function verifyComfyUi(opts: { dataRoot: string; repoRoot: string; 
       probeUrl: comfyUrl,
       ok: comfyOk,
       status: comfyStatus,
-      error: comfyError
+      error: comfyError,
     },
     objectInfo: {
       ok: objectInfoOk,
       error: objectInfoError,
       nodeCount: objectInfoNodeCount,
-      categoriesSample: objectInfoCategories
+      categoriesSample: objectInfoCategories,
     },
     python: {
       ok: pythonOk,
       error: pythonError,
-      packagesCount: pythonPackages ? pythonPackages.length : null
+      packagesCount: pythonPackages ? pythonPackages.length : null,
     },
     manifest: {
       path: manifestPath,
@@ -339,7 +351,7 @@ export async function verifyComfyUi(opts: { dataRoot: string; repoRoot: string; 
       examplePath: manifestExamplePath,
       exampleExists: manifestExampleExists,
       customNodes: Array.isArray(manifest?.customNodes) ? manifest.customNodes.length : null,
-      models: Array.isArray(manifest?.models) ? manifest.models.length : null
+      models: Array.isArray(manifest?.models) ? manifest.models.length : null,
     },
     manifestIssues,
     customNodes,
@@ -347,9 +359,9 @@ export async function verifyComfyUi(opts: { dataRoot: string; repoRoot: string; 
     workflowFiles: workflowChecks,
     localConfig: {
       paths: roots,
-      missingRoots
+      missingRoots,
     },
     checkpoints,
-    loras
+    loras,
   };
 }

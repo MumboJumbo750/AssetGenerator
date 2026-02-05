@@ -18,8 +18,16 @@
       "properties": {
         "assetIds": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
         "atlasIds": { "type": "array", "items": { "type": "string" } },
-        "profileId": { "type": "string", "minLength": 1, "description": "References data/projects/<projectId>/export-profiles/<profileId>.json" },
-        "profileSnapshot": { "type": "object", "additionalProperties": true, "description": "Optional frozen copy of profile options used for this run." }
+        "profileId": {
+          "type": "string",
+          "minLength": 1,
+          "description": "References data/projects/<projectId>/export-profiles/<profileId>.json"
+        },
+        "profileSnapshot": {
+          "type": "object",
+          "additionalProperties": true,
+          "description": "Optional frozen copy of profile options used for this run."
+        }
       }
     },
     "output": {

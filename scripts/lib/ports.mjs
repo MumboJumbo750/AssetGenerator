@@ -10,7 +10,7 @@ const NON_LISTENING_TCP_STATES = new Set([
   "CLOSE",
   "CLOSE_WAIT",
   "LAST_ACK",
-  "CLOSING"
+  "CLOSING",
 ]);
 
 function isNetstatListeningRow({ foreignAddress, state }) {
@@ -63,7 +63,10 @@ async function findListeningPidsUnix(port) {
   const lsof = await runCapture("lsof", ["-nP", `-iTCP:${port}`, "-sTCP:LISTEN", "-t"]);
   if (lsof.code === 0) {
     const pids = new Set();
-    for (const line of lsof.stdout.split(/\r?\n/).map((s) => s.trim()).filter(Boolean)) {
+    for (const line of lsof.stdout
+      .split(/\r?\n/)
+      .map((s) => s.trim())
+      .filter(Boolean)) {
       const pid = Number(line);
       if (Number.isFinite(pid) && pid > 0) pids.add(pid);
     }

@@ -9,4 +9,3 @@ export function repoRootFromHere(importMetaUrl: string) {
 export function repoPath(repoRoot: string, ...segments: string[]) {
   return path.join(repoRoot, ...segments);
 }
-

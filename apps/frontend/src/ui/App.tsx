@@ -14,6 +14,7 @@ import { PixiPage } from "./pages/PixiPage";
 import { SpecsPage } from "./pages/SpecsPage";
 import { TrainingPage } from "./pages/TrainingPage";
 import { AdminPage } from "./pages/AdminPage";
+import { AutomationPage } from "./pages/AutomationPage";
 
 export function App() {
   return (
@@ -29,6 +30,7 @@ export function App() {
             <Route path="jobs" element={<JobsPage />} />
             <Route path="pixi" element={<PixiPage />} />
             <Route path="training" element={<TrainingPage />} />
+            <Route path="automation" element={<AutomationPage />} />
             <Route path="admin" element={<AdminPage />} />
             <Route path="help" element={<HelpPage />} />
             <Route path="logs" element={<LogsPage />} />

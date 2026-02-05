@@ -39,7 +39,9 @@ export function AnimationMappingPanel(props: Props) {
               </Stack>
             </Card>
           ))}
-          {props.animationSpecs.length === 0 && <Text size="sm">No animation specs yet. Define animations on the Atlases page.</Text>}
+          {props.animationSpecs.length === 0 && (
+            <Text size="sm">No animation specs yet. Define animations on the Atlases page.</Text>
+          )}
         </Stack>
       </Stack>
     </Card>

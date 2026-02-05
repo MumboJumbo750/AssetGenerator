@@ -31,6 +31,6 @@ export function useOrderedFrameList() {
     addFrame,
     clearFrames,
     moveFrame,
-    removeFrame
+    removeFrame,
   };
 }

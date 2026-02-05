@@ -86,8 +86,8 @@ export async function importAssets(opts: {
         style,
         scenario,
         prompt: { positive: "", negative: "" },
-        status: "ready"
-      }
+        status: "ready",
+      },
     });
 
     const assetId = ulid();
@@ -95,7 +95,16 @@ export async function importAssets(opts: {
     const variantId = ulid();
     const createdAt = nowIso();
 
-    const originalAbs = path.join(opts.dataRoot, "projects", opts.projectId, "files", "images", assetId, "original", `${variantId}${ext}`);
+    const originalAbs = path.join(
+      opts.dataRoot,
+      "projects",
+      opts.projectId,
+      "files",
+      "images",
+      assetId,
+      "original",
+      `${variantId}${ext}`,
+    );
     await fs.mkdir(path.dirname(originalAbs), { recursive: true });
     await fs.copyFile(sourcePath, originalAbs);
 
@@ -117,11 +126,11 @@ export async function importAssets(opts: {
               id: variantId,
               originalPath: toDataRel(opts.dataRoot, originalAbs),
               tags: Array.isArray(item.tags) ? item.tags : undefined,
-              status: "candidate"
-            }
-          ]
-        }
-      ]
+              status: "candidate",
+            },
+          ],
+        },
+      ],
     };
 
     opts.schemas.validateOrThrow("asset.schema.json", asset);
@@ -131,7 +140,7 @@ export async function importAssets(opts: {
       assetId,
       specId: spec.id,
       sourcePath,
-      originalPath: toDataRel(opts.dataRoot, originalAbs)
+      originalPath: toDataRel(opts.dataRoot, originalAbs),
     });
   }
 

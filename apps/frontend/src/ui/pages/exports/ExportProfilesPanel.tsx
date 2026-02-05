@@ -46,17 +46,51 @@ export function ExportProfilesPanel(props: Props) {
           placeholder="Create or pick a profile"
           searchable
         />
-        <TextInput label="Profile name" value={props.profileName} onChange={(event: React.ChangeEvent<HTMLInputElement>) => props.onProfileNameChange(event.currentTarget.value)} />
+        <TextInput
+          label="Profile name"
+          value={props.profileName}
+          onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+            props.onProfileNameChange(event.currentTarget.value)
+          }
+        />
         <Group grow>
-          <NumberInput label="Scale" value={props.profileScale} onChange={(value) => props.onProfileScaleChange(Number(value) || 1)} min={0.1} step={0.1} />
-          <NumberInput label="Padding" value={props.profilePadding} onChange={(value) => props.onProfilePaddingChange(Number(value) || 0)} min={0} step={1} />
+          <NumberInput
+            label="Scale"
+            value={props.profileScale}
+            onChange={(value) => props.onProfileScaleChange(Number(value) || 1)}
+            min={0.1}
+            step={0.1}
+          />
+          <NumberInput
+            label="Padding"
+            value={props.profilePadding}
+            onChange={(value) => props.onProfilePaddingChange(Number(value) || 0)}
+            min={0}
+            step={1}
+          />
         </Group>
         <Group align="flex-end">
-          <Switch label="Trim transparent edges" checked={props.profileTrim} onChange={(event) => props.onProfileTrimChange(event.currentTarget.checked)} />
+          <Switch
+            label="Trim transparent edges"
+            checked={props.profileTrim}
+            onChange={(event) => props.onProfileTrimChange(event.currentTarget.checked)}
+          />
         </Group>
         <Group grow>
-          <TextInput label="Name prefix" value={props.profilePrefix} onChange={(event: React.ChangeEvent<HTMLInputElement>) => props.onProfilePrefixChange(event.currentTarget.value)} />
-          <TextInput label="Name suffix" value={props.profileSuffix} onChange={(event: React.ChangeEvent<HTMLInputElement>) => props.onProfileSuffixChange(event.currentTarget.value)} />
+          <TextInput
+            label="Name prefix"
+            value={props.profilePrefix}
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+              props.onProfilePrefixChange(event.currentTarget.value)
+            }
+          />
+          <TextInput
+            label="Name suffix"
+            value={props.profileSuffix}
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+              props.onProfileSuffixChange(event.currentTarget.value)
+            }
+          />
         </Group>
         <Text size="xs" c="dimmed">
           Scale/trim/padding apply to exported images; atlas images are scaled and renamed for consistency.

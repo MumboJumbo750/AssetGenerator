@@ -14,7 +14,7 @@ function parseArgs() {
     all: false,
     list: false,
     dryRun: false,
-    dataRoot: ""
+    dataRoot: "",
   };
   for (let i = 0; i < args.length; i++) {
     const a = args[i];
@@ -51,7 +51,7 @@ async function loadMigrations(stepsDir) {
       id: String(mod.id),
       description: String(mod.description ?? ""),
       run: mod.run,
-      file
+      file,
     });
   }
   migrations.sort((a, b) => a.id.localeCompare(b.id));
@@ -106,7 +106,7 @@ async function main() {
       dryRun: opts.dryRun,
       readJson,
       writeJson,
-      log: console
+      log: console,
     });
     if (!opts.dryRun) {
       applied.applied = applied.applied ?? [];

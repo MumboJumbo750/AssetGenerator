@@ -28,7 +28,7 @@ function parseArgs() {
     prompts: "",
     promptsFile: "",
     notes: "",
-    dryRun: false
+    dryRun: false,
   };
   for (let i = 0; i < args.length; i++) {
     const a = args[i];
@@ -57,8 +57,10 @@ function parsePrompts(raw) {
 async function main() {
   const { projectId, scope, loraId, releaseId, status, evalId, prompts, promptsFile, notes, dryRun } = parseArgs();
   if (!loraId) {
-    console.log("Usage: npm run lora:eval -- --lora <loraId> --release <releaseId> [--project <projectId>] [--scope project|baseline]");
-    console.log("  Prompts: --prompts \"p1|p2|p3\" or --prompts-file <path>");
+    console.log(
+      "Usage: npm run lora:eval -- --lora <loraId> --release <releaseId> [--project <projectId>] [--scope project|baseline]",
+    );
+    console.log('  Prompts: --prompts "p1|p2|p3" or --prompts-file <path>');
     console.log("  Optional: --status <pending|running|complete> --eval <evalId> --notes <text> --dry-run");
     process.exit(1);
   }
@@ -108,13 +110,11 @@ async function main() {
     status,
     prompts: promptList,
     outputs: [],
-    notes: notes || undefined
+    notes: notes || undefined,
   };
 
   const evalDir =
-    scope === "baseline"
-      ? path.join(dataRoot, "shared", "evals")
-      : path.join(dataRoot, "projects", projectId, "evals");
+    scope === "baseline" ? path.join(dataRoot, "shared", "evals") : path.join(dataRoot, "projects", projectId, "evals");
   const evalPath = path.join(evalDir, `${evalRecord.id}.json`);
 
   if (!release.evaluation || typeof release.evaluation !== "object") {

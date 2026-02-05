@@ -29,7 +29,7 @@ export async function registerProjectRoutes(app: FastifyInstance, opts: { dataRo
       projectsRoot,
       schemas: opts.schemas,
       name,
-      defaults: body?.defaults
+      defaults: body?.defaults,
     });
     return reply.code(201).send(project);
   });

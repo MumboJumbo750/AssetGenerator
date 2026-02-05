@@ -7,4 +7,3 @@ export function loadLocalConfig() {
   const raw = fs.readFileSync(localConfigPath, "utf8");
   return JSON.parse(raw);
 }
-

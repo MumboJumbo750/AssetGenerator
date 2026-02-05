@@ -46,6 +46,12 @@ export async function listSpecs(projectsRoot: string, projectId: string) {
   }
 }
 
+export async function getSpec(projectsRoot: string, projectId: string, specId: string) {
+  const filePath = path.join(projectsRoot, projectId, "specs", `${specId}.json`);
+  if (!(await fileExists(filePath))) return null;
+  return readJson<AssetSpec>(filePath);
+}
+
 export async function createSpec(opts: {
   projectsRoot: string;
   schemas: SchemaRegistry;
@@ -66,10 +72,10 @@ export async function createSpec(opts: {
     scenario: opts.spec?.scenario ?? "fantasy",
     prompt: {
       positive: opts.spec?.prompt?.positive ?? "",
-      negative: opts.spec?.prompt?.negative ?? ""
+      negative: opts.spec?.prompt?.negative ?? "",
     },
     generationParams: opts.spec?.generationParams ?? {},
-    status: (opts.spec?.status ?? "draft") as AssetSpec["status"]
+    status: (opts.spec?.status ?? "draft") as AssetSpec["status"],
   };
 
   opts.schemas.validateOrThrow("spec.schema.json", spec);

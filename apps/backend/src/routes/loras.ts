@@ -10,7 +10,7 @@ import {
   listSharedLoras,
   updateProjectLora,
   updateSharedLora,
-  type LoraUpdatePatch
+  type LoraUpdatePatch,
 } from "../services/loras";
 
 export async function registerLoraRoutes(app: FastifyInstance, opts: { dataRoot: string; schemas: SchemaRegistry }) {

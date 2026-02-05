@@ -17,9 +17,9 @@ export function useAssetFilters(initial: AssetFilters) {
       searchQuery,
       statusFilter,
       tagFilter,
-      assetTypeFilter
+      assetTypeFilter,
     }),
-    [assetTypeFilter, searchQuery, statusFilter, tagFilter]
+    [assetTypeFilter, searchQuery, statusFilter, tagFilter],
   );
 
   const clearFilters = useCallback(() => {
@@ -41,7 +41,7 @@ export function useAssetFilters(initial: AssetFilters) {
     if (!name) return;
     const next = [
       ...savedFilters.filter((f) => f.name !== name),
-      { name, searchQuery, statusFilter, tagFilter, assetTypeFilter }
+      { name, searchQuery, statusFilter, tagFilter, assetTypeFilter },
     ];
     setSavedFilters(next);
     setSavedFilterName("");
@@ -52,15 +52,18 @@ export function useAssetFilters(initial: AssetFilters) {
     }
   }, [assetTypeFilter, savedFilterName, savedFilters, searchQuery, statusFilter, tagFilter]);
 
-  const removeSavedFilter = useCallback((name: string) => {
-    const next = savedFilters.filter((f) => f.name !== name);
-    setSavedFilters(next);
-    try {
-      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
-    } catch {
-      // ignore
-    }
-  }, [savedFilters]);
+  const removeSavedFilter = useCallback(
+    (name: string) => {
+      const next = savedFilters.filter((f) => f.name !== name);
+      setSavedFilters(next);
+      try {
+        window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+      } catch {
+        // ignore
+      }
+    },
+    [savedFilters],
+  );
 
   useEffect(() => {
     try {
@@ -89,6 +92,6 @@ export function useAssetFilters(initial: AssetFilters) {
     clearFilters,
     applyFilters,
     saveCurrentFilter,
-    removeSavedFilter
+    removeSavedFilter,
   };
 }

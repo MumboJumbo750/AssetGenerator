@@ -28,7 +28,13 @@ export function ChainedJobsPanel(props: Props) {
               topicId="chained-jobs"
             />
           </Group>
-          <Checkbox checked={props.chainEnabled} onChange={(event: React.ChangeEvent<HTMLInputElement>) => props.onToggleEnabled(event.currentTarget.checked)} label="Enable" />
+          <Checkbox
+            checked={props.chainEnabled}
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+              props.onToggleEnabled(event.currentTarget.checked)
+            }
+            label="Enable"
+          />
         </Group>
         {props.chainEnabled && (
           <Stack gap="xs">
@@ -37,13 +43,15 @@ export function ChainedJobsPanel(props: Props) {
                 <Accordion.Control>Help & FAQ: placeholders</Accordion.Control>
                 <Accordion.Panel>
                   <Stack gap="xs">
-                    <Text size="sm">Placeholders let you reference the previous job output or input when chaining.</Text>
-                    <Text size="xs" c="dimmed">
-                      Supported: <code>$output.*</code> (e.g. <code>$output.assetId</code>), <code>$input.*</code>, <code>$projectId</code>,{" "}
-                      <code>$jobId</code>.
+                    <Text size="sm">
+                      Placeholders let you reference the previous job output or input when chaining.
                     </Text>
                     <Text size="xs" c="dimmed">
-                      Example: <code>{"{\"assetIds\":[\"$output.assetId\"]}"}</code>
+                      Supported: <code>$output.*</code> (e.g. <code>$output.assetId</code>), <code>$input.*</code>,{" "}
+                      <code>$projectId</code>, <code>$jobId</code>.
+                    </Text>
+                    <Text size="xs" c="dimmed">
+                      Example: <code>{'{"assetIds":["$output.assetId"]}'}</code>
                     </Text>
                   </Stack>
                 </Accordion.Panel>
@@ -57,7 +65,7 @@ export function ChainedJobsPanel(props: Props) {
                       data={[
                         { value: "bg_remove", label: "bg_remove" },
                         { value: "atlas_pack", label: "atlas_pack" },
-                        { value: "export", label: "export" }
+                        { value: "export", label: "export" },
                       ]}
                       value={job.type}
                       onChange={(value: string | null) => props.onUpdateJob(idx, { type: value ?? "bg_remove" })}
@@ -70,12 +78,17 @@ export function ChainedJobsPanel(props: Props) {
                     label={
                       <Group gap="xs">
                         <span>Chained job input (JSON)</span>
-                        <HelpTip label="JSON object only. Use placeholders like $output.assetId." topicId="chained-jobs" />
+                        <HelpTip
+                          label="JSON object only. Use placeholders like $output.assetId."
+                          topicId="chained-jobs"
+                        />
                       </Group>
                     }
                     placeholder='{"assetIds":["$output.assetId"]}'
                     value={job.inputText}
-                    onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => props.onUpdateJob(idx, { inputText: event.currentTarget.value })}
+                    onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) =>
+                      props.onUpdateJob(idx, { inputText: event.currentTarget.value })
+                    }
                     minRows={3}
                   />
                 </Stack>

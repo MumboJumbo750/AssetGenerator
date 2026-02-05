@@ -13,7 +13,7 @@ function parseArgs() {
   const out = {
     scope: "all",
     projectId: "",
-    dryRun: false
+    dryRun: false,
   };
   for (let i = 0; i < args.length; i++) {
     const a = args[i];
@@ -62,7 +62,7 @@ async function normalizeEvalFile(filePath, opts) {
     const next = {
       ...evalRecord,
       status,
-      updatedAt: nowIso()
+      updatedAt: nowIso(),
     };
 
     if (!opts.dryRun) {
@@ -115,7 +115,9 @@ async function main() {
   }
 
   const dryRunLabel = args.dryRun ? " (dry-run)" : "";
-  console.log(`[normalize-evals] Scanned ${scannedCount} evals${dryRunLabel}. Updated ${updatedCount}. Errors ${errorCount}.`);
+  console.log(
+    `[normalize-evals] Scanned ${scannedCount} evals${dryRunLabel}. Updated ${updatedCount}. Errors ${errorCount}.`,
+  );
 }
 
 main().catch((err) => {

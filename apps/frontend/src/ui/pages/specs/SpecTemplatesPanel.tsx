@@ -16,7 +16,10 @@ export function SpecTemplatesPanel(props: Props) {
       <Stack gap="xs">
         <Group justify="space-between">
           <Text fw={600}>Templates</Text>
-          <HelpTip label="Start with a template to avoid prompt mistakes and get consistent results." topicId="workflow-generation" />
+          <HelpTip
+            label="Start with a template to avoid prompt mistakes and get consistent results."
+            topicId="workflow-generation"
+          />
         </Group>
         <Group>
           {props.templates.map((template) => (

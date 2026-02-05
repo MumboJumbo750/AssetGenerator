@@ -33,7 +33,9 @@ export function JobDetailsPanel(props: Props) {
               variant="light"
               color="red"
               onClick={props.onCancel}
-              disabled={!props.selectedJobId || !props.selectedJob || !["queued", "running"].includes(props.selectedJob.status)}
+              disabled={
+                !props.selectedJobId || !props.selectedJob || !["queued", "running"].includes(props.selectedJob.status)
+              }
               loading={props.actionLoading}
             >
               Cancel
@@ -41,7 +43,9 @@ export function JobDetailsPanel(props: Props) {
             <Button
               variant="light"
               onClick={props.onRetry}
-              disabled={!props.selectedJobId || !props.selectedJob || !["failed", "canceled"].includes(props.selectedJob.status)}
+              disabled={
+                !props.selectedJobId || !props.selectedJob || !["failed", "canceled"].includes(props.selectedJob.status)
+              }
               loading={props.actionLoading}
             >
               Retry

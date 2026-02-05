@@ -17,7 +17,7 @@ import {
   updateCheckpoint,
   updateExportProfile,
   updateProjectLora,
-  updateSharedLora
+  updateSharedLora,
 } from "../api";
 import { useAsyncAction } from "../hooks/useAsyncAction";
 
@@ -26,7 +26,7 @@ const CATALOGS = [
   { value: "styles", label: "Styles" },
   { value: "scenarios", label: "Scenarios" },
   { value: "palettes", label: "Palettes" },
-  { value: "tags", label: "Tags" }
+  { value: "tags", label: "Tags" },
 ];
 
 function pretty(value: unknown) {
@@ -176,7 +176,11 @@ export function AdminPage() {
                   {catalogAction.error || saveCatalogAction.error}
                 </Text>
               )}
-              <Textarea minRows={12} value={catalogJson} onChange={(event) => setCatalogJson(event.currentTarget.value)} />
+              <Textarea
+                minRows={12}
+                value={catalogJson}
+                onChange={(event) => setCatalogJson(event.currentTarget.value)}
+              />
             </Stack>
           </Card>
         </Tabs.Panel>
@@ -213,7 +217,11 @@ export function AdminPage() {
                   {checkpointsAction.error || loadCheckpointAction.error || saveCheckpointAction.error}
                 </Text>
               )}
-              <Textarea minRows={12} value={checkpointJson} onChange={(event) => setCheckpointJson(event.currentTarget.value)} />
+              <Textarea
+                minRows={12}
+                value={checkpointJson}
+                onChange={(event) => setCheckpointJson(event.currentTarget.value)}
+              />
               <Group justify="flex-end">
                 <Button size="xs" onClick={() => saveCheckpointAction.run().catch(() => undefined)}>
                   Save checkpoint
@@ -230,7 +238,7 @@ export function AdminPage() {
                 <Select
                   data={[
                     { value: "project", label: "Project" },
-                    { value: "baseline", label: "Baseline" }
+                    { value: "baseline", label: "Baseline" },
                   ]}
                   value={loraScope}
                   onChange={(value) => setLoraScope((value as "project" | "baseline") ?? "project")}
@@ -274,7 +282,10 @@ export function AdminPage() {
                           </Button>
                         </Group>
                         <Select
-                          data={(lora.releases ?? []).map((r: any) => ({ value: r.id, label: `${r.id} (${r.status})` }))}
+                          data={(lora.releases ?? []).map((r: any) => ({
+                            value: r.id,
+                            label: `${r.id} (${r.status})`,
+                          }))}
                           value={lora.activeReleaseId ?? ""}
                           onChange={(value) =>
                             (loraScope === "baseline"
@@ -328,7 +339,11 @@ export function AdminPage() {
                   {profilesAction.error || loadProfileAction.error || saveProfileAction.error}
                 </Text>
               )}
-              <Textarea minRows={12} value={profileJson} onChange={(event) => setProfileJson(event.currentTarget.value)} />
+              <Textarea
+                minRows={12}
+                value={profileJson}
+                onChange={(event) => setProfileJson(event.currentTarget.value)}
+              />
               <Group justify="flex-end">
                 <Button size="xs" onClick={() => saveProfileAction.run().catch(() => undefined)}>
                   Save profile

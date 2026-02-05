@@ -18,7 +18,7 @@ export function JobsPage() {
   const { log, error, refresh } = useJobLog({
     projectId: selectedProjectId,
     jobId: selectedJobId,
-    logPath: selectedJob?.logPath
+    logPath: selectedJob?.logPath,
   });
 
   const jobAction = useAsyncAction(async (action: "cancel" | "retry") => {

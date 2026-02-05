@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "automation-rule.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "projectId", "name", "enabled", "trigger", "actions", "createdAt", "updatedAt"],
+  "properties": {
+    "id": { "type": "string", "minLength": 1 },
+    "projectId": { "type": "string", "minLength": 1 },
+    "name": { "type": "string", "minLength": 1 },
+    "description": { "type": "string" },
+    "enabled": { "type": "boolean" },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "updatedAt": { "type": "string", "format": "date-time" },
+    "lastRunAt": { "type": "string", "format": "date-time" },
+    "notes": { "type": "string" },
+    "trigger": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["type"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["spec_refined", "asset_approved", "atlas_ready", "schedule", "manual"]
+        },
+        "schedule": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "cron": { "type": "string" },
+            "timezone": { "type": "string" }
+          }
+        }
+      }
+    },
+    "conditions": { "type": "object", "additionalProperties": true },
+    "actions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": true,
+        "required": ["type"],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["enqueue_job", "run_eval_grid", "apply_tags", "set_status", "export"]
+          },
+          "config": { "type": "object", "additionalProperties": true }
+        }
+      }
+    }
+  }
+}

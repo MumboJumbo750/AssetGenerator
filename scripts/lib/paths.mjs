@@ -16,7 +16,6 @@ export function platformPaths() {
     isWindows,
     venvPython(venvDir) {
       return isWindows ? path.join(venvDir, "Scripts", "python.exe") : path.join(venvDir, "bin", "python");
-    }
+    },
   };
 }
-

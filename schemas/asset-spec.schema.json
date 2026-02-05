@@ -3,17 +3,7 @@
   "$id": "asset-spec.schema.json",
   "type": "object",
   "additionalProperties": false,
-  "required": [
-    "id",
-    "projectId",
-    "createdAt",
-    "updatedAt",
-    "assetType",
-    "title",
-    "style",
-    "scenario",
-    "prompt"
-  ],
+  "required": ["id", "projectId", "createdAt", "updatedAt", "assetType", "title", "style", "scenario", "prompt"],
   "properties": {
     "id": { "type": "string", "minLength": 1 },
     "projectId": { "type": "string", "minLength": 1 },

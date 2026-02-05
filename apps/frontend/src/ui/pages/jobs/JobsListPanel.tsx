@@ -18,7 +18,10 @@ export function JobsListPanel(props: Props) {
         <Group justify="space-between">
           <Group gap="xs">
             <Text fw={600}>Jobs</Text>
-            <HelpTip label="Track generation and post-processing jobs; click to see details." topicId="workflow-generation" />
+            <HelpTip
+              label="Track generation and post-processing jobs; click to see details."
+              topicId="workflow-generation"
+            />
           </Group>
           <Badge variant="light">{props.jobs.length}</Badge>
         </Group>

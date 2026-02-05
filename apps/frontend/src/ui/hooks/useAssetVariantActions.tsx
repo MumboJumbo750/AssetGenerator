@@ -27,7 +27,7 @@ export function useAssetVariantActions(opts: {
           opts.selectedAsset.id,
           opts.selectedVersion.id,
           opts.selectedVariant.id,
-          patch
+          patch,
         );
         await opts.onRefresh();
       } catch (e: any) {
@@ -36,7 +36,7 @@ export function useAssetVariantActions(opts: {
         setAssetUpdateBusy(false);
       }
     },
-    [opts]
+    [opts],
   );
 
   const onToggleTag = useCallback(
@@ -49,7 +49,7 @@ export function useAssetVariantActions(opts: {
       }
       await updateVariant({ tags: next });
     },
-    [opts.selectedVariant, updateVariant]
+    [opts.selectedVariant, updateVariant],
   );
 
   const onAddCustomTag = useCallback(
@@ -62,21 +62,21 @@ export function useAssetVariantActions(opts: {
       }
       onClear();
     },
-    [opts.selectedVariant, updateVariant]
+    [opts.selectedVariant, updateVariant],
   );
 
   const onSetVariantStatus = useCallback(
     async (status: "candidate" | "selected" | "rejected") => {
       await updateVariant({ status });
     },
-    [updateVariant]
+    [updateVariant],
   );
 
   const onSetVariantRating = useCallback(
     async (value: number | null) => {
       await updateVariant({ rating: value });
     },
-    [updateVariant]
+    [updateVariant],
   );
 
   const onSaveReviewNote = useCallback(
@@ -85,19 +85,14 @@ export function useAssetVariantActions(opts: {
       const note = reviewNote.trim();
       await updateVariant({ reviewNote: note.length === 0 ? null : note });
     },
-    [opts.selectedVariant, updateVariant]
+    [opts.selectedVariant, updateVariant],
   );
 
   const onSetPrimaryVariant = useCallback(async () => {
     if (!opts.projectId || !opts.selectedAsset || !opts.selectedVersion || !opts.selectedVariant) return;
     setAssetUpdateBusy(true);
     try {
-      await setPrimaryVariant(
-        opts.projectId,
-        opts.selectedAsset.id,
-        opts.selectedVersion.id,
-        opts.selectedVariant.id
-      );
+      await setPrimaryVariant(opts.projectId, opts.selectedAsset.id, opts.selectedVersion.id, opts.selectedVariant.id);
       await opts.onRefresh();
     } catch (e: any) {
       opts.onError(e?.message ?? String(e));
@@ -119,7 +114,7 @@ export function useAssetVariantActions(opts: {
         setAssetUpdateBusy(false);
       }
     },
-    [opts]
+    [opts],
   );
 
   return {
@@ -131,6 +126,6 @@ export function useAssetVariantActions(opts: {
     onSetVariantRating,
     onSaveReviewNote,
     onSetPrimaryVariant,
-    onSetVersionStatus
+    onSetVersionStatus,
   };
 }

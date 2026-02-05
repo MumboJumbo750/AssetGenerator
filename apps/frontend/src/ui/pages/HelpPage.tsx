@@ -11,7 +11,7 @@ import {
   Stack,
   Text,
   TextInput,
-  Title
+  Title,
 } from "@mantine/core";
 
 import { useSearchParams } from "react-router-dom";
@@ -31,7 +31,7 @@ export function HelpPage() {
     setSelectedTopicId,
     categories,
     filteredTopics,
-    selectedTopic
+    selectedTopic,
   } = useHelpTopics({ topicParam });
 
   return (
@@ -63,12 +63,7 @@ export function HelpPage() {
             <Stack gap="xs">
               <Text fw={600}>Categories</Text>
               {categories.map((name) => (
-                <NavLink
-                  key={name}
-                  label={name}
-                  active={category === name}
-                  onClick={() => setCategory(name)}
-                />
+                <NavLink key={name} label={name} active={category === name} onClick={() => setCategory(name)} />
               ))}
             </Stack>
           </Card>

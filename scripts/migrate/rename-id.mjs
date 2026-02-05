@@ -14,7 +14,7 @@ function parseArgs() {
     to: null,
     projectId: null,
     dataRoot: null,
-    dryRun: false
+    dryRun: false,
   };
 
   for (let i = 0; i < args.length; i++) {
@@ -32,7 +32,9 @@ function parseArgs() {
 
 function usage() {
   console.log("Usage:");
-  console.log("  npm run migrate:rename-id -- --kind <kind> --from <oldId> --to <newId> [--project <projectId>] [--dry-run]");
+  console.log(
+    "  npm run migrate:rename-id -- --kind <kind> --from <oldId> --to <newId> [--project <projectId>] [--dry-run]",
+  );
   console.log("");
   console.log("Kinds:");
   console.log("  tag | tagGroup | assetType | style | scenario | palette | checkpoint | lora");
@@ -404,15 +406,25 @@ async function main() {
     const catalogsDir = path.join(p.dir, "catalogs");
     const tagsCatalog = path.join(catalogsDir, "tags.json");
     if (kind === "tag") await processJsonFile(tagsCatalog, (v) => updateTagsCatalogJsonForTag(v, { from, to }));
-    if (kind === "tagGroup") await processJsonFile(tagsCatalog, (v) => updateTagsCatalogJsonForTagGroup(v, { from, to }));
+    if (kind === "tagGroup")
+      await processJsonFile(tagsCatalog, (v) => updateTagsCatalogJsonForTagGroup(v, { from, to }));
     if (kind === "assetType") {
-      await processJsonFile(path.join(catalogsDir, "asset-types.json"), (v) => updateAssetTypesCatalogJson(v, { from, to }));
+      await processJsonFile(path.join(catalogsDir, "asset-types.json"), (v) =>
+        updateAssetTypesCatalogJson(v, { from, to }),
+      );
       // assetType tag IDs follow `assetType:<assetTypeId>`
-      await processJsonFile(tagsCatalog, (v) => updateTagsCatalogJsonForTag(v, { from: `assetType:${from}`, to: `assetType:${to}` }));
+      await processJsonFile(tagsCatalog, (v) =>
+        updateTagsCatalogJsonForTag(v, { from: `assetType:${from}`, to: `assetType:${to}` }),
+      );
     }
-    if (kind === "style") await processJsonFile(path.join(catalogsDir, "styles.json"), (v) => updateStylesCatalogJson(v, { from, to }));
-    if (kind === "scenario") await processJsonFile(path.join(catalogsDir, "scenarios.json"), (v) => updateScenariosCatalogJson(v, { from, to }));
-    if (kind === "palette") await processJsonFile(path.join(catalogsDir, "palettes.json"), (v) => updatePalettesCatalogJson(v, { from, to }));
+    if (kind === "style")
+      await processJsonFile(path.join(catalogsDir, "styles.json"), (v) => updateStylesCatalogJson(v, { from, to }));
+    if (kind === "scenario")
+      await processJsonFile(path.join(catalogsDir, "scenarios.json"), (v) =>
+        updateScenariosCatalogJson(v, { from, to }),
+      );
+    if (kind === "palette")
+      await processJsonFile(path.join(catalogsDir, "palettes.json"), (v) => updatePalettesCatalogJson(v, { from, to }));
 
     // specs + assets
     const specFiles = await fg(["*.json"], { cwd: path.join(p.dir, "specs"), absolute: true });

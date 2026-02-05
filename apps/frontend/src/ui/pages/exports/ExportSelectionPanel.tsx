@@ -46,7 +46,10 @@ export function ExportSelectionPanel(props: Props) {
                 <Card key={asset.id} withBorder radius="sm" p="sm">
                   <Group justify="space-between">
                     <Group>
-                      <img src={`/data/${asset.previewPath}`} style={{ width: 40, height: 40, objectFit: "contain", borderRadius: 8 }} />
+                      <img
+                        src={`/data/${asset.previewPath}`}
+                        style={{ width: 40, height: 40, objectFit: "contain", borderRadius: 8 }}
+                      />
                       <div>
                         <Text size="sm" fw={600}>
                           {asset.title}
@@ -56,7 +59,11 @@ export function ExportSelectionPanel(props: Props) {
                         </Text>
                       </div>
                     </Group>
-                    <Button size="xs" variant={props.isAssetSelected(asset.id) ? "filled" : "light"} onClick={() => props.onToggleAsset(asset.id)}>
+                    <Button
+                      size="xs"
+                      variant={props.isAssetSelected(asset.id) ? "filled" : "light"}
+                      onClick={() => props.onToggleAsset(asset.id)}
+                    >
                       {props.isAssetSelected(asset.id) ? "Selected" : "Select"}
                     </Button>
                   </Group>
@@ -89,7 +96,10 @@ export function ExportSelectionPanel(props: Props) {
                 <Card key={atlas.id} withBorder radius="sm" p="sm">
                   <Group justify="space-between">
                     <Group>
-                      <img src={`/data/${atlas.imagePath}`} style={{ width: 40, height: 40, objectFit: "contain", borderRadius: 8 }} />
+                      <img
+                        src={`/data/${atlas.imagePath}`}
+                        style={{ width: 40, height: 40, objectFit: "contain", borderRadius: 8 }}
+                      />
                       <div>
                         <Text size="sm" fw={600}>
                           {atlas.id}
@@ -99,7 +109,11 @@ export function ExportSelectionPanel(props: Props) {
                         </Text>
                       </div>
                     </Group>
-                    <Button size="xs" variant={props.isAtlasSelected(atlas.id) ? "filled" : "light"} onClick={() => props.onToggleAtlas(atlas.id)}>
+                    <Button
+                      size="xs"
+                      variant={props.isAtlasSelected(atlas.id) ? "filled" : "light"}
+                      onClick={() => props.onToggleAtlas(atlas.id)}
+                    >
                       {props.isAtlasSelected(atlas.id) ? "Selected" : "Select"}
                     </Button>
                   </Group>

@@ -3,6 +3,7 @@
 We use ADRs to record “why” decisions so the system stays coherent as it grows.
 
 ## Index
+
 - `docs/decisions/ADR-0001-data-first-json-db.md`
 - `docs/decisions/ADR-0002-typescript-everywhere.md`
 - `docs/decisions/ADR-0003-comfyui-as-generation-backend.md`
@@ -12,6 +13,7 @@ We use ADRs to record “why” decisions so the system stays coherent as it gro
 - `docs/decisions/adr-template.md`
 
 ## Rules
+
 - One decision per ADR.
 - Keep them short and date-stamped.
 - Prefer documenting tradeoffs over “marketing”.

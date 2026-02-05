@@ -30,13 +30,7 @@
           "properties": {
             "mode": {
               "type": "string",
-              "enum": [
-                "manual",
-                "baseline_then_project",
-                "project_then_baseline",
-                "baseline_only",
-                "project_only"
-              ],
+              "enum": ["manual", "baseline_then_project", "project_then_baseline", "baseline_only", "project_only"],
               "default": "baseline_then_project"
             },
             "preferRecommended": { "type": "boolean", "default": true },

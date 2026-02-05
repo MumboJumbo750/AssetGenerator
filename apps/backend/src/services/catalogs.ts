@@ -9,7 +9,7 @@ const catalogMap: Record<string, { fileName: string; schemaId: string }> = {
   styles: { fileName: "styles.json", schemaId: "catalog.styles.schema.json" },
   scenarios: { fileName: "scenarios.json", schemaId: "catalog.scenarios.schema.json" },
   palettes: { fileName: "palettes.json", schemaId: "catalog.palettes.schema.json" },
-  tags: { fileName: "tags.json", schemaId: "catalog.tags.schema.json" }
+  tags: { fileName: "tags.json", schemaId: "catalog.tags.schema.json" },
 };
 
 export function getCatalogEntry(catalogId: string) {

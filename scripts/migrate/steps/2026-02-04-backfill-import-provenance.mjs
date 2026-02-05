@@ -22,7 +22,7 @@ export async function run(ctx) {
 
     asset.provenance = {
       source: generation?.source ?? "import",
-      url: typeof generation?.sourcePath === "string" ? generation.sourcePath : undefined
+      url: typeof generation?.sourcePath === "string" ? generation.sourcePath : undefined,
     };
     asset.updatedAt = new Date().toISOString();
     updated += 1;

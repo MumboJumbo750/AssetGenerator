@@ -31,14 +31,18 @@ export async function registerImportRoutes(app: FastifyInstance, opts: { dataRoo
           provenance:
             typeof item.provenance === "object" && item.provenance
               ? {
-                  source: typeof (item.provenance as any).source === "string" ? (item.provenance as any).source : undefined,
-                  author: typeof (item.provenance as any).author === "string" ? (item.provenance as any).author : undefined,
-                  license: typeof (item.provenance as any).license === "string" ? (item.provenance as any).license : undefined,
+                  source:
+                    typeof (item.provenance as any).source === "string" ? (item.provenance as any).source : undefined,
+                  author:
+                    typeof (item.provenance as any).author === "string" ? (item.provenance as any).author : undefined,
+                  license:
+                    typeof (item.provenance as any).license === "string" ? (item.provenance as any).license : undefined,
                   url: typeof (item.provenance as any).url === "string" ? (item.provenance as any).url : undefined,
-                  notes: typeof (item.provenance as any).notes === "string" ? (item.provenance as any).notes : undefined
+                  notes:
+                    typeof (item.provenance as any).notes === "string" ? (item.provenance as any).notes : undefined,
                 }
-              : undefined
-        }))
+              : undefined,
+        })),
       });
       return reply.code(201).send(result);
     } catch (err: any) {

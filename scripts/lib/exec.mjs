@@ -24,4 +24,3 @@ export function runCapture(command, args, options = {}) {
     child.on("exit", (code) => resolve({ code: code ?? -1, stdout, stderr }));
   });
 }
-

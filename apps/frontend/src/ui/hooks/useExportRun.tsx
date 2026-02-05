@@ -39,10 +39,17 @@ export function useExportRun(opts: {
           atlasId,
           frames,
           fps: animation?.fps ?? 12,
-          loop: animation?.loop ?? true
+          loop: animation?.loop ?? true,
         };
       })
-      .filter(Boolean) as Array<{ name: string; assetId: string; atlasId: string; frames: string[]; fps: number; loop: boolean }>;
+      .filter(Boolean) as Array<{
+      name: string;
+      assetId: string;
+      atlasId: string;
+      frames: string[];
+      fps: number;
+      loop: boolean;
+    }>;
 
     const requiredAtlasIds = new Set(animations.map((a) => a.atlasId));
     const atlasIdsFinal = Array.from(new Set([...atlasIds, ...requiredAtlasIds]));
@@ -69,10 +76,15 @@ export function useExportRun(opts: {
         atlasIds: atlasIdsFinal,
         profileId: opts.selectedProfile?.id,
         profileSnapshot: opts.selectedProfile
-          ? { id: opts.selectedProfile.id, name: opts.selectedProfile.name, type: opts.selectedProfile.type, options: opts.selectedProfile.options }
+          ? {
+              id: opts.selectedProfile.id,
+              name: opts.selectedProfile.name,
+              type: opts.selectedProfile.type,
+              options: opts.selectedProfile.options,
+            }
           : undefined,
         animations,
-        ui
+        ui,
       });
       await opts.onRefresh();
       opts.setExportId("");

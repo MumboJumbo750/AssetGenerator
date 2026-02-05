@@ -9,3 +9,4 @@ export * from "./comfyuiVerify";
 export * from "./exportProfiles";
 export * from "./loras";
 export * from "./evals";
+export * from "./automation";

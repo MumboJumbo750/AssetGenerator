@@ -7,14 +7,16 @@ import type { JsonlLogger } from "../lib/logging";
 import { tailString } from "../lib/logging";
 
 function venvPython(venvDir: string) {
-  return process.platform === "win32" ? path.join(venvDir, "Scripts", "python.exe") : path.join(venvDir, "bin", "python");
+  return process.platform === "win32"
+    ? path.join(venvDir, "Scripts", "python.exe")
+    : path.join(venvDir, "bin", "python");
 }
 
 async function runLogged(
   log: JsonlLogger | undefined,
   command: string,
   args: string[],
-  options: { cwd?: string; env?: NodeJS.ProcessEnv }
+  options: { cwd?: string; env?: NodeJS.ProcessEnv },
 ) {
   if (!log) {
     await run(command, args, options);

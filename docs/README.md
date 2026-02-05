@@ -3,6 +3,7 @@
 This repository is intentionally **data-first**: the project database is versioned JSON in `data/` so the app can be moved via Git and everyone shares the same specs, tags, and asset metadata.
 
 ## Goals
+
 - Create assets from structured specs (not ad-hoc prompts)
 - Support multiple model checkpoints and per-checkpoint LoRAs
 - Make review/tagging fast (clickable prepared tags)
@@ -10,6 +11,7 @@ This repository is intentionally **data-first**: the project database is version
 - Enable background removal (alpha) and spritesheet stitching
 
 ## Table of contents
+
 - Vision and scope: `docs/vision.md`
 - Architecture: `docs/architecture.md` (includes services + frontend layering)
 - Backend services: `docs/backend/services.md`
@@ -60,6 +62,7 @@ This repository is intentionally **data-first**: the project database is version
   - Frontend architecture: `docs/ui/frontend-architecture.md`
 
 ## Glossary (short)
+
 - **Project**: the top-level container (defaults, shared catalogs, assets).
 - **SpecList**: a user’s “wishlist” in natural language, refined into structured **AssetSpecs**.
 - **AssetSpec**: structured definition of one asset to generate (type, style, scenario, prompts, tags).

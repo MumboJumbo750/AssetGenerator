@@ -14,6 +14,6 @@ export function useAtlasAnimationForm() {
     setAnimationName,
     setAnimationFps,
     setAnimationLoop,
-    setAnimationSpecId
+    setAnimationSpecId,
   };
 }

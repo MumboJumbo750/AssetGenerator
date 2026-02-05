@@ -3,7 +3,15 @@ import path from "node:path";
 import type { FastifyInstance } from "fastify";
 
 import type { SchemaRegistry } from "../lib/schemas";
-import { approveAssetVersion, getAsset, listAssets, setPrimaryVariant, updateAssetVariant, updateAssetVersion } from "../services/assets";
+import {
+  approveAssetVersion,
+  getAsset,
+  listAssets,
+  setPrimaryVariant,
+  updateAssetVariant,
+  updateAssetVersion,
+} from "../services/assets";
+import { triggerAutomationEvent } from "../services/automation";
 
 export async function registerAssetRoutes(app: FastifyInstance, opts: { dataRoot: string; schemas: SchemaRegistry }) {
   const projectsRoot = path.join(opts.dataRoot, "projects");
@@ -28,9 +36,15 @@ export async function registerAssetRoutes(app: FastifyInstance, opts: { dataRoot
       schemas: opts.schemas,
       projectId,
       assetId,
-      versionId
+      versionId,
     });
     if (!asset) return reply.code(404).send({ error: "Asset or version not found" });
+    await triggerAutomationEvent({
+      projectsRoot,
+      schemas: opts.schemas,
+      projectId,
+      event: { type: "asset_approved", payload: { assetId, versionId } },
+    });
     return { ok: true };
   });
 
@@ -46,7 +60,7 @@ export async function registerAssetRoutes(app: FastifyInstance, opts: { dataRoot
       projectId,
       assetId,
       versionId,
-      variantId
+      variantId,
     });
     if (!asset) return reply.code(404).send({ error: "Asset, version, or variant not found" });
     return { ok: true };
@@ -59,7 +73,12 @@ export async function registerAssetRoutes(app: FastifyInstance, opts: { dataRoot
       versionId: string;
       variantId: string;
     };
-    const body = req.body as { tags?: string[]; rating?: number | null; status?: string; reviewNote?: string | null } | null;
+    const body = req.body as {
+      tags?: string[];
+      rating?: number | null;
+      status?: string;
+      reviewNote?: string | null;
+    } | null;
 
     const asset = await updateAssetVariant({
       projectsRoot,
@@ -68,7 +87,7 @@ export async function registerAssetRoutes(app: FastifyInstance, opts: { dataRoot
       assetId,
       versionId,
       variantId,
-      patch: body ?? {}
+      patch: body ?? {},
     });
     if (!asset) return reply.code(404).send({ error: "Asset, version, or variant not found" });
     return { ok: true };
@@ -81,6 +100,8 @@ export async function registerAssetRoutes(app: FastifyInstance, opts: { dataRoot
       versionId: string;
     };
     const body = req.body as { status?: string } | null;
+    const before = await getAsset(projectsRoot, projectId, assetId);
+    const prevStatus = before?.versions.find((v) => v.id === versionId)?.status;
 
     const asset = await updateAssetVersion({
       projectsRoot,
@@ -88,9 +109,18 @@ export async function registerAssetRoutes(app: FastifyInstance, opts: { dataRoot
       projectId,
       assetId,
       versionId,
-      patch: body ?? {}
+      patch: body ?? {},
     });
     if (!asset) return reply.code(404).send({ error: "Asset or version not found" });
+    const nextStatus = asset.versions.find((v) => v.id === versionId)?.status;
+    if (prevStatus !== "approved" && nextStatus === "approved") {
+      await triggerAutomationEvent({
+        projectsRoot,
+        schemas: opts.schemas,
+        projectId,
+        event: { type: "asset_approved", payload: { assetId, versionId } },
+      });
+    }
     return { ok: true };
   });
 }

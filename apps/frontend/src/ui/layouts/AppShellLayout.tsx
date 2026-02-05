@@ -11,7 +11,7 @@ import {
   Stack,
   Text,
   TextInput,
-  Title
+  Title,
 } from "@mantine/core";
 import { NavLink as RouterNavLink, Outlet, useLocation } from "react-router-dom";
 
@@ -25,11 +25,12 @@ const NAV_ITEMS = [
   { to: "/atlases", label: "Atlases", description: "Frames & animations" },
   { to: "/exports", label: "Exports", description: "Profiles & Pixi kits" },
   { to: "/training", label: "Training", description: "LoRA eval comparison" },
+  { to: "/automation", label: "Automation", description: "Rule-based job orchestration" },
   { to: "/admin", label: "Admin", description: "Catalogs & governance" },
   { to: "/jobs", label: "Jobs", description: "Queue and logs" },
   { to: "/pixi", label: "Pixi", description: "Export preview" },
   { to: "/help", label: "Help", description: "FAQ and workflows" },
-  { to: "/logs", label: "Logs", description: "Backend & worker" }
+  { to: "/logs", label: "Logs", description: "Backend & worker" },
 ];
 
 export function AppShellLayout() {
@@ -42,7 +43,7 @@ export function AppShellLayout() {
     systemStatus,
     systemStatusError,
     error,
-    setError
+    setError,
   } = useAppData();
 
   const location = useLocation();
@@ -50,7 +51,7 @@ export function AppShellLayout() {
 
   const projectOptions = useMemo(
     () => projects.map((project) => ({ value: project.id, label: project.name })),
-    [projects]
+    [projects],
   );
 
   function isActive(path: string) {
@@ -90,7 +91,10 @@ export function AppShellLayout() {
               searchable
               nothingFoundMessage="No projects"
             />
-            <Button variant="light" onClick={() => refreshProjectData().catch((e) => setError(e?.message ?? String(e)))}>
+            <Button
+              variant="light"
+              onClick={() => refreshProjectData().catch((e) => setError(e?.message ?? String(e)))}
+            >
               Refresh
             </Button>
           </Group>
@@ -168,7 +172,9 @@ export function AppShellLayout() {
                 <TextInput
                   placeholder="New project name"
                   value={newProjectName}
-                  onChange={(event: React.ChangeEvent<HTMLInputElement>) => setNewProjectName(event.currentTarget.value)}
+                  onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                    setNewProjectName(event.currentTarget.value)
+                  }
                   style={{ flex: 1 }}
                 />
                 <Button onClick={onCreateProject} disabled={!newProjectName.trim()}>

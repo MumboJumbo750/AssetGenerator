@@ -11,9 +11,7 @@ function parseArgs() {
     if (a === "--ports") ports.push(...String(args[++i] ?? "").split(","));
   }
 
-  const parsedPorts = ports
-    .map((p) => Number(String(p).trim()))
-    .filter((n) => Number.isFinite(n) && n > 0);
+  const parsedPorts = ports.map((p) => Number(String(p).trim())).filter((n) => Number.isFinite(n) && n > 0);
 
   return { ports: parsedPorts, dryRun };
 }
@@ -46,4 +44,3 @@ main().catch((err) => {
   console.error(err?.message ?? err);
   process.exit(1);
 });
-

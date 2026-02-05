@@ -23,9 +23,10 @@ export function ExportsPage() {
 
   const uiSpecsLocal = useMemo(
     () => specs.filter((spec) => spec.output?.kind === "ui_states" && spec.output?.uiStates?.states?.length),
-    [specs]
+    [specs],
   );
-  const { animationAtlasMap, setAnimationAtlasMap, uiMappings, updateUiMapping, resetMappings } = useExportMappings(uiSpecsLocal);
+  const { animationAtlasMap, setAnimationAtlasMap, uiMappings, updateUiMapping, resetMappings } =
+    useExportMappings(uiSpecsLocal);
   const {
     profiles,
     atlases,
@@ -48,34 +49,28 @@ export function ExportsPage() {
     selectedProfile,
     profileOptions,
     createProfile,
-    updateProfile
+    updateProfile,
   } = useExportProfiles(selectedProjectId);
 
-  const {
-    uiSpecs,
-    animationSpecs,
-    exportableAssets,
-    textureOptions,
-    missingAnimationMappings,
-    missingUiMappings
-  } = useExportsViewModel({
-    assets,
-    specs,
-    uiSpecs: uiSpecsLocal,
-    atlases,
-    assetSelection: assetSelection.selected,
-    atlasSelection: atlasSelection.selected,
-    animationAtlasMap,
-    uiMappings,
-    profilePrefix,
-    profileSuffix
-  });
+  const { uiSpecs, animationSpecs, exportableAssets, textureOptions, missingAnimationMappings, missingUiMappings } =
+    useExportsViewModel({
+      assets,
+      specs,
+      uiSpecs: uiSpecsLocal,
+      atlases,
+      assetSelection: assetSelection.selected,
+      atlasSelection: atlasSelection.selected,
+      animationAtlasMap,
+      uiMappings,
+      profilePrefix,
+      profileSuffix,
+    });
 
   useExportSelectionReset({
     projectId: selectedProjectId,
     assetSelection,
     atlasSelection,
-    resetMappings
+    resetMappings,
   });
 
   const { runExport } = useExportRun({
@@ -90,9 +85,8 @@ export function ExportsPage() {
     uiSpecs,
     uiMappings,
     onRefresh: refreshProjectData,
-    onError: (message) => setError(message)
+    onError: (message) => setError(message),
   });
-
 
   return (
     <Stack gap="lg">
@@ -139,7 +133,11 @@ export function ExportsPage() {
       </SimpleGrid>
 
       <ExportSelectionPanel
-        exportableAssets={exportableAssets.map((asset) => ({ id: asset.id, title: asset.title, previewPath: asset.previewPath }))}
+        exportableAssets={exportableAssets.map((asset) => ({
+          id: asset.id,
+          title: asset.title,
+          previewPath: asset.previewPath,
+        }))}
         atlases={atlases}
         atlasError={atlasError}
         isAssetSelected={assetSelection.has}

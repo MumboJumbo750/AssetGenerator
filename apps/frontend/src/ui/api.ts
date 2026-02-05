@@ -40,6 +40,44 @@ export type Job = {
   logPath?: string;
 };
 
+export type AutomationRule = {
+  id: string;
+  projectId: string;
+  name: string;
+  description?: string;
+  enabled: boolean;
+  createdAt: string;
+  updatedAt: string;
+  lastRunAt?: string;
+  notes?: string;
+  trigger: { type: "spec_refined" | "asset_approved" | "atlas_ready" | "schedule" | "manual"; schedule?: unknown };
+  conditions?: Record<string, unknown>;
+  actions: Array<{ type: "enqueue_job" | "run_eval_grid" | "apply_tags" | "set_status" | "export"; config?: unknown }>;
+};
+
+export type AutomationRun = {
+  id: string;
+  projectId: string;
+  ruleId: string;
+  status: "queued" | "running" | "succeeded" | "failed" | "canceled";
+  createdAt: string;
+  updatedAt: string;
+  startedAt?: string;
+  endedAt?: string;
+  dryRun?: boolean;
+  error?: string;
+  meta?: Record<string, unknown>;
+  steps?: Array<{
+    id: string;
+    type: string;
+    status: "queued" | "running" | "succeeded" | "failed" | "canceled";
+    startedAt?: string;
+    endedAt?: string;
+    error?: string;
+    meta?: Record<string, unknown>;
+  }>;
+};
+
 export type CheckpointRecord = {
   id: string;
   name: string;
@@ -113,7 +151,7 @@ async function api<T>(method: string, path: string, body?: unknown): Promise<T> 
   const res = await fetch(path, {
     method,
     headers: body ? { "content-type": "application/json" } : undefined,
-    body: body ? JSON.stringify(body) : undefined
+    body: body ? JSON.stringify(body) : undefined,
   });
   if (!res.ok) throw new Error(await res.text());
   return (await res.json()) as T;
@@ -148,7 +186,7 @@ export async function createSpecList(projectId: string, title: string, text: str
 export async function updateSpecList(
   projectId: string,
   specListId: string,
-  patch: Partial<Pick<SpecList, "status" | "derivedSpecIds" | "notes">>
+  patch: Partial<Pick<SpecList, "status" | "derivedSpecIds" | "notes">>,
 ) {
   return api<SpecList>("PATCH", `/api/projects/${projectId}/spec-lists/${specListId}`, patch);
 }
@@ -167,6 +205,36 @@ export async function cancelJob(projectId: string, jobId: string) {
 
 export async function retryJob(projectId: string, jobId: string) {
   return api<{ job: Job }>("POST", `/api/projects/${projectId}/jobs/${jobId}/retry`);
+}
+
+export async function listAutomationRules(projectId: string) {
+  return api<{ rules: AutomationRule[] }>("GET", `/api/projects/${projectId}/automation/rules`);
+}
+
+export async function createAutomationRule(projectId: string, body: Partial<AutomationRule>) {
+  return api<{ rule: AutomationRule }>("POST", `/api/projects/${projectId}/automation/rules`, body);
+}
+
+export async function updateAutomationRule(projectId: string, ruleId: string, patch: Partial<AutomationRule>) {
+  return api<{ rule: AutomationRule }>("PUT", `/api/projects/${projectId}/automation/rules/${ruleId}`, patch);
+}
+
+export async function listAutomationRuns(projectId: string) {
+  return api<{ runs: AutomationRun[] }>("GET", `/api/projects/${projectId}/automation/runs`);
+}
+
+export async function createAutomationRun(
+  projectId: string,
+  body: { ruleId: string; dryRun?: boolean; meta?: Record<string, unknown> },
+) {
+  return api<{ run: AutomationRun }>("POST", `/api/projects/${projectId}/automation/runs`, body);
+}
+
+export async function executeAutomationRun(
+  projectId: string,
+  body: { ruleId: string; dryRun?: boolean; meta?: Record<string, unknown> },
+) {
+  return api<{ run: AutomationRun }>("POST", `/api/projects/${projectId}/automation/runs/execute`, body);
 }
 
 export async function listCheckpoints(projectId: string) {
@@ -259,9 +327,26 @@ export type ComfyUiVerify = {
   customNodes: Array<{ name: string; matched: boolean }>;
   pythonRequirements: Array<{ package: string; installed: boolean }>;
   workflowFiles: Array<{ path: string; exists: boolean }>;
-  localConfig: { paths: { modelsRoot: string | null; checkpointsRoot: string | null; lorasRoot: string | null }; missingRoots: string[] };
-  checkpoints: Array<{ id: string; path: string | null; exists: boolean; reason?: string; hashExpected?: string; hashMatch?: boolean }>;
-  loras: Array<{ id: string; path: string | null; exists: boolean; reason?: string; hashExpected?: string; hashMatch?: boolean }>;
+  localConfig: {
+    paths: { modelsRoot: string | null; checkpointsRoot: string | null; lorasRoot: string | null };
+    missingRoots: string[];
+  };
+  checkpoints: Array<{
+    id: string;
+    path: string | null;
+    exists: boolean;
+    reason?: string;
+    hashExpected?: string;
+    hashMatch?: boolean;
+  }>;
+  loras: Array<{
+    id: string;
+    path: string | null;
+    exists: boolean;
+    reason?: string;
+    hashExpected?: string;
+    hashMatch?: boolean;
+  }>;
 };
 
 export async function getComfyUiVerify() {
@@ -378,20 +463,31 @@ export async function updateAssetVariant(
   assetId: string,
   versionId: string,
   variantId: string,
-  patch: { tags?: string[]; rating?: number | null; status?: "candidate" | "selected" | "rejected"; reviewNote?: string | null }
+  patch: {
+    tags?: string[];
+    rating?: number | null;
+    status?: "candidate" | "selected" | "rejected";
+    reviewNote?: string | null;
+  },
 ) {
-  return api<{ ok: true }>("PATCH", `/api/projects/${projectId}/assets/${assetId}/versions/${versionId}/variants/${variantId}`, patch);
+  return api<{ ok: true }>(
+    "PATCH",
+    `/api/projects/${projectId}/assets/${assetId}/versions/${versionId}/variants/${variantId}`,
+    patch,
+  );
 }
 
 export async function setPrimaryVariant(projectId: string, assetId: string, versionId: string, variantId: string) {
-  return api<{ ok: true }>("POST", `/api/projects/${projectId}/assets/${assetId}/versions/${versionId}/primary`, { variantId });
+  return api<{ ok: true }>("POST", `/api/projects/${projectId}/assets/${assetId}/versions/${versionId}/primary`, {
+    variantId,
+  });
 }
 
 export async function updateAssetVersion(
   projectId: string,
   assetId: string,
   versionId: string,
-  patch: { status?: "draft" | "review" | "approved" | "rejected" | "deprecated" }
+  patch: { status?: "draft" | "review" | "approved" | "rejected" | "deprecated" },
 ) {
   return api<{ ok: true }>("PATCH", `/api/projects/${projectId}/assets/${assetId}/versions/${versionId}`, patch);
 }
@@ -423,7 +519,7 @@ export async function getAtlas(projectId: string, atlasId: string) {
 export async function updateAtlasFrames(
   projectId: string,
   atlasId: string,
-  frames: Array<{ id: string; pivot?: { x: number; y: number } }>
+  frames: Array<{ id: string; pivot?: { x: number; y: number } }>,
 ) {
   return api<AtlasRecord>("PATCH", `/api/projects/${projectId}/atlases/${atlasId}`, { frames });
 }

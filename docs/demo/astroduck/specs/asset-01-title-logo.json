@@ -14,7 +14,13 @@
     "background": "transparent_required",
     "logoVariants": {
       "variants": [
-        { "id": "full_color", "label": "Full Color", "theme": "full_color", "aspect": "wide", "background": "transparent" },
+        {
+          "id": "full_color",
+          "label": "Full Color",
+          "theme": "full_color",
+          "aspect": "wide",
+          "background": "transparent"
+        },
         { "id": "mono", "label": "Mono", "theme": "mono", "aspect": "wide", "background": "transparent" }
       ]
     },
@@ -30,4 +36,3 @@
   "generationParams": { "width": 1024, "height": 512, "variants": 6 },
   "status": "ready"
 }
-

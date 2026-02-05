@@ -3,6 +3,7 @@
 This document describes how the UI is structured for scalability and clarity.
 
 ## Directory layout
+
 - `apps/frontend/src/ui/App.tsx`: providers + routes only
 - `apps/frontend/src/ui/layouts/*`: AppShell + navigation
 - `apps/frontend/src/ui/pages/*`: route-level pages
@@ -14,6 +15,7 @@ This document describes how the UI is structured for scalability and clarity.
 - `apps/frontend/src/ui/api.ts`: API boundary
 
 ## Rules of thumb
+
 - **No god files**: pages should stay focused; split when a file grows.
 - **Hooks for workflows**: shared async actions and selection logic belong in hooks.
 - **Workflow hooks**: keep reusable page logic in hooks (e.g. `useAssetsViewModel`, `useAssetFilters`, `useAssetCatalogOptions`, `useAssetDerivedLists`, `useAssetReviewState`, `useAssetBulkActions`, `useAssetVariantActions`, `useAssetReviewActions`, `useAssetSelectionHelpers`, `useAssetFilterPresets`, `useTextInput`, `useExportProfiles`, `useExportsViewModel`, `useExportSelections`, `useExportSelectionReset`, `useExportRun`, `useExportMappings`, `useSpecRefinement`, `useAtlasWorkspace`, `useAtlasImageSizing`, `useAtlasAnimationForm`, `useAtlasAnimationPreview`, `useAtlasBuild`, `useAtlasAnimationSave`, `useAtlasPivotEditor`, `useAtlasPivotSave`, `useOrderedFrameList`, `useApprovedAtlasCandidates`, `useAtlasSelectionReset`, `useSelectedJob`, `useSystemLogService`, `useOnboardingStep`, `useHelpTopics`).
@@ -24,11 +26,13 @@ This document describes how the UI is structured for scalability and clarity.
 - **Shared data**: use `AppDataProvider` + `useAppData` for project-scoped state.
 
 ## Typical flow
-1) `pages/*` consumes `useAppData` + hooks
-2) `hooks/*` handle shared async/selection logic
-3) `types/*` defines view-models for lists and filters
+
+1. `pages/*` consumes `useAppData` + hooks
+2. `hooks/*` handle shared async/selection logic
+3. `types/*` defines view-models for lists and filters
 
 ## Example patterns
+
 ```
 const action = useAsyncAction(async () => { ... });
 const selection = useSelectionSet<string>();

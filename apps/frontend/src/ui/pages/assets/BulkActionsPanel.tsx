@@ -53,7 +53,10 @@ export function BulkActionsPanel(props: Props) {
             <Button variant="light" onClick={props.onSelectAll} disabled={props.disableSelectAll}>
               Select all
             </Button>
-            <HelpTip label="Select everything in the filtered list for bulk actions." topicId="filters-and-bulk-actions" />
+            <HelpTip
+              label="Select everything in the filtered list for bulk actions."
+              topicId="filters-and-bulk-actions"
+            />
           </Group>
           <Group gap="xs">
             <Button variant="light" onClick={props.onClearSelection} disabled={props.selectionCount === 0}>
@@ -64,12 +67,21 @@ export function BulkActionsPanel(props: Props) {
         </Group>
         <Group>
           <Group gap="xs">
-            <Button color="green" onClick={props.onApproveSelected} disabled={props.selectionCount === 0 || props.bulkBusy}>
+            <Button
+              color="green"
+              onClick={props.onApproveSelected}
+              disabled={props.selectionCount === 0 || props.bulkBusy}
+            >
               Approve selected
             </Button>
             <HelpTip label="Bulk-approve the primary variant for each selected asset." topicId="ratings-and-status" />
           </Group>
-          <Button color="red" variant="light" onClick={props.onRejectSelected} disabled={props.selectionCount === 0 || props.bulkBusy}>
+          <Button
+            color="red"
+            variant="light"
+            onClick={props.onRejectSelected}
+            disabled={props.selectionCount === 0 || props.bulkBusy}
+          >
             Reject selected
           </Button>
         </Group>
@@ -98,7 +110,7 @@ export function BulkActionsPanel(props: Props) {
             placeholder="Mode"
             data={[
               { value: "add", label: "add" },
-              { value: "remove", label: "remove" }
+              { value: "remove", label: "remove" },
             ]}
             value={props.bulkMode}
             onChange={(value: string | null) => props.onBulkModeChange((value ?? "add") as "add" | "remove")}
@@ -106,7 +118,11 @@ export function BulkActionsPanel(props: Props) {
         </Group>
         <Group>
           <Group gap="xs">
-            <Button variant="light" onClick={props.onApplyTag} disabled={props.selectionCount === 0 || props.bulkBusy || !props.bulkTagId}>
+            <Button
+              variant="light"
+              onClick={props.onApplyTag}
+              disabled={props.selectionCount === 0 || props.bulkBusy || !props.bulkTagId}
+            >
               Apply tag
             </Button>
             <HelpTip label="Apply the selected tag action to all selected assets." topicId="filters-and-bulk-actions" />
@@ -122,15 +138,36 @@ export function BulkActionsPanel(props: Props) {
             }
             placeholder="Checkpoint name"
             value={props.bulkCheckpointName}
-            onChange={(event: React.ChangeEvent<HTMLInputElement>) => props.onCheckpointNameChange(event.currentTarget.value)}
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+              props.onCheckpointNameChange(event.currentTarget.value)
+            }
           />
-          <NumberInput value={props.bulkWidth} onChange={(value) => props.onWidthChange(Number(value) || 512)} min={64} step={64} />
-          <NumberInput value={props.bulkHeight} onChange={(value) => props.onHeightChange(Number(value) || 512)} min={64} step={64} />
-          <NumberInput value={props.bulkVariants} onChange={(value) => props.onVariantsChange(Number(value) || 1)} min={1} max={16} />
+          <NumberInput
+            value={props.bulkWidth}
+            onChange={(value) => props.onWidthChange(Number(value) || 512)}
+            min={64}
+            step={64}
+          />
+          <NumberInput
+            value={props.bulkHeight}
+            onChange={(value) => props.onHeightChange(Number(value) || 512)}
+            min={64}
+            step={64}
+          />
+          <NumberInput
+            value={props.bulkVariants}
+            onChange={(value) => props.onVariantsChange(Number(value) || 1)}
+            min={1}
+            max={16}
+          />
         </Group>
         <Group>
           <Group gap="xs">
-            <Button variant="light" onClick={props.onRegenerate} disabled={props.selectionCount === 0 || props.bulkBusy}>
+            <Button
+              variant="light"
+              onClick={props.onRegenerate}
+              disabled={props.selectionCount === 0 || props.bulkBusy}
+            >
               Regenerate selected
             </Button>
             <HelpTip label="Queue new generation jobs for the selected assets." topicId="filters-and-bulk-actions" />
@@ -182,7 +219,11 @@ export function BulkActionsPanel(props: Props) {
         </Group>
         <Group>
           <Group gap="xs">
-            <Button variant="light" onClick={props.onRunBgRemove} disabled={props.selectionCount === 0 || props.bulkBusy}>
+            <Button
+              variant="light"
+              onClick={props.onRunBgRemove}
+              disabled={props.selectionCount === 0 || props.bulkBusy}
+            >
               Run bg removal
             </Button>
             <HelpTip label="Runs background removal for approved variants only." topicId="background-removal" />

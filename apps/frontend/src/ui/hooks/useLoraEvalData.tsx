@@ -1,6 +1,13 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
-import { listProjectEvals, listProjectLoras, listSharedEvals, listSharedLoras, type LoraEval, type LoraRecord } from "../api";
+import {
+  listProjectEvals,
+  listProjectLoras,
+  listSharedEvals,
+  listSharedLoras,
+  type LoraEval,
+  type LoraRecord,
+} from "../api";
 import { useAsyncAction } from "./useAsyncAction";
 
 export function useLoraEvalData(opts: { projectId: string; scope: "project" | "baseline" }) {
@@ -44,8 +51,8 @@ export function useLoraEvalData(opts: { projectId: string; scope: "project" | "b
       evals,
       loading: fetchAction.loading,
       error,
-      refresh
+      refresh,
     }),
-    [loras, evals, fetchAction.loading, error, refresh]
+    [loras, evals, fetchAction.loading, error, refresh],
   );
 }

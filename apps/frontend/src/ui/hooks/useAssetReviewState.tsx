@@ -2,24 +2,21 @@ import { useEffect, useMemo, useState } from "react";
 
 import type { Asset } from "../api";
 
-export function useAssetReviewState(opts: {
-  assets: Asset[];
-  selectedAssetId: string | null;
-}) {
+export function useAssetReviewState(opts: { assets: Asset[]; selectedAssetId: string | null }) {
   const [selectedVariantId, setSelectedVariantId] = useState("");
   const [reviewNote, setReviewNote] = useState("");
   const [zoom, setZoom] = useState(1);
 
   const selectedAsset = useMemo(
-    () => (opts.selectedAssetId ? opts.assets.find((asset) => asset.id === opts.selectedAssetId) ?? null : null),
-    [opts.selectedAssetId, opts.assets]
+    () => (opts.selectedAssetId ? (opts.assets.find((asset) => asset.id === opts.selectedAssetId) ?? null) : null),
+    [opts.selectedAssetId, opts.assets],
   );
 
   const selectedVersion = selectedAsset?.versions?.[selectedAsset.versions.length - 1] ?? null;
   const selectedVariant =
     selectedVersion && selectedVariantId
-      ? selectedVersion.variants.find((variant) => variant.id === selectedVariantId) ?? null
-      : selectedVersion?.variants?.[0] ?? null;
+      ? (selectedVersion.variants.find((variant) => variant.id === selectedVariantId) ?? null)
+      : (selectedVersion?.variants?.[0] ?? null);
 
   useEffect(() => {
     if (!selectedAsset) {
@@ -47,6 +44,6 @@ export function useAssetReviewState(opts: {
     reviewNote,
     setReviewNote,
     zoom,
-    setZoom
+    setZoom,
   };
 }

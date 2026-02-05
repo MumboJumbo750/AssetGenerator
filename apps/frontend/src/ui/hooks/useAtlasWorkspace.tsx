@@ -11,7 +11,7 @@ export function useAtlasWorkspace(projectId: string) {
   const atlasImageRef = useRef<HTMLImageElement | null>(null);
   const { imageSize, setImageSize, onImageLoad } = useAtlasImageSizing({
     atlasImageRef,
-    selectedAtlasId
+    selectedAtlasId,
   });
 
   const refreshAtlases = useCallback(async () => {
@@ -50,6 +50,6 @@ export function useAtlasWorkspace(projectId: string) {
     atlasImageRef,
     imageSize,
     setImageSize,
-    onImageLoad
+    onImageLoad,
   };
 }

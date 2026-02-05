@@ -15,7 +15,9 @@ export function useAssetCatalogOptions(specs: AssetSpec[], tagCatalog: TagCatalo
   const assetTypeOptions: TagOption[] = useMemo(() => {
     const types = new Set<string>();
     for (const spec of specs) types.add(spec.assetType);
-    return Array.from(types).sort().map((value) => ({ value, label: value }));
+    return Array.from(types)
+      .sort()
+      .map((value) => ({ value, label: value }));
   }, [specs]);
 
   const tagOptions: TagOption[] = useMemo(() => {
@@ -23,8 +25,8 @@ export function useAssetCatalogOptions(specs: AssetSpec[], tagCatalog: TagCatalo
     return tagCatalog.groups.flatMap((group) =>
       group.tags.map((tag) => ({
         value: tag.id,
-        label: `${group.label}: ${tag.label}`
-      }))
+        label: `${group.label}: ${tag.label}`,
+      })),
     );
   }, [tagCatalog]);
 

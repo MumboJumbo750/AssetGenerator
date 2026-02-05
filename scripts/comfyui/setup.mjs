@@ -45,7 +45,9 @@ async function main() {
   await run(pythonInVenv, ["-m", "pip", "install", "--upgrade", "pip"], { cwd: repoPath() });
 
   console.log("[comfyui:setup] Installing ComfyUI requirements (this can take a while)...");
-  await run(pythonInVenv, ["-m", "pip", "install", "-r", path.join(comfyuiDir, "requirements.txt")], { cwd: repoPath() });
+  await run(pythonInVenv, ["-m", "pip", "install", "-r", path.join(comfyuiDir, "requirements.txt")], {
+    cwd: repoPath(),
+  });
 
   console.log("[comfyui:setup] Done.");
   console.log("Next: npm run comfyui:start");

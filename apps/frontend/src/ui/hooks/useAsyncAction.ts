@@ -2,7 +2,7 @@ import { useCallback, useState } from "react";
 
 export function useAsyncAction<TArgs extends unknown[], TResult>(
   action: (...args: TArgs) => Promise<TResult>,
-  opts?: { onError?: (error: string) => void }
+  opts?: { onError?: (error: string) => void },
 ) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -22,7 +22,7 @@ export function useAsyncAction<TArgs extends unknown[], TResult>(
         setLoading(false);
       }
     },
-    [action, opts]
+    [action, opts],
   );
 
   return { run, loading, error, setError };

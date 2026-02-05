@@ -10,7 +10,7 @@ function matchesSearch(topic: HelpTopic, search: string) {
     ...(topic.details ?? []),
     ...(topic.bullets ?? []),
     ...(topic.steps ?? []),
-    ...(topic.keywords ?? [])
+    ...(topic.keywords ?? []),
   ]
     .join(" ")
     .toLowerCase();
@@ -22,19 +22,16 @@ export function useHelpTopics(opts: { topicParam: string | null }) {
   const [category, setCategory] = useState("All");
   const [selectedTopicId, setSelectedTopicId] = useState<string | null>(null);
 
-  const categories = useMemo(
-    () => ["All", ...Array.from(new Set(HELP_TOPICS.map((topic) => topic.category)))],
-    []
-  );
+  const categories = useMemo(() => ["All", ...Array.from(new Set(HELP_TOPICS.map((topic) => topic.category)))], []);
 
   const normalizedSearch = search.trim().toLowerCase();
 
   const filteredTopics = useMemo(
     () =>
       HELP_TOPICS.filter((topic) => (category === "All" ? true : topic.category === category)).filter((topic) =>
-        matchesSearch(topic, normalizedSearch)
+        matchesSearch(topic, normalizedSearch),
       ),
-    [category, normalizedSearch]
+    [category, normalizedSearch],
   );
 
   useEffect(() => {
@@ -71,6 +68,6 @@ export function useHelpTopics(opts: { topicParam: string | null }) {
     setSelectedTopicId,
     categories,
     filteredTopics,
-    selectedTopic
+    selectedTopic,
   };
 }

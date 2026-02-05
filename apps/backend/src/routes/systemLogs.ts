@@ -37,4 +37,3 @@ export async function registerSystemLogRoutes(app: FastifyInstance, opts: { data
     return reply.type("text/plain; charset=utf-8").send(text);
   });
 }
-

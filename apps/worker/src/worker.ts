@@ -83,7 +83,7 @@ async function writeWorkerHeartbeat(dataRoot: string, opts: { pid: number; inter
   const body = {
     ts: nowIso(),
     pid: opts.pid,
-    pollIntervalMs: opts.intervalMs
+    pollIntervalMs: opts.intervalMs,
   };
   await fs.writeFile(tmp, JSON.stringify(body, null, 2) + "\n", "utf8");
   await fs.rename(tmp, outPath);
@@ -127,15 +127,18 @@ function summarizeJobInput(input: Record<string, any>) {
   const out: Record<string, any> = { ...input };
   if (out.workflow) out.workflow = "[omitted workflow]";
   if (Array.isArray(out.nextJobs)) out.nextJobs = `[${out.nextJobs.length} chained jobs omitted]`;
-  if (Array.isArray(out.framePaths) && out.framePaths.length > 100) out.framePaths = `[${out.framePaths.length} frames omitted]`;
-  if (Array.isArray(out.assetIds) && out.assetIds.length > 200) out.assetIds = `[${out.assetIds.length} assetIds omitted]`;
-  if (Array.isArray(out.atlasIds) && out.atlasIds.length > 200) out.atlasIds = `[${out.atlasIds.length} atlasIds omitted]`;
+  if (Array.isArray(out.framePaths) && out.framePaths.length > 100)
+    out.framePaths = `[${out.framePaths.length} frames omitted]`;
+  if (Array.isArray(out.assetIds) && out.assetIds.length > 200)
+    out.assetIds = `[${out.assetIds.length} assetIds omitted]`;
+  if (Array.isArray(out.atlasIds) && out.atlasIds.length > 200)
+    out.atlasIds = `[${out.atlasIds.length} atlasIds omitted]`;
   return out;
 }
 
 function resolveTemplateValue(
   value: unknown,
-  ctx: { input: Record<string, any>; output: Record<string, any>; projectId: string; jobId: string }
+  ctx: { input: Record<string, any>; output: Record<string, any>; projectId: string; jobId: string },
 ): unknown {
   if (typeof value === "string") {
     if (value === "$projectId") return ctx.projectId;
@@ -155,8 +158,16 @@ function resolveTemplateValue(
   return value;
 }
 
-async function enqueueNextJobs(opts: { dataRoot: string; projectId: string; jobId: string; input: Record<string, any>; output: Record<string, any> }) {
-  const nextJobs = Array.isArray(opts.input.nextJobs) ? (opts.input.nextJobs as Array<{ type?: Job["type"]; input?: Record<string, any> }>) : [];
+async function enqueueNextJobs(opts: {
+  dataRoot: string;
+  projectId: string;
+  jobId: string;
+  input: Record<string, any>;
+  output: Record<string, any>;
+}) {
+  const nextJobs = Array.isArray(opts.input.nextJobs)
+    ? (opts.input.nextJobs as Array<{ type?: Job["type"]; input?: Record<string, any> }>)
+    : [];
   if (nextJobs.length === 0) return [];
   const jobsDir = path.join(opts.dataRoot, "projects", opts.projectId, "jobs");
   await fs.mkdir(jobsDir, { recursive: true });
@@ -169,7 +180,7 @@ async function enqueueNextJobs(opts: { dataRoot: string; projectId: string; jobI
       input: opts.input,
       output: opts.output ?? {},
       projectId: opts.projectId,
-      jobId: opts.jobId
+      jobId: opts.jobId,
     }) as Record<string, any>;
     const id = ulid();
     const createdAt = nowIso();
@@ -180,7 +191,7 @@ async function enqueueNextJobs(opts: { dataRoot: string; projectId: string; jobI
       status: "queued",
       createdAt,
       updatedAt: createdAt,
-      input
+      input,
     };
     await writeJsonAtomic(path.join(jobsDir, `${id}.json`), job);
     created.push(id);
@@ -222,7 +233,13 @@ async function releaseProjectLock(lockPath: string) {
   }
 }
 
-async function processGenerateJob(opts: { repoRoot: string; dataRoot: string; comfyBaseUrl: string; job: Job; log?: JsonlLogger }) {
+async function processGenerateJob(opts: {
+  repoRoot: string;
+  dataRoot: string;
+  comfyBaseUrl: string;
+  job: Job;
+  log?: JsonlLogger;
+}) {
   const { job } = opts;
   const specId = String(job.input.specId ?? "");
   if (!specId) throw new Error("generate job missing input.specId");
@@ -270,16 +287,30 @@ async function processGenerateJob(opts: { repoRoot: string; dataRoot: string; co
     const positive = String(job.input.positive ?? renderedPositive);
     const negative = String(job.input.negative ?? renderedNegative);
     const width = Number(
-      job.input.width ?? spec.generationParams?.width ?? spec.generationParams?.w ?? checkpoint?.defaultGenerationParams?.width ?? 512
+      job.input.width ??
+        spec.generationParams?.width ??
+        spec.generationParams?.w ??
+        checkpoint?.defaultGenerationParams?.width ??
+        512,
     );
     const height = Number(
-      job.input.height ?? spec.generationParams?.height ?? spec.generationParams?.h ?? checkpoint?.defaultGenerationParams?.height ?? 512
+      job.input.height ??
+        spec.generationParams?.height ??
+        spec.generationParams?.h ??
+        checkpoint?.defaultGenerationParams?.height ??
+        512,
     );
-    const variants = Number(job.input.variants ?? spec.generationParams?.variants ?? checkpoint?.defaultGenerationParams?.variants ?? 4);
+    const variants = Number(
+      job.input.variants ?? spec.generationParams?.variants ?? checkpoint?.defaultGenerationParams?.variants ?? 4,
+    );
     const seed = Number(job.input.seed ?? Math.floor(Math.random() * 1_000_000_000));
-    const steps = Number(job.input.steps ?? spec.generationParams?.steps ?? checkpoint?.defaultGenerationParams?.steps ?? 20);
+    const steps = Number(
+      job.input.steps ?? spec.generationParams?.steps ?? checkpoint?.defaultGenerationParams?.steps ?? 20,
+    );
     const cfg = Number(job.input.cfg ?? spec.generationParams?.cfg ?? checkpoint?.defaultGenerationParams?.cfg ?? 7);
-    const sampler = String(job.input.sampler_name ?? job.input.sampler ?? checkpoint?.defaultGenerationParams?.sampler ?? "euler");
+    const sampler = String(
+      job.input.sampler_name ?? job.input.sampler ?? checkpoint?.defaultGenerationParams?.sampler ?? "euler",
+    );
     const scheduler = String(job.input.scheduler ?? checkpoint?.defaultGenerationParams?.scheduler ?? "normal");
 
     const filenamePrefix = String(job.input.filenamePrefix ?? `assetgen/${job.projectId}/${spec.id}`);
@@ -348,7 +379,7 @@ async function processGenerateJob(opts: { repoRoot: string; dataRoot: string; co
       specId: spec.id,
       createdAt: nowIso(),
       updatedAt: nowIso(),
-      versions: []
+      versions: [],
     } satisfies Asset);
 
   base.updatedAt = nowIso();
@@ -361,9 +392,9 @@ async function processGenerateJob(opts: { repoRoot: string; dataRoot: string; co
       spec: { id: spec.id, title: spec.title, assetType: spec.assetType },
       workflow: job.input.workflow,
       // Keeping prompt examples here for traceability; the true resolved prompt should also be stored once we add templates.
-      promptExample: { positive: spec.prompt.positive, negative: spec.prompt.negative }
+      promptExample: { positive: spec.prompt.positive, negative: spec.prompt.negative },
     },
-    variants
+    variants,
   });
 
   await upsertAsset(opts.dataRoot, job.projectId, base);
@@ -383,7 +414,7 @@ async function processGenerateJob(opts: { repoRoot: string; dataRoot: string; co
           prompt,
           images: variants.map((v) => v.originalPath),
           assetId,
-          assetVersionId
+          assetVersionId,
         });
         evalRecord.outputs = outputs;
         evalRecord.updatedAt = nowIso();
@@ -420,7 +451,7 @@ async function processGenerateJob(opts: { repoRoot: string; dataRoot: string; co
         const error = err as any;
         await opts.log?.error("eval_update_failed", {
           evalId,
-          error: { message: error?.message ?? String(error), stack: error?.stack }
+          error: { message: error?.message ?? String(error), stack: error?.stack },
         });
       }
     } else {
@@ -432,7 +463,7 @@ async function processGenerateJob(opts: { repoRoot: string; dataRoot: string; co
     assetId,
     assetVersionId,
     variantIds: variants.map((v) => v.id),
-    originalsDir: relToData(opts.dataRoot, originalsDir)
+    originalsDir: relToData(opts.dataRoot, originalsDir),
   };
 }
 
@@ -444,7 +475,9 @@ async function processBgRemoveJob(opts: { repoRoot: string; dataRoot: string; jo
   if (!(await fileExists(originalAbs))) throw new Error(`Original image not found: ${originalAbs}`);
 
   const outputRel = String(job.input.alphaPath ?? "");
-  const alphaAbs = outputRel ? path.join(opts.dataRoot, outputRel) : originalAbs.replace(/\/original\//g, "/alpha/").replace(/\\original\\/g, "\\alpha\\");
+  const alphaAbs = outputRel
+    ? path.join(opts.dataRoot, outputRel)
+    : originalAbs.replace(/\/original\//g, "/alpha/").replace(/\\original\\/g, "\\alpha\\");
   await fs.mkdir(path.dirname(alphaAbs), { recursive: true });
 
   const threshold = typeof job.input.threshold === "number" ? Number(job.input.threshold) : undefined;
@@ -454,7 +487,7 @@ async function processBgRemoveJob(opts: { repoRoot: string; dataRoot: string; jo
   await opts.log?.info("bg_remove_start", {
     originalPath: originalPathRel,
     alphaPath: relToData(opts.dataRoot, alphaAbs),
-    params: { threshold, feather, erode }
+    params: { threshold, feather, erode },
   });
   await removeBackground({
     repoRoot: opts.repoRoot,
@@ -463,7 +496,7 @@ async function processBgRemoveJob(opts: { repoRoot: string; dataRoot: string; jo
     threshold,
     feather,
     erode,
-    log: opts.log
+    log: opts.log,
   });
   await opts.log?.info("bg_remove_done", { alphaPath: relToData(opts.dataRoot, alphaAbs) });
 
@@ -479,7 +512,7 @@ async function processBgRemoveJob(opts: { repoRoot: string; dataRoot: string; jo
         variant.alphaPath = relToData(opts.dataRoot, alphaAbs);
         variant.processing = {
           ...(variant.processing ?? {}),
-          bg_remove: { threshold, feather, erode }
+          bg_remove: { threshold, feather, erode },
         };
         asset.updatedAt = nowIso();
         await upsertAsset(opts.dataRoot, job.projectId, asset);
@@ -493,7 +526,8 @@ async function processBgRemoveJob(opts: { repoRoot: string; dataRoot: string; jo
 async function processAtlasPackJob(opts: { dataRoot: string; job: Job; log?: JsonlLogger }) {
   const { job } = opts;
   const framePaths = job.input.framePaths as unknown;
-  if (!Array.isArray(framePaths) || framePaths.length === 0) throw new Error("atlas_pack job missing input.framePaths[] (data-relative)");
+  if (!Array.isArray(framePaths) || framePaths.length === 0)
+    throw new Error("atlas_pack job missing input.framePaths[] (data-relative)");
 
   const atlasId = String(job.input.atlasId ?? ulid());
   const atlasDir = path.join(opts.dataRoot, "projects", job.projectId, "files", "atlases", atlasId);
@@ -508,10 +542,19 @@ async function processAtlasPackJob(opts: { dataRoot: string; job: Job; log?: Jso
 
   const frames = framePaths.map((p: any, idx: number) => ({
     key: String(p.key ?? `frame_${idx}`),
-    absPath: path.join(opts.dataRoot, String(p.path ?? p))
+    absPath: path.join(opts.dataRoot, String(p.path ?? p)),
   }));
 
-  await opts.log?.info("atlas_pack_start", { atlasId, frames: frames.length, padding, maxSize, powerOfTwo, trim, extrude, sort });
+  await opts.log?.info("atlas_pack_start", {
+    atlasId,
+    frames: frames.length,
+    padding,
+    maxSize,
+    powerOfTwo,
+    trim,
+    extrude,
+    sort,
+  });
   const packed = await packAtlas({
     frames,
     atlasAbsPngPath: atlasPng,
@@ -521,9 +564,13 @@ async function processAtlasPackJob(opts: { dataRoot: string; job: Job; log?: Jso
     powerOfTwo,
     trim,
     extrude,
-    sort: (sort as any) ?? "area"
+    sort: (sort as any) ?? "area",
   });
-  await opts.log?.info("atlas_pack_done", { atlasId, frames: packed.frames.length, atlasImagePath: relToData(opts.dataRoot, atlasPng) });
+  await opts.log?.info("atlas_pack_done", {
+    atlasId,
+    frames: packed.frames.length,
+    atlasImagePath: relToData(opts.dataRoot, atlasPng),
+  });
 
   // Write engine-agnostic atlas record.
   const atlasRecord = {
@@ -537,8 +584,8 @@ async function processAtlasPackJob(opts: { dataRoot: string; job: Job; log?: Jso
       id: f.key,
       sourcePath: relToData(opts.dataRoot, f.sourcePath),
       rect: f.rect,
-      sourceSize: { w: f.rect.w, h: f.rect.h }
-    }))
+      sourceSize: { w: f.rect.w, h: f.rect.h },
+    })),
   };
 
   await writeJsonAtomic(path.join(opts.dataRoot, "projects", job.projectId, "atlases", `${atlasId}.json`), atlasRecord);
@@ -546,7 +593,7 @@ async function processAtlasPackJob(opts: { dataRoot: string; job: Job; log?: Jso
   return {
     atlasId,
     atlasImagePath: relToData(opts.dataRoot, atlasPng),
-    atlasDataPath: relToData(opts.dataRoot, atlasJson)
+    atlasDataPath: relToData(opts.dataRoot, atlasJson),
   };
 }
 
@@ -567,7 +614,10 @@ async function processExportJob(opts: { dataRoot: string; job: Job; log?: JsonlL
   const atlasIds = Array.isArray(job.input.atlasIds) ? (job.input.atlasIds as string[]) : [];
 
   const profileId = typeof job.input.profileId === "string" ? String(job.input.profileId) : "";
-  const profileSnapshot = typeof job.input.profileSnapshot === "object" && job.input.profileSnapshot ? (job.input.profileSnapshot as ExportProfile) : null;
+  const profileSnapshot =
+    typeof job.input.profileSnapshot === "object" && job.input.profileSnapshot
+      ? (job.input.profileSnapshot as ExportProfile)
+      : null;
   const profileFromDisk = async () => {
     if (!profileId) return null;
     const filePath = path.join(opts.dataRoot, "projects", job.projectId, "export-profiles", `${profileId}.json`);
@@ -578,7 +628,8 @@ async function processExportJob(opts: { dataRoot: string; job: Job; log?: JsonlL
   const profileOptions = profile?.options ?? {};
   const scale = typeof profileOptions.scale === "number" && profileOptions.scale > 0 ? Number(profileOptions.scale) : 1;
   const trim = Boolean(profileOptions.trim ?? false);
-  const padding = typeof profileOptions.padding === "number" && profileOptions.padding > 0 ? Number(profileOptions.padding) : 0;
+  const padding =
+    typeof profileOptions.padding === "number" && profileOptions.padding > 0 ? Number(profileOptions.padding) : 0;
   const namePrefix = typeof profileOptions.namePrefix === "string" ? profileOptions.namePrefix : "";
   const nameSuffix = typeof profileOptions.nameSuffix === "string" ? profileOptions.nameSuffix : "";
 
@@ -642,7 +693,7 @@ async function processExportJob(opts: { dataRoot: string; job: Job; log?: JsonlL
           bottom: padding,
           left: padding,
           right: padding,
-          background: { r: 0, g: 0, b: 0, alpha: 0 }
+          background: { r: 0, g: 0, b: 0, alpha: 0 },
         });
       }
       await pipeline.png().toFile(destAbs);
@@ -682,21 +733,25 @@ async function processExportJob(opts: { dataRoot: string; job: Job; log?: JsonlL
           x: Math.round(rect.x * scale),
           y: Math.round(rect.y * scale),
           w: Math.max(1, Math.round(rect.w * scale)),
-          h: Math.max(1, Math.round(rect.h * scale))
+          h: Math.max(1, Math.round(rect.h * scale)),
         });
         if (frame.frame) frame.frame = scaleRect(frame.frame);
         if (frame.spriteSourceSize) frame.spriteSourceSize = scaleRect(frame.spriteSourceSize);
         if (frame.sourceSize) {
           frame.sourceSize = {
             w: Math.max(1, Math.round(frame.sourceSize.w * scale)),
-            h: Math.max(1, Math.round(frame.sourceSize.h * scale))
+            h: Math.max(1, Math.round(frame.sourceSize.h * scale)),
           };
         }
       }
     }
     await fs.writeFile(destJson, JSON.stringify(atlasData, null, 2) + "\n", "utf8");
 
-    atlases.push({ id: atlasId, imagePath: `assets/atlases/${atlasName}.png`, dataPath: `assets/atlases/${atlasName}.json` });
+    atlases.push({
+      id: atlasId,
+      imagePath: `assets/atlases/${atlasName}.png`,
+      dataPath: `assets/atlases/${atlasName}.json`,
+    });
   }
 
   const manifest = {
@@ -708,7 +763,7 @@ async function processExportJob(opts: { dataRoot: string; job: Job; log?: JsonlL
     atlases,
     images,
     animations: Array.isArray(job.input.animations) ? job.input.animations : [],
-    ui: Array.isArray(job.input.ui) ? job.input.ui : []
+    ui: Array.isArray(job.input.ui) ? job.input.ui : [],
   };
 
   const manifestAbs = path.join(kitRoot, "manifest.json");
@@ -719,7 +774,7 @@ async function processExportJob(opts: { dataRoot: string; job: Job; log?: JsonlL
     private: true,
     version: "0.0.0",
     type: "module",
-    main: "./src/index.ts"
+    main: "./src/index.ts",
   };
   await fs.writeFile(path.join(kitRoot, "package.json"), JSON.stringify(kitPackageJson, null, 2) + "\n", "utf8");
 
@@ -743,12 +798,17 @@ async function processExportJob(opts: { dataRoot: string; job: Job; log?: JsonlL
       assetIds,
       atlasIds,
       profileId: (profile?.id ?? profileId) || undefined,
-      profileSnapshot: profile ? { id: profile.id, name: profile.name, type: profile.type, options: profile.options } : undefined
+      profileSnapshot: profile
+        ? { id: profile.id, name: profile.name, type: profile.type, options: profile.options }
+        : undefined,
     },
-    output: { exportPath: relToData(opts.dataRoot, kitRoot), manifestPath: relToData(opts.dataRoot, manifestAbs) }
+    output: { exportPath: relToData(opts.dataRoot, kitRoot), manifestPath: relToData(opts.dataRoot, manifestAbs) },
   };
 
-  await writeJsonAtomic(path.join(opts.dataRoot, "projects", job.projectId, "exports", `${exportId}.json`), exportRecord);
+  await writeJsonAtomic(
+    path.join(opts.dataRoot, "projects", job.projectId, "exports", `${exportId}.json`),
+    exportRecord,
+  );
 
   await opts.log?.info("export_done", { exportId, manifestPath: exportRecord.output.manifestPath });
   return exportRecord.output;
@@ -777,7 +837,11 @@ async function runOnce(opts: { repoRoot: string; dataRoot: string; comfyBaseUrl:
       batch.map(async ({ filePath, job }) => {
         const logAbs = path.join(opts.dataRoot, "projects", job.projectId, "files", "logs", "jobs", `${job.id}.jsonl`);
         const logRel = relToData(opts.dataRoot, logAbs);
-        const log = await createJsonlLogger({ absPath: logAbs, component: "worker", baseFields: { projectId: job.projectId, jobId: job.id } });
+        const log = await createJsonlLogger({
+          absPath: logAbs,
+          component: "worker",
+          baseFields: { projectId: job.projectId, jobId: job.id },
+        });
 
         const latest = await readJson<Job>(filePath);
         if (latest.status !== "queued") {
@@ -794,10 +858,20 @@ async function runOnce(opts: { repoRoot: string; dataRoot: string; comfyBaseUrl:
         try {
           await log.info("job_start", { type: latest.type, input: summarizeJobInput(latest.input) });
           let output: any = {};
-          if (latest.type === "generate") output = await processGenerateJob({ repoRoot: opts.repoRoot, dataRoot: opts.dataRoot, comfyBaseUrl: opts.comfyBaseUrl, job: latest, log });
-          else if (latest.type === "bg_remove") output = await processBgRemoveJob({ repoRoot: opts.repoRoot, dataRoot: opts.dataRoot, job: latest, log });
-          else if (latest.type === "atlas_pack") output = await processAtlasPackJob({ dataRoot: opts.dataRoot, job: latest, log });
-          else if (latest.type === "export") output = await processExportJob({ dataRoot: opts.dataRoot, job: latest, log });
+          if (latest.type === "generate")
+            output = await processGenerateJob({
+              repoRoot: opts.repoRoot,
+              dataRoot: opts.dataRoot,
+              comfyBaseUrl: opts.comfyBaseUrl,
+              job: latest,
+              log,
+            });
+          else if (latest.type === "bg_remove")
+            output = await processBgRemoveJob({ repoRoot: opts.repoRoot, dataRoot: opts.dataRoot, job: latest, log });
+          else if (latest.type === "atlas_pack")
+            output = await processAtlasPackJob({ dataRoot: opts.dataRoot, job: latest, log });
+          else if (latest.type === "export")
+            output = await processExportJob({ dataRoot: opts.dataRoot, job: latest, log });
           else throw new Error(`Unsupported job.type=${latest.type}`);
 
           const updated = await readJson<Job>(filePath);
@@ -813,7 +887,13 @@ async function runOnce(opts: { repoRoot: string; dataRoot: string; comfyBaseUrl:
           updated.updatedAt = nowIso();
           updated.output = output;
           await writeJsonAtomic(filePath, updated);
-          const chained = await enqueueNextJobs({ dataRoot: opts.dataRoot, projectId: updated.projectId, jobId: updated.id, input: updated.input, output });
+          const chained = await enqueueNextJobs({
+            dataRoot: opts.dataRoot,
+            projectId: updated.projectId,
+            jobId: updated.id,
+            input: updated.input,
+            output,
+          });
           await log.info("job_succeeded", { output, chainedJobs: chained });
         } catch (err: any) {
           const updated = await readJson<Job>(filePath);
@@ -825,7 +905,7 @@ async function runOnce(opts: { repoRoot: string; dataRoot: string; comfyBaseUrl:
           }
           await log.error("job_failed", { error: { message: err?.message ?? String(err), stack: err?.stack } });
         }
-      })
+      }),
     );
     await releaseProjectLock(lock.lockPath);
   }
@@ -840,7 +920,7 @@ async function main() {
 
   const runtimeLog = await createJsonlLogger({
     absPath: path.join(dataRoot, "runtime", "logs", "worker.jsonl"),
-    component: "worker"
+    component: "worker",
   });
   await runtimeLog.info("startup", { dataRoot, comfyBaseUrl: comfyBaseUrlRaw });
 
@@ -848,9 +928,11 @@ async function main() {
     void runtimeLog.error("unhandled_rejection", { reason: String(reason) });
   });
   process.on("uncaughtException", (err) => {
-    void runtimeLog.error("uncaught_exception", { error: { message: err?.message ?? String(err), stack: (err as any)?.stack } }).finally(() => {
-      process.exit(1);
-    });
+    void runtimeLog
+      .error("uncaught_exception", { error: { message: err?.message ?? String(err), stack: (err as any)?.stack } })
+      .finally(() => {
+        process.exit(1);
+      });
   });
 
   const once = process.argv.includes("--once");

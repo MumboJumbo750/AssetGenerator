@@ -40,7 +40,7 @@ async function main() {
   if (pids.size > 0) {
     if (!killInUse) {
       throw new Error(
-        `Port ${port} is already in use by pid(s) ${[...pids].join(",")}. Run: npm run comfyui:stop (or start with --kill).`
+        `Port ${port} is already in use by pid(s) ${[...pids].join(",")}. Run: npm run comfyui:stop (or start with --kill).`,
       );
     }
 
@@ -56,7 +56,7 @@ async function main() {
 
   await run(pythonInVevnCompat(pythonInVenv), ["main.py", "--listen", host, "--port", String(port)], {
     cwd: comfyuiDir,
-    env: process.env
+    env: process.env,
   });
 }
 

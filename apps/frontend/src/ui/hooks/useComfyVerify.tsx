@@ -34,6 +34,6 @@ export function useComfyVerify() {
     verifyError,
     verifyReady,
     runVerify,
-    loading: verifyAction.loading
+    loading: verifyAction.loading,
   };
 }

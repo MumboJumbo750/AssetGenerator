@@ -26,16 +26,16 @@ export function useAtlasAnimationSave(opts: {
               fps: animationFps,
               loop: animationLoop,
               frameCount: animationFrames.length,
-              frameNames: animationFrames
-            }
-          }
+              frameNames: animationFrames,
+            },
+          },
         });
         await opts.onRefreshProject();
       } catch (e: any) {
         opts.onError(e?.message ?? String(e));
       }
     },
-    [opts]
+    [opts],
   );
 
   return { saveAnimation };

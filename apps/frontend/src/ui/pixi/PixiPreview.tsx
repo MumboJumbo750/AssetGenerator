@@ -43,7 +43,7 @@ export function PixiPreview() {
     selectedAnimation,
     appRef,
     stageRef,
-    onError: setError
+    onError: setError,
   });
 
   const errorMessage = error ?? pixiError;
@@ -78,7 +78,8 @@ export function PixiPreview() {
             w={260}
           />
           <Badge variant="light">
-            atlases={manifest.atlases.length} · images={manifest.images.length} · animations={manifest.animations.length}
+            atlases={manifest.atlases.length} · images={manifest.images.length} · animations=
+            {manifest.animations.length}
           </Badge>
         </Group>
       )}
@@ -96,7 +97,7 @@ export function PixiPreview() {
             background:
               "linear-gradient(45deg, rgba(255,255,255,0.06) 25%, transparent 25%), linear-gradient(-45deg, rgba(255,255,255,0.06) 25%, transparent 25%), linear-gradient(45deg, transparent 75%, rgba(255,255,255,0.06) 75%), linear-gradient(-45deg, transparent 75%, rgba(255,255,255,0.06) 75%)",
             backgroundSize: "22px 22px",
-            backgroundPosition: "0 0, 0 11px, 11px -11px, -11px 0px"
+            backgroundPosition: "0 0, 0 11px, 11px -11px, -11px 0px",
           }}
         />
       </Card>

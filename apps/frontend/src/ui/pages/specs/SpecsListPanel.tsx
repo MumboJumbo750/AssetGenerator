@@ -19,7 +19,10 @@ export function SpecsListPanel(props: Props) {
         <Group justify="space-between">
           <Group gap="xs">
             <Text fw={600}>Specs</Text>
-            <HelpTip label="AssetSpecs are structured definitions used to generate variants." topicId="workflow-specs" />
+            <HelpTip
+              label="AssetSpecs are structured definitions used to generate variants."
+              topicId="workflow-specs"
+            />
           </Group>
           <Badge variant="light">{props.specs.length}</Badge>
         </Group>

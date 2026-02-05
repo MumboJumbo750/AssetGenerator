@@ -30,7 +30,7 @@ export async function createJsonlLogger(opts: {
       component: opts.component,
       ...(opts.baseFields ?? {}),
       msg,
-      ...(data === undefined ? null : { data })
+      ...(data === undefined ? null : { data }),
     };
     await fs.appendFile(opts.absPath, JSON.stringify(entry) + "\n", "utf8");
   };
@@ -41,7 +41,7 @@ export async function createJsonlLogger(opts: {
     debug: (msg, data) => write("debug", msg, data),
     info: (msg, data) => write("info", msg, data),
     warn: (msg, data) => write("warn", msg, data),
-    error: (msg, data) => write("error", msg, data)
+    error: (msg, data) => write("error", msg, data),
   };
 }
 
@@ -49,4 +49,3 @@ export function tailString(s: string, maxChars: number) {
   if (s.length <= maxChars) return s;
   return s.slice(s.length - maxChars);
 }
-

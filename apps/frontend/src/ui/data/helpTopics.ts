@@ -241,6 +241,23 @@ export const HELP_TOPICS: HelpTopic[] = [
     keywords: ["filters", "bulk", "selection"]
   },
   {
+    id: "workflow-automation",
+    category: "Workflow",
+    title: "Workflow automation",
+    summary: "Automate multi-step tasks with rules, triggers, and actions.",
+    details: [
+      "Automation rules let you chain jobs after key events (asset approval, atlas ready, schedule).",
+      "Start with safe presets and use dry-runs to verify expected behavior.",
+      "Rules should be scoped per project and avoid re-triggering on the same asset repeatedly."
+    ],
+    bullets: [
+      "Use dry-run before enabling rules",
+      "Prefer explicit triggers and limited actions",
+      "Check run history after changes"
+    ],
+    keywords: ["automation", "rules", "workflow", "scheduler"]
+  },
+  {
     id: "data-layout",
     category: "Data & Metadata",
     title: "Data layout on disk",

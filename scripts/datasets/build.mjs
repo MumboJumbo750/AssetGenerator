@@ -61,8 +61,8 @@ function parseArgs() {
       author: "",
       license: "",
       url: "",
-      notes: ""
-    }
+      notes: "",
+    },
   };
   for (let i = 0; i < args.length; i++) {
     const a = args[i];
@@ -73,15 +73,30 @@ function parseArgs() {
     if (a === "--status") out.status = args[++i] ?? "approved";
     if (a === "--asset-type" || a === "--assetType") {
       const raw = args[++i] ?? "";
-      out.assetTypes.push(...raw.split(",").map((v) => v.trim()).filter(Boolean));
+      out.assetTypes.push(
+        ...raw
+          .split(",")
+          .map((v) => v.trim())
+          .filter(Boolean),
+      );
     }
     if (a === "--tag") {
       const raw = args[++i] ?? "";
-      out.tags.push(...raw.split(",").map((v) => v.trim()).filter(Boolean));
+      out.tags.push(
+        ...raw
+          .split(",")
+          .map((v) => v.trim())
+          .filter(Boolean),
+      );
     }
     if (a === "--checkpoint") {
       const raw = args[++i] ?? "";
-      out.checkpoints.push(...raw.split(",").map((v) => v.trim()).filter(Boolean));
+      out.checkpoints.push(
+        ...raw
+          .split(",")
+          .map((v) => v.trim())
+          .filter(Boolean),
+      );
     }
     if (a === "--tag-any") out.tagMode = "any";
     if (a === "--caption") out.captionStrategy = args[++i] ?? "tags";
@@ -125,13 +140,17 @@ async function main() {
     captionStrategy,
     includeSpecTags,
     includePromptTokens,
-    provenance
+    provenance,
   } = parseArgs();
   if (!projectId && scope === "project") {
-    console.log("Usage: npm run dataset:build -- --project <projectId> [--id <datasetId>] [--dry-run] [--status <status>]");
+    console.log(
+      "Usage: npm run dataset:build -- --project <projectId> [--id <datasetId>] [--dry-run] [--status <status>]",
+    );
     console.log("  Optional filters: --asset-type <type[,type]> --checkpoint <id[,id]> --tag <tag[,tag]> [--tag-any]");
     console.log("  Caption: --caption <tags|tags+spec|tags+spec+title> [--no-spec-tags] [--with-tokens]");
-    console.log("  Provenance: --provenance-source <text> --provenance-author <text> --provenance-license <text> --provenance-url <url> --provenance-notes <text>");
+    console.log(
+      "  Provenance: --provenance-source <text> --provenance-author <text> --provenance-license <text> --provenance-url <url> --provenance-notes <text>",
+    );
     process.exit(1);
   }
   if (!["project", "baseline"].includes(scope)) {
@@ -149,7 +168,10 @@ async function main() {
   const id = datasetId || ulid();
   const createdAt = new Date().toISOString();
 
-  const baseDir = scope === "baseline" ? path.join(dataRoot, "shared", "datasets") : path.join(dataRoot, "projects", projectId, "datasets");
+  const baseDir =
+    scope === "baseline"
+      ? path.join(dataRoot, "shared", "datasets")
+      : path.join(dataRoot, "projects", projectId, "datasets");
   const outPath = path.join(baseDir, `${id}.json`);
 
   const assetsGlob = path.join(dataRoot, "projects", projectId, "assets", "*.json");
@@ -193,12 +215,12 @@ async function main() {
     const [stylesCatalog, scenariosCatalog, tagsCatalog] = await Promise.all([
       readJsonIfExists(path.join(catalogDir, "styles.json")),
       readJsonIfExists(path.join(catalogDir, "scenarios.json")),
-      readJsonIfExists(path.join(catalogDir, "tags.json"))
+      readJsonIfExists(path.join(catalogDir, "tags.json")),
     ]);
     return {
       styleTokensById: buildPromptTokensById(stylesCatalog?.styles),
       scenarioTokensById: buildPromptTokensById(scenariosCatalog?.scenarios),
-      tagTokensById: buildTagPromptTokens(tagsCatalog)
+      tagTokensById: buildTagPromptTokens(tagsCatalog),
     };
   }
 
@@ -212,8 +234,11 @@ async function main() {
     const checkpointCatalogTokens = await loadCatalogTokens(checkpointCatalogsRoot);
     const merged = {
       styleTokensById: mergeTokenMaps(baseCatalogTokens.styleTokensById, checkpointCatalogTokens.styleTokensById),
-      scenarioTokensById: mergeTokenMaps(baseCatalogTokens.scenarioTokensById, checkpointCatalogTokens.scenarioTokensById),
-      tagTokensById: mergeTokenMaps(baseCatalogTokens.tagTokensById, checkpointCatalogTokens.tagTokensById)
+      scenarioTokensById: mergeTokenMaps(
+        baseCatalogTokens.scenarioTokensById,
+        checkpointCatalogTokens.scenarioTokensById,
+      ),
+      tagTokensById: mergeTokenMaps(baseCatalogTokens.tagTokensById, checkpointCatalogTokens.tagTokensById),
     };
     catalogCache.set(checkpointId, merged);
     return merged;
@@ -289,7 +314,7 @@ async function main() {
       variantId: variant.id,
       path: toPosix(relPath),
       caption,
-      tags: Array.isArray(variant.tags) ? variant.tags : []
+      tags: Array.isArray(variant.tags) ? variant.tags : [],
     });
   }
 
@@ -300,7 +325,7 @@ async function main() {
           author: provenance.author || undefined,
           license: provenance.license || undefined,
           url: provenance.url || undefined,
-          notes: provenance.notes || undefined
+          notes: provenance.notes || undefined,
         }
       : undefined;
 
@@ -322,9 +347,9 @@ async function main() {
       captionStrategy,
       includeSpecTags,
       includePromptTokens,
-      note: "Dataset builder with filters."
+      note: "Dataset builder with filters.",
     },
-    items
+    items,
   };
 
   if (dryRun) {

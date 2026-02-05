@@ -36,8 +36,8 @@ async function ensureProjectCatalogFiles(projectDir: string) {
         { id: "spritesheet", label: "Spritesheet", requiresAlpha: true, multiFrame: true },
         { id: "texture", label: "Texture", tileable: true, multiFrame: false },
         { id: "tile", label: "Tile", tileable: true, multiFrame: false },
-        { id: "overlay", label: "Overlay/VFX", requiresAlpha: true, multiFrame: false }
-      ]
+        { id: "overlay", label: "Overlay/VFX", requiresAlpha: true, multiFrame: false },
+      ],
     },
     "styles.json": {
       id: "styles",
@@ -47,20 +47,24 @@ async function ensureProjectCatalogFiles(projectDir: string) {
         { id: "cartoon", label: "Cartoon" },
         { id: "anime", label: "Anime" },
         { id: "realistic", label: "Realistic" },
-        { id: "pixel_art", label: "Pixel Art" }
-      ]
+        { id: "pixel_art", label: "Pixel Art" },
+      ],
     },
     "scenarios.json": {
       id: "scenarios",
       createdAt: nowIso(),
       updatedAt: nowIso(),
-      scenarios: [{ id: "fantasy", label: "Fantasy" }, { id: "scifi", label: "Sci‑Fi" }, { id: "cyberpunk", label: "Cyberpunk" }]
+      scenarios: [
+        { id: "fantasy", label: "Fantasy" },
+        { id: "scifi", label: "Sci‑Fi" },
+        { id: "cyberpunk", label: "Cyberpunk" },
+      ],
     },
     "palettes.json": {
       id: "palettes",
       createdAt: nowIso(),
       updatedAt: nowIso(),
-      palettes: [{ id: "default", label: "Default", colors: ["#ffffff", "#000000"] }]
+      palettes: [{ id: "default", label: "Default", colors: ["#ffffff", "#000000"] }],
     },
     "tags.json": {
       id: "tags",
@@ -78,17 +82,21 @@ async function ensureProjectCatalogFiles(projectDir: string) {
             { id: "assetType:spritesheet", label: "Spritesheet" },
             { id: "assetType:texture", label: "Texture" },
             { id: "assetType:tile", label: "Tile" },
-            { id: "assetType:overlay", label: "Overlay" }
-          ]
+            { id: "assetType:overlay", label: "Overlay" },
+          ],
         },
         {
           id: "quality",
           label: "Quality",
           exclusive: false,
-          tags: [{ id: "quality:high", label: "High" }, { id: "quality:medium", label: "Medium" }, { id: "quality:low", label: "Low" }]
-        }
-      ]
-    }
+          tags: [
+            { id: "quality:high", label: "High" },
+            { id: "quality:medium", label: "Medium" },
+            { id: "quality:low", label: "Low" },
+          ],
+        },
+      ],
+    },
   };
 
   for (const [name, contents] of Object.entries(defaults)) {
@@ -135,16 +143,16 @@ export async function createProject(opts: {
     updatedAt: createdAt,
     defaults: {
       style: opts.defaults?.style ?? "cartoon",
-      scenario: opts.defaults?.scenario ?? "fantasy"
+      scenario: opts.defaults?.scenario ?? "fantasy",
     },
     policies: {
       loraSelection: {
         mode: "baseline_then_project",
         preferRecommended: true,
         maxActiveLoras: 2,
-        releasePolicy: "active_or_latest_approved"
-      }
-    }
+        releasePolicy: "active_or_latest_approved",
+      },
+    },
   };
 
   opts.schemas.validateOrThrow("project.schema.json", project);
@@ -168,7 +176,7 @@ export async function updateProject(opts: {
   const project = await readJson<Project>(filePath);
   const next: Project = {
     ...project,
-    updatedAt: nowIso()
+    updatedAt: nowIso(),
   };
 
   if (opts.patch.policies !== undefined) {

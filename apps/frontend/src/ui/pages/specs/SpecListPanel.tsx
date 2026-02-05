@@ -65,7 +65,9 @@ export function SpecListPanel(props: Props) {
           }
           placeholder="SpecList text"
           value={props.specText}
-          onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => props.onSpecTextChange(event.currentTarget.value)}
+          onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) =>
+            props.onSpecTextChange(event.currentTarget.value)
+          }
           minRows={4}
         />
         <Button onClick={props.onCreateSpecList} disabled={!props.specTitle.trim() || !props.specText.trim()}>

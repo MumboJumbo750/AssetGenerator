@@ -15,7 +15,7 @@ import {
   Switch,
   Text,
   TextInput,
-  Title
+  Title,
 } from "@mantine/core";
 
 import { HelpTip } from "../components/HelpTip";
@@ -49,14 +49,19 @@ export function TrainingPage() {
   const [promptFilter, setPromptFilter] = useState("");
   const [sortMode, setSortMode] = useState<"prompt" | "left_images" | "right_images" | "missing">("prompt");
 
-  const currentProject = useMemo(() => projects.find((project) => project.id === selectedProjectId) ?? null, [projects, selectedProjectId]);
-  const loraPolicy = currentProject?.policies?.loraSelection;
-  const [policyMode, setPolicyMode] = useState<"manual" | "baseline_then_project" | "project_then_baseline" | "baseline_only" | "project_only">(
-    "baseline_then_project"
+  const currentProject = useMemo(
+    () => projects.find((project) => project.id === selectedProjectId) ?? null,
+    [projects, selectedProjectId],
   );
+  const loraPolicy = currentProject?.policies?.loraSelection;
+  const [policyMode, setPolicyMode] = useState<
+    "manual" | "baseline_then_project" | "project_then_baseline" | "baseline_only" | "project_only"
+  >("baseline_then_project");
   const [policyPreferRecommended, setPolicyPreferRecommended] = useState(true);
   const [policyMaxActive, setPolicyMaxActive] = useState(2);
-  const [policyReleasePolicy, setPolicyReleasePolicy] = useState<"active_or_latest_approved" | "active_only">("active_or_latest_approved");
+  const [policyReleasePolicy, setPolicyReleasePolicy] = useState<"active_or_latest_approved" | "active_only">(
+    "active_or_latest_approved",
+  );
 
   const policyAction = useAsyncAction(async () => {
     if (!selectedProjectId) return;
@@ -66,9 +71,9 @@ export function TrainingPage() {
           mode: policyMode,
           preferRecommended: policyPreferRecommended,
           maxActiveLoras: policyMaxActive,
-          releasePolicy: policyReleasePolicy
-        }
-      }
+          releasePolicy: policyReleasePolicy,
+        },
+      },
     });
     await refreshProjectData(selectedProjectId);
   });
@@ -85,7 +90,7 @@ export function TrainingPage() {
 
   const loraOptions = useMemo(
     () => loras.map((lora) => ({ value: lora.id, label: `${lora.name} (${lora.id})` })),
-    [loras]
+    [loras],
   );
 
   const selectedLora = useMemo(() => loras.find((lora) => lora.id === selectedLoraId) ?? null, [loras, selectedLoraId]);
@@ -93,13 +98,13 @@ export function TrainingPage() {
   const releaseOptions = useMemo(() => {
     return (selectedLora?.releases ?? []).map((release) => ({
       value: release.id,
-      label: `${release.id} (${release.status})`
+      label: `${release.id} (${release.status})`,
     }));
   }, [selectedLora]);
 
   const selectedRelease = useMemo(
     () => selectedLora?.releases?.find((release) => release.id === selectedReleaseId) ?? null,
-    [selectedLora, selectedReleaseId]
+    [selectedLora, selectedReleaseId],
   );
 
   const releaseOptionsFor = (lora: typeof selectedLora | null) =>
@@ -107,22 +112,30 @@ export function TrainingPage() {
 
   const evalOptionsFor = (releaseId: string) =>
     evals
-      .filter((evalRecord) => evalRecord.loraId === selectedLoraId && (!releaseId || evalRecord.releaseId === releaseId))
+      .filter(
+        (evalRecord) => evalRecord.loraId === selectedLoraId && (!releaseId || evalRecord.releaseId === releaseId),
+      )
       .map((evalRecord) => ({
         value: evalRecord.id,
-        label: `${evalRecord.id} (${evalRecord.status})`
+        label: `${evalRecord.id} (${evalRecord.status})`,
       }));
 
   const evalOptions = useMemo(() => {
     return evals
-      .filter((evalRecord) => evalRecord.loraId === selectedLoraId && (!selectedReleaseId || evalRecord.releaseId === selectedReleaseId))
+      .filter(
+        (evalRecord) =>
+          evalRecord.loraId === selectedLoraId && (!selectedReleaseId || evalRecord.releaseId === selectedReleaseId),
+      )
       .map((evalRecord) => ({
         value: evalRecord.id,
-        label: `${evalRecord.id} (${evalRecord.status})`
+        label: `${evalRecord.id} (${evalRecord.status})`,
       }));
   }, [evals, selectedLoraId, selectedReleaseId]);
 
-  const selectedEval = useMemo(() => evals.find((evalRecord) => evalRecord.id === selectedEvalId) ?? null, [evals, selectedEvalId]);
+  const selectedEval = useMemo(
+    () => evals.find((evalRecord) => evalRecord.id === selectedEvalId) ?? null,
+    [evals, selectedEvalId],
+  );
 
   React.useEffect(() => {
     if (!selectedLoraId || !loras.some((lora) => lora.id === selectedLoraId)) {
@@ -188,7 +201,13 @@ export function TrainingPage() {
     setPolicyPreferRecommended(loraPolicy?.preferRecommended ?? true);
     setPolicyMaxActive(loraPolicy?.maxActiveLoras ?? 2);
     setPolicyReleasePolicy(loraPolicy?.releasePolicy ?? "active_or_latest_approved");
-  }, [selectedProjectId, loraPolicy?.mode, loraPolicy?.preferRecommended, loraPolicy?.maxActiveLoras, loraPolicy?.releasePolicy]);
+  }, [
+    selectedProjectId,
+    loraPolicy?.mode,
+    loraPolicy?.preferRecommended,
+    loraPolicy?.maxActiveLoras,
+    loraPolicy?.releasePolicy,
+  ]);
 
   const evalOutputs = Array.isArray(selectedEval?.outputs) ? selectedEval.outputs : [];
 
@@ -225,7 +244,10 @@ export function TrainingPage() {
   }
 
   const leftEval = useMemo(() => evals.find((evalRecord) => evalRecord.id === leftEvalId) ?? null, [evals, leftEvalId]);
-  const rightEval = useMemo(() => evals.find((evalRecord) => evalRecord.id === rightEvalId) ?? null, [evals, rightEvalId]);
+  const rightEval = useMemo(
+    () => evals.find((evalRecord) => evalRecord.id === rightEvalId) ?? null,
+    [evals, rightEvalId],
+  );
 
   const comparisonRows = useMemo(() => {
     const leftPrompts = promptsFor(leftEval);
@@ -239,7 +261,7 @@ export function TrainingPage() {
       .map((prompt) => ({
         prompt,
         leftImages: leftMap.get(prompt) ?? [],
-        rightImages: rightMap.get(prompt) ?? []
+        rightImages: rightMap.get(prompt) ?? [],
       }))
       .filter((row) => (!filter ? true : row.prompt.toLowerCase().includes(filter)));
 
@@ -277,7 +299,7 @@ export function TrainingPage() {
               onChange={(value) => setScope(value as "project" | "baseline")}
               data={[
                 { label: "Project", value: "project" },
-                { label: "Baseline", value: "baseline" }
+                { label: "Baseline", value: "baseline" },
               ]}
             />
             <Text size="sm" c="dimmed">
@@ -289,7 +311,7 @@ export function TrainingPage() {
             onChange={(value) => setComparisonMode(value as "single" | "compare")}
             data={[
               { label: "Single", value: "single" },
-              { label: "Compare", value: "compare" }
+              { label: "Compare", value: "compare" },
             ]}
           />
           <Text size="sm" c="dimmed" onClick={() => refresh().catch(() => undefined)} style={{ cursor: "pointer" }}>
@@ -323,7 +345,7 @@ export function TrainingPage() {
                   { value: "baseline_then_project", label: "Baseline then project" },
                   { value: "project_then_baseline", label: "Project then baseline" },
                   { value: "baseline_only", label: "Baseline only" },
-                  { value: "project_only", label: "Project only" }
+                  { value: "project_only", label: "Project only" },
                 ]}
                 value={policyMode}
                 onChange={(value) => setPolicyMode((value as typeof policyMode) ?? "baseline_then_project")}
@@ -332,10 +354,12 @@ export function TrainingPage() {
                 label="Release policy"
                 data={[
                   { value: "active_or_latest_approved", label: "Active or latest approved" },
-                  { value: "active_only", label: "Active only" }
+                  { value: "active_only", label: "Active only" },
                 ]}
                 value={policyReleasePolicy}
-                onChange={(value) => setPolicyReleasePolicy((value as typeof policyReleasePolicy) ?? "active_or_latest_approved")}
+                onChange={(value) =>
+                  setPolicyReleasePolicy((value as typeof policyReleasePolicy) ?? "active_or_latest_approved")
+                }
               />
               <NumberInput
                 label="Max active LoRAs"
@@ -350,7 +374,12 @@ export function TrainingPage() {
               />
             </SimpleGrid>
             <Group justify="flex-end">
-              <Button size="xs" variant="light" loading={policyAction.loading} onClick={() => policyAction.run().catch(() => undefined)}>
+              <Button
+                size="xs"
+                variant="light"
+                loading={policyAction.loading}
+                onClick={() => policyAction.run().catch(() => undefined)}
+              >
                 Save policy
               </Button>
             </Group>
@@ -423,22 +452,25 @@ export function TrainingPage() {
                   </Text>
                 </Group>
                 {selectedLora && (
-                <Group gap="xs">
-                  {(["candidate", "approved", "deprecated"] as const).map((status) => (
-                    <Button
-                      key={status}
-                      size="xs"
-                      variant={selectedRelease.status === status ? "filled" : "light"}
-                      onClick={() =>
-                        loraAction
-                          .run({ loraId: selectedLora.id, patch: { releaseUpdates: [{ id: selectedRelease.id, status }] } })
-                          .catch(() => undefined)
-                      }
-                    >
-                      {status}
-                    </Button>
-                  ))}
-                </Group>
+                  <Group gap="xs">
+                    {(["candidate", "approved", "deprecated"] as const).map((status) => (
+                      <Button
+                        key={status}
+                        size="xs"
+                        variant={selectedRelease.status === status ? "filled" : "light"}
+                        onClick={() =>
+                          loraAction
+                            .run({
+                              loraId: selectedLora.id,
+                              patch: { releaseUpdates: [{ id: selectedRelease.id, status }] },
+                            })
+                            .catch(() => undefined)
+                        }
+                      >
+                        {status}
+                      </Button>
+                    ))}
+                  </Group>
                 )}
                 {selectedLora && (
                   <Select
@@ -589,7 +621,7 @@ export function TrainingPage() {
                     { value: "prompt", label: "Sort: prompt" },
                     { value: "left_images", label: "Sort: left images" },
                     { value: "right_images", label: "Sort: right images" },
-                    { value: "missing", label: "Sort: missing" }
+                    { value: "missing", label: "Sort: missing" },
                   ]}
                   value={sortMode}
                   onChange={(value) => setSortMode((value as any) ?? "prompt")}
@@ -636,7 +668,10 @@ export function TrainingPage() {
           ) : (
             <Stack gap="md">
               <SimpleGrid cols={{ base: 1, md: 2 }}>
-                {[{ label: "Eval A", evalRecord: leftEval }, { label: "Eval B", evalRecord: rightEval }].map((slot) => {
+                {[
+                  { label: "Eval A", evalRecord: leftEval },
+                  { label: "Eval B", evalRecord: rightEval },
+                ].map((slot) => {
                   const metrics = evalMetrics(slot.evalRecord);
                   return (
                     <Card key={slot.label} withBorder radius="sm" p="sm">

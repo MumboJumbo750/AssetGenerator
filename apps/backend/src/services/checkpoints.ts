@@ -64,7 +64,7 @@ export async function createProjectCheckpoint(opts: {
     weights: opts.checkpoint.weights,
     supportedAssetTypes: opts.checkpoint.supportedAssetTypes ?? ["ui_icon"],
     promptTemplates: opts.checkpoint.promptTemplates,
-    defaultGenerationParams: opts.checkpoint.defaultGenerationParams
+    defaultGenerationParams: opts.checkpoint.defaultGenerationParams,
   };
 
   opts.schemas.validateOrThrow("checkpoint.schema.json", checkpoint);
@@ -85,7 +85,7 @@ export async function updateProjectCheckpoint(opts: {
   const checkpoint = await readJson<CheckpointRecord>(filePath);
   const next: CheckpointRecord = {
     ...checkpoint,
-    updatedAt: nowIso()
+    updatedAt: nowIso(),
   };
 
   if (typeof opts.patch.name === "string") next.name = opts.patch.name.trim();
@@ -93,7 +93,8 @@ export async function updateProjectCheckpoint(opts: {
   if (opts.patch.weights !== undefined) next.weights = opts.patch.weights;
   if (Array.isArray(opts.patch.supportedAssetTypes)) next.supportedAssetTypes = opts.patch.supportedAssetTypes;
   if (opts.patch.promptTemplates !== undefined) next.promptTemplates = opts.patch.promptTemplates;
-  if (opts.patch.defaultGenerationParams !== undefined) next.defaultGenerationParams = opts.patch.defaultGenerationParams;
+  if (opts.patch.defaultGenerationParams !== undefined)
+    next.defaultGenerationParams = opts.patch.defaultGenerationParams;
 
   opts.schemas.validateOrThrow("checkpoint.schema.json", next);
   await writeJsonAtomic(filePath, next);

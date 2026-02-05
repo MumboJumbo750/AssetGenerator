@@ -9,7 +9,7 @@ export async function submitWorkflow(opts: { baseUrl: string; workflow: unknown 
   const res = await fetch(new URL("/prompt", opts.baseUrl), {
     method: "POST",
     headers: { "content-type": "application/json" },
-    body: JSON.stringify({ prompt: opts.workflow, client_id: clientId })
+    body: JSON.stringify({ prompt: opts.workflow, client_id: clientId }),
   });
   if (!res.ok) throw new Error(`ComfyUI /prompt failed: ${res.status} ${await res.text()}`);
   const json = (await res.json()) as ComfyQueueResponse;
@@ -33,7 +33,11 @@ export function extractImagesFromHistory(history: any, promptId: string): ComfyI
     if (!Array.isArray(imgs)) continue;
     for (const img of imgs) {
       if (!img?.filename) continue;
-      images.push({ filename: String(img.filename), subfolder: img.subfolder ? String(img.subfolder) : "", type: img.type ? String(img.type) : "output" });
+      images.push({
+        filename: String(img.filename),
+        subfolder: img.subfolder ? String(img.subfolder) : "",
+        type: img.type ? String(img.type) : "output",
+      });
     }
   }
   return images;
@@ -50,4 +54,3 @@ export async function downloadImage(opts: { baseUrl: string; ref: ComfyImageRef 
   const buf = new Uint8Array(await res.arrayBuffer());
   return buf;
 }
-

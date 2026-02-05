@@ -17,7 +17,7 @@ export function useAtlasPivotEditor(opts: {
         return { ...prev, frames: framesNext };
       });
     },
-    [opts]
+    [opts],
   );
 
   return { updatePivot };

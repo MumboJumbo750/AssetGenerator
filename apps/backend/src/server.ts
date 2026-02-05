@@ -23,6 +23,7 @@ import { registerImportRoutes } from "./routes/imports";
 import { registerSystemLogRoutes } from "./routes/systemLogs";
 import { registerSystemStatusRoutes } from "./routes/systemStatus";
 import { registerComfyUiVerifyRoutes } from "./routes/comfyuiVerify";
+import { registerAutomationRoutes } from "./routes/automation";
 
 const repoRoot = repoRootFromHere(import.meta.url);
 
@@ -35,7 +36,7 @@ async function main() {
 
   const runtimeLog = await createJsonlLogger({
     absPath: path.join(dataRoot, "runtime", "logs", "backend.jsonl"),
-    component: "backend"
+    component: "backend",
   });
   await runtimeLog.info("startup", { dataRoot });
 
@@ -43,9 +44,11 @@ async function main() {
     void runtimeLog.error("unhandled_rejection", { reason: String(reason) });
   });
   process.on("uncaughtException", (err) => {
-    void runtimeLog.error("uncaught_exception", { error: { message: err?.message ?? String(err), stack: (err as any)?.stack } }).finally(() => {
-      process.exit(1);
-    });
+    void runtimeLog
+      .error("uncaught_exception", { error: { message: err?.message ?? String(err), stack: (err as any)?.stack } })
+      .finally(() => {
+        process.exit(1);
+      });
   });
 
   const app = Fastify({ logger: true });
@@ -55,14 +58,14 @@ async function main() {
   await app.register(fastifyStatic, {
     root: dataRoot,
     prefix: "/data/",
-    decorateReply: false
+    decorateReply: false,
   });
 
   app.addHook("onError", async (req, _reply, err) => {
     void runtimeLog.error("request_error", {
       method: req.method,
       url: req.url,
-      error: { message: err?.message ?? String(err), stack: (err as any)?.stack }
+      error: { message: err?.message ?? String(err), stack: (err as any)?.stack },
     });
   });
 
@@ -74,11 +77,12 @@ async function main() {
   await registerJobRoutes(app, { dataRoot, schemas });
   await registerSpecRoutes(app, { dataRoot, schemas });
   await registerAssetRoutes(app, { dataRoot, schemas });
-  await registerAtlasRoutes(app, { dataRoot });
+  await registerAtlasRoutes(app, { dataRoot, schemas });
   await registerCheckpointRoutes(app, { dataRoot, schemas });
   await registerExportProfileRoutes(app, { dataRoot, schemas });
   await registerLoraRoutes(app, { dataRoot, schemas });
   await registerEvalRoutes(app, { dataRoot });
+  await registerAutomationRoutes(app, { dataRoot, schemas });
   await registerImportRoutes(app, { dataRoot, schemas });
   await registerSystemLogRoutes(app, { dataRoot });
   await registerSystemStatusRoutes(app, { dataRoot, comfyBaseUrl: local?.comfyui?.baseUrl ?? "http://127.0.0.1:8188" });
@@ -86,7 +90,7 @@ async function main() {
     dataRoot,
     repoRoot,
     comfyBaseUrl: local?.comfyui?.baseUrl ?? "http://127.0.0.1:8188",
-    local
+    local,
   });
 
   const port = Number(process.env.ASSETGEN_BACKEND_PORT ?? 3030);
@@ -95,7 +99,11 @@ async function main() {
     await app.listen({ port, host });
     await runtimeLog.info("listening", { host, port, dataRoot });
   } catch (err: any) {
-    await runtimeLog.error("listen_failed", { host, port, error: { message: err?.message ?? String(err), stack: err?.stack } });
+    await runtimeLog.error("listen_failed", {
+      host,
+      port,
+      error: { message: err?.message ?? String(err), stack: err?.stack },
+    });
     throw err;
   }
 }

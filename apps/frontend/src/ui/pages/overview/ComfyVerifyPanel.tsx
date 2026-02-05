@@ -18,7 +18,10 @@ export function ComfyVerifyPanel(props: Props) {
         <Group justify="space-between">
           <Group gap="xs">
             <Text fw={600}>ComfyUI verification</Text>
-            <HelpTip label="Verify ComfyUI reachability, workflow files, and model weight paths." topicId="system-status" />
+            <HelpTip
+              label="Verify ComfyUI reachability, workflow files, and model weight paths."
+              topicId="system-status"
+            />
           </Group>
           <Button variant="light" onClick={props.onVerify} loading={props.verifyLoading}>
             Run verify
@@ -74,7 +77,11 @@ export function ComfyVerifyPanel(props: Props) {
             </Group>
             {props.verify.checkpoints.some((c) => !c.exists) && (
               <Text size="xs" c="dimmed">
-                Missing checkpoints: {props.verify.checkpoints.filter((c) => !c.exists).map((c) => c.id).join(", ")}
+                Missing checkpoints:{" "}
+                {props.verify.checkpoints
+                  .filter((c) => !c.exists)
+                  .map((c) => c.id)
+                  .join(", ")}
               </Text>
             )}
             {props.verify.checkpoints.some((c) => c.hashExpected && c.hashMatch === false) && (
@@ -88,7 +95,11 @@ export function ComfyVerifyPanel(props: Props) {
             )}
             {props.verify.loras.some((l) => !l.exists) && (
               <Text size="xs" c="dimmed">
-                Missing LoRAs: {props.verify.loras.filter((l) => !l.exists).map((l) => l.id).join(", ")}
+                Missing LoRAs:{" "}
+                {props.verify.loras
+                  .filter((l) => !l.exists)
+                  .map((l) => l.id)
+                  .join(", ")}
               </Text>
             )}
             {props.verify.loras.some((l) => l.hashExpected && l.hashMatch === false) && (
@@ -107,14 +118,23 @@ export function ComfyVerifyPanel(props: Props) {
             )}
             {props.verify.customNodes.length > 0 && props.verify.customNodes.some((n) => !n.matched) && (
               <Text size="xs" c="dimmed">
-                Missing custom nodes: {props.verify.customNodes.filter((n) => !n.matched).map((n) => n.name).join(", ")}
+                Missing custom nodes:{" "}
+                {props.verify.customNodes
+                  .filter((n) => !n.matched)
+                  .map((n) => n.name)
+                  .join(", ")}
               </Text>
             )}
-            {props.verify.pythonRequirements.length > 0 && props.verify.pythonRequirements.some((p) => !p.installed) && (
-              <Text size="xs" c="dimmed">
-                Missing python packages: {props.verify.pythonRequirements.filter((p) => !p.installed).map((p) => p.package).join(", ")}
-              </Text>
-            )}
+            {props.verify.pythonRequirements.length > 0 &&
+              props.verify.pythonRequirements.some((p) => !p.installed) && (
+                <Text size="xs" c="dimmed">
+                  Missing python packages:{" "}
+                  {props.verify.pythonRequirements
+                    .filter((p) => !p.installed)
+                    .map((p) => p.package)
+                    .join(", ")}
+                </Text>
+              )}
           </Stack>
         )}
       </Stack>

@@ -34,6 +34,6 @@ export function useExportMappings(uiSpecs: AssetSpec[]) {
     uiMappings,
     setUiMappings,
     updateUiMapping,
-    resetMappings
+    resetMappings,
   };
 }

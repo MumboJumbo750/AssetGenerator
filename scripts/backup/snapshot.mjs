@@ -10,7 +10,7 @@ function parseArgs() {
     dataRoot: "",
     outDir: "",
     includeRuntime: false,
-    dryRun: false
+    dryRun: false,
   };
   for (let i = 0; i < args.length; i++) {
     const a = args[i];

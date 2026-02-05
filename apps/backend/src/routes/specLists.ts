@@ -6,7 +6,10 @@ import { fileExists } from "../lib/json";
 import type { SchemaRegistry } from "../lib/schemas";
 import { createSpecList, listSpecLists, updateSpecList } from "../services/specLists";
 
-export async function registerSpecListRoutes(app: FastifyInstance, opts: { dataRoot: string; schemas: SchemaRegistry }) {
+export async function registerSpecListRoutes(
+  app: FastifyInstance,
+  opts: { dataRoot: string; schemas: SchemaRegistry },
+) {
   const projectsRoot = path.join(opts.dataRoot, "projects");
 
   app.get("/api/projects/:projectId/spec-lists", async (req) => {
@@ -30,7 +33,7 @@ export async function registerSpecListRoutes(app: FastifyInstance, opts: { dataR
       schemas: opts.schemas,
       projectId,
       title,
-      text
+      text,
     });
     return reply.code(201).send(specList);
   });
@@ -47,7 +50,7 @@ export async function registerSpecListRoutes(app: FastifyInstance, opts: { dataR
       schemas: opts.schemas,
       projectId,
       specListId,
-      patch: body ?? {}
+      patch: body ?? {},
     });
     if (!updated) return reply.code(404).send({ error: "SpecList not found" });
     return reply.send(updated);

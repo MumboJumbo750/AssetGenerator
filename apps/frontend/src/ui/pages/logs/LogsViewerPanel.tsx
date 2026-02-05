@@ -18,13 +18,24 @@ export function LogsViewerPanel(props: Props) {
         <Group justify="space-between">
           <Group gap="xs">
             <Text fw={600}>System logs</Text>
-            <HelpTip label="Backend and worker logs help diagnose failures and config issues." topicId="logs-and-debugging" />
+            <HelpTip
+              label="Backend and worker logs help diagnose failures and config issues."
+              topicId="logs-and-debugging"
+            />
           </Group>
           <Group gap="xs">
-            <Button size="xs" variant={props.systemLogService === "backend" ? "filled" : "light"} onClick={() => props.onSelectService("backend")}>
+            <Button
+              size="xs"
+              variant={props.systemLogService === "backend" ? "filled" : "light"}
+              onClick={() => props.onSelectService("backend")}
+            >
               Backend
             </Button>
-            <Button size="xs" variant={props.systemLogService === "worker" ? "filled" : "light"} onClick={() => props.onSelectService("worker")}>
+            <Button
+              size="xs"
+              variant={props.systemLogService === "worker" ? "filled" : "light"}
+              onClick={() => props.onSelectService("worker")}
+            >
               Worker
             </Button>
             <HelpTip label="Switch between backend and worker logs." topicId="logs-and-debugging" />

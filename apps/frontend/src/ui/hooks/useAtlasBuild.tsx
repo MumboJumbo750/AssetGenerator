@@ -28,7 +28,13 @@ export function useAtlasBuild(opts: {
   const addFrame = useCallback((candidate: { assetId: string; versionId: string; variantId: string; path: string }) => {
     setFrames((items) => [
       ...items,
-      { key: `${candidate.assetId}_${candidate.variantId}`, path: candidate.path, assetId: candidate.assetId, versionId: candidate.versionId, variantId: candidate.variantId }
+      {
+        key: `${candidate.assetId}_${candidate.variantId}`,
+        path: candidate.path,
+        assetId: candidate.assetId,
+        versionId: candidate.versionId,
+        variantId: candidate.variantId,
+      },
     ]);
   }, []);
 
@@ -66,7 +72,7 @@ export function useAtlasBuild(opts: {
         trim,
         extrude,
         sort,
-        framePaths: frames.map((f) => ({ key: f.key, path: f.path }))
+        framePaths: frames.map((f) => ({ key: f.key, path: f.path })),
       });
       await opts.onRefreshProject();
       await opts.onRefreshAtlases();
@@ -96,6 +102,6 @@ export function useAtlasBuild(opts: {
     moveFrame,
     updateFrameKey,
     removeFrame,
-    createAtlas
+    createAtlas,
   };
 }

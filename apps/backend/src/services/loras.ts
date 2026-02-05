@@ -66,7 +66,7 @@ async function updateLoraRecord(filePath: string, schemas: SchemaRegistry, patch
   const next: LoraRecord = {
     ...lora,
     releases: Array.isArray(lora.releases) ? [...lora.releases] : [],
-    updatedAt: nowIso()
+    updatedAt: nowIso(),
   };
 
   if (typeof patch.recommended === "boolean") {
@@ -125,13 +125,18 @@ export async function updateProjectLora(
   schemas: SchemaRegistry,
   projectId: string,
   loraId: string,
-  patch: LoraUpdatePatch
+  patch: LoraUpdatePatch,
 ) {
   const filePath = path.join(projectsRoot, projectId, "loras", `${loraId}.json`);
   return updateLoraRecord(filePath, schemas, patch);
 }
 
-export async function updateSharedLora(dataRoot: string, schemas: SchemaRegistry, loraId: string, patch: LoraUpdatePatch) {
+export async function updateSharedLora(
+  dataRoot: string,
+  schemas: SchemaRegistry,
+  loraId: string,
+  patch: LoraUpdatePatch,
+) {
   const filePath = path.join(dataRoot, "shared", "loras", `${loraId}.json`);
   return updateLoraRecord(filePath, schemas, patch);
 }
