@@ -76,10 +76,10 @@ async function ensureProjectCatalogFiles(projectDir: string) {
           label: "Asset Type",
           exclusive: true,
           tags: [
-            { id: "assetType:ui_icon", label: "UI Icon" },
-            { id: "assetType:logo", label: "Logo" },
+            { id: "assetType:ui_icon", label: "UI Icon", reviewTools: [{ type: "safe_area" }] },
+            { id: "assetType:logo", label: "Logo", reviewTools: [{ type: "safe_area" }] },
             { id: "assetType:sprite", label: "Sprite" },
-            { id: "assetType:spritesheet", label: "Spritesheet" },
+            { id: "assetType:spritesheet", label: "Spritesheet", reviewTools: [{ type: "onion_skin" }] },
             { id: "assetType:texture", label: "Texture" },
             { id: "assetType:tile", label: "Tile" },
             { id: "assetType:overlay", label: "Overlay" },
@@ -151,6 +151,11 @@ export async function createProject(opts: {
         preferRecommended: true,
         maxActiveLoras: 2,
         releasePolicy: "active_or_latest_approved",
+      },
+      runtimeFeedbackPolicy: {
+        manualReviewFallbackEnabled: false,
+        sprintQueueName: "decision_sprint_queue",
+        questionnaireMode: "contract_tag_v1",
       },
     },
   };

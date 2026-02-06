@@ -35,6 +35,7 @@
     "lora:eval-grid": "node scripts/lora/eval-grid.mjs",
     "lora:cleanup-eval": "node scripts/lora/cleanup-eval-specs.mjs",
     "lora:normalize-evals": "node scripts/lora/normalize-evals.mjs",
+    "test": "node --import tsx --test tests/**/*.test.ts",
     "format": "prettier . --write",
     "format:check": "prettier . --check",
     "help": "node scripts/help.mjs"

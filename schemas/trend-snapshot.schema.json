@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "trend-snapshot.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "projectId", "period", "createdAt", "metrics"],
+  "properties": {
+    "id": { "type": "string", "minLength": 1 },
+    "projectId": { "type": "string", "minLength": 1 },
+    "period": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["from", "to", "granularity"],
+      "properties": {
+        "from": { "type": "string", "format": "date-time" },
+        "to": { "type": "string", "format": "date-time" },
+        "granularity": { "type": "string", "enum": ["hourly", "daily", "weekly"] }
+      }
+    },
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Optional scope filter; omit for project-wide snapshot.",
+      "properties": {
+        "checkpointId": { "type": "string" },
+        "assetType": { "type": "string" },
+        "entityFamily": { "type": "string" },
+        "tag": { "type": "string" }
+      }
+    },
+    "metrics": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "totalJobs": { "type": "integer", "minimum": 0 },
+        "succeededJobs": { "type": "integer", "minimum": 0 },
+        "failedJobs": { "type": "integer", "minimum": 0 },
+        "totalAssets": { "type": "integer", "minimum": 0 },
+        "approvedAssets": { "type": "integer", "minimum": 0 },
+        "rejectedAssets": { "type": "integer", "minimum": 0 },
+        "firstPassApprovalRate": { "type": "number", "minimum": 0, "maximum": 1 },
+        "validatorPassRate": { "type": "number", "minimum": 0, "maximum": 1 },
+        "avgValidatorScore": { "type": "number", "minimum": 0, "maximum": 1 },
+        "escalationCount": { "type": "integer", "minimum": 0 },
+        "autoResolvedDecisions": { "type": "integer", "minimum": 0 },
+        "manualDecisions": { "type": "integer", "minimum": 0 },
+        "autoResolvedRate": { "type": "number", "minimum": 0, "maximum": 1 },
+        "avgJobDurationMs": { "type": "number", "minimum": 0 },
+        "cohesionScore": { "type": "number", "minimum": 0, "maximum": 1 },
+        "driftScore": { "type": "number", "minimum": 0, "maximum": 1 },
+        "validatorGapCount": {
+          "type": "integer", "minimum": 0,
+          "description": "Count of human-reject vs validator-pass discrepancies."
+        },
+        "validatorGapRate": {
+          "type": "number", "minimum": 0, "maximum": 1,
+          "description": "Fraction of validator passes that were human-rejected."
+        }
+      }
+    },
+    "createdAt": { "type": "string", "format": "date-time" }
+  }
+}

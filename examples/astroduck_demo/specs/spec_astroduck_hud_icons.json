@@ -1,0 +1,32 @@
+{
+  "id": "spec_astroduck_hud_icons",
+  "projectId": "astroduck_demo",
+  "specListId": "specList_astroduck_demo",
+  "createdAt": "2026-02-03T00:00:00.000Z",
+  "updatedAt": "2026-02-03T00:00:00.000Z",
+  "title": "HUD icons (health/energy/ammo/score) + UI icons (pause/sound/music)",
+  "assetType": "ui_icon",
+  "style": "comic",
+  "scenario": "scifi",
+  "tags": [
+    "assetType:ui_icon",
+    "ui:hud",
+    "style:comic"
+  ],
+  "output": {
+    "kind": "single_image",
+    "background": "transparent_required"
+  },
+  "prompt": {
+    "positive": "Set of sci-fi comic HUD icons: heart/health, battery/energy, ammo, score star, pause, sound, music; clean silhouettes, neon accents, transparent background",
+    "negative": "photo, watermark, text, cluttered background"
+  },
+  "generationParams": {
+    "width": 512,
+    "height": 512,
+    "variants": 10
+  },
+  "tier": 0,
+  "status": "ready",
+  "checkpointId": "ckpt_sd15_demo"
+}

@@ -1,0 +1,63 @@
+{
+  "id": "spec_astroduck_title_logo",
+  "projectId": "astroduck_demo",
+  "specListId": "specList_astroduck_demo",
+  "createdAt": "2026-02-03T00:00:00.000Z",
+  "updatedAt": "2026-02-03T00:00:00.000Z",
+  "title": "Title logo: AstroDuck Space Shooter",
+  "assetType": "logo",
+  "style": "comic",
+  "scenario": "scifi",
+  "tags": [
+    "assetType:logo",
+    "ui:title",
+    "theme:scifi",
+    "style:comic"
+  ],
+  "output": {
+    "kind": "logo_set",
+    "background": "transparent_required",
+    "logoVariants": {
+      "variants": [
+        {
+          "id": "full_color",
+          "label": "Full Color",
+          "theme": "full_color",
+          "aspect": "wide",
+          "background": "transparent"
+        },
+        {
+          "id": "mono",
+          "label": "Mono",
+          "theme": "mono",
+          "aspect": "wide",
+          "background": "transparent"
+        }
+      ]
+    },
+    "sizes": [
+      {
+        "label": "large",
+        "w": 2048,
+        "h": 1024
+      },
+      {
+        "label": "menu",
+        "w": 1024,
+        "h": 512
+      }
+    ]
+  },
+  "prompt": {
+    "positive": "Bold sci-fi comic logo reading 'AstroDuck Space Shooter', glowing neon accents, strong outlines, readable silhouette, space motif",
+    "negative": "photo, watermark, tiny text, cluttered background, low contrast"
+  },
+  "generationParams": {
+    "width": 1024,
+    "height": 512,
+    "variants": 6
+  },
+  "tier": 2,
+  "status": "draft",
+  "checkpointId": "ckpt_sd15_demo"
+}

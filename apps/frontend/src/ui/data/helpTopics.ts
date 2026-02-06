@@ -275,10 +275,10 @@ export const HELP_TOPICS: HelpTopic[] = [
     title: "Admin console",
     summary: "Manage catalogs, checkpoints, LoRAs, and export profiles.",
     details: [
-      "Use the Admin page to edit catalog JSON, create checkpoints, and manage LoRA recommendations.",
-      "Changes are validated against schemas, so keep JSON structure intact."
+      "Use the Admin page to edit catalogs with structured fields, create checkpoints, and manage LoRA recommendations.",
+      "Changes are validated against schemas before they are saved."
     ],
-    bullets: ["Load before editing", "Save only valid JSON", "Refresh after updates"],
+    bullets: ["Load before editing", "Review required fields", "Refresh after updates"],
     keywords: ["admin", "catalogs", "checkpoints", "governance"]
   }
 ];

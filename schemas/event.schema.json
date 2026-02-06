@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "event.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "projectId", "seq", "ts", "type", "entityType", "entityId", "causalChainId", "idempotencyKey", "payload"],
+  "properties": {
+    "id": { "type": "string", "minLength": 1 },
+    "projectId": { "type": "string", "minLength": 1 },
+    "seq": { "type": "integer", "minimum": 1 },
+    "ts": { "type": "string", "format": "date-time" },
+    "type": { "type": "string", "minLength": 1 },
+    "entityType": { "type": "string", "minLength": 1 },
+    "entityId": { "type": "string", "minLength": 1 },
+    "causalChainId": { "type": "string", "minLength": 1 },
+    "idempotencyKey": { "type": "string", "minLength": 1 },
+    "payload": { "type": "object", "additionalProperties": true }
+  }
+}
+

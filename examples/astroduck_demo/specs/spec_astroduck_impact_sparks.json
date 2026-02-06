@@ -1,0 +1,37 @@
+{
+  "id": "spec_astroduck_impact_sparks",
+  "projectId": "astroduck_demo",
+  "specListId": "specList_astroduck_demo",
+  "createdAt": "2026-02-03T00:00:00.000Z",
+  "updatedAt": "2026-02-03T00:00:00.000Z",
+  "title": "Impact sparks (small + large)",
+  "assetType": "spritesheet",
+  "style": "comic",
+  "scenario": "scifi",
+  "tags": [
+    "assetType:spritesheet",
+    "vfx:impact",
+    "style:comic"
+  ],
+  "output": {
+    "kind": "animation",
+    "background": "transparent_required",
+    "animation": {
+      "fps": 16,
+      "loop": false,
+      "frameCount": 8
+    }
+  },
+  "prompt": {
+    "positive": "Comic sci-fi impact sparks, small and large bursts, neon shards, clean alpha edges, transparent background",
+    "negative": "photo, watermark, text, smoke, messy background"
+  },
+  "generationParams": {
+    "width": 512,
+    "height": 512,
+    "variants": 8
+  },
+  "tier": 3,
+  "status": "draft",
+  "checkpointId": "ckpt_sd15_demo"
+}

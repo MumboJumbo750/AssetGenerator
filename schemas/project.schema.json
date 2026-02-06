@@ -42,6 +42,180 @@
               "description": "How to pick which release artifact to use for a LoRA."
             }
           }
+        },
+        "modelStackPolicy": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "stackOrder": {
+              "type": "array",
+              "items": { "type": "string", "enum": ["baseline", "project", "manual"] }
+            },
+            "maxActiveLoras": { "type": "integer", "minimum": 0 },
+            "layerCaps": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "baseline": { "type": "integer", "minimum": 0 },
+                "project": { "type": "integer", "minimum": 0 },
+                "manual": { "type": "integer", "minimum": 0 }
+              }
+            }
+          }
+        },
+        "checkpointProfiles": {
+          "type": "object",
+          "description": "Checkpoint-specific prompt dialect/profile defaults.",
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["profileId", "version"],
+            "properties": {
+              "profileId": { "type": "string", "minLength": 1 },
+              "version": { "type": "integer", "minimum": 1 },
+              "defaultForCheckpoint": { "type": "boolean" },
+              "basePositive": { "type": "string" },
+              "baseNegative": { "type": "string" },
+              "perAssetType": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "positive": { "type": "string" },
+                    "negative": { "type": "string" }
+                  }
+                }
+              },
+              "tagOrderPolicy": {
+                "type": "string",
+                "enum": ["checkpoint_default", "explicit"]
+              },
+              "tagOrder": { "type": "array", "items": { "type": "string" } },
+              "runtimeSafety": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "enabled": { "type": "boolean" },
+                  "positive": { "type": "array", "items": { "type": "string" } },
+                  "negative": { "type": "array", "items": { "type": "string" } }
+                }
+              }
+            }
+          }
+        },
+        "runtimeSafety": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "positive": { "type": "array", "items": { "type": "string" } },
+            "negative": { "type": "array", "items": { "type": "string" } }
+          }
+        },
+        "runtimeFeedbackPolicy": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "manualReviewFallbackEnabled": { "type": "boolean" },
+            "sprintQueueName": { "type": "string", "minLength": 1 },
+            "questionnaireMode": {
+              "type": "string",
+              "enum": ["contract_tag_v1", "validator_only"],
+              "default": "contract_tag_v1"
+            }
+          }
+        },
+        "checkpointBaselineMap": {
+          "type": "object",
+          "description": "Allowed/default baseline profile ids per checkpoint.",
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "defaultBaselineProfileId": { "type": "string" },
+              "allowedBaselineProfileIds": { "type": "array", "items": { "type": "string" } }
+            }
+          }
+        },
+        "tagPromptMap": {
+          "type": "object",
+          "description": "Checkpoint-scoped tag prompt fragments.",
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "positive": { "type": "string" },
+                "negative": { "type": "string" },
+                "weight": { "type": "number" },
+                "position": { "type": "string", "enum": ["prefix", "suffix", "replace"] }
+              }
+            }
+          }
+        },
+        "retryPolicy": {
+          "type": "object",
+          "description": "Global retry/backoff/escalation policy for job failures.",
+          "additionalProperties": false,
+          "properties": {
+            "maxAttempts": { "type": "integer", "minimum": 1, "default": 3 },
+            "backoffMode": { "type": "string", "enum": ["fixed", "exponential"], "default": "exponential" },
+            "baseDelayMs": { "type": "integer", "minimum": 100, "default": 2000 },
+            "maxDelayMs": { "type": "integer", "minimum": 100, "default": 60000 },
+            "jitterPct": { "type": "number", "minimum": 0, "maximum": 1, "default": 0.15 },
+            "retryOn": {
+              "type": "array",
+              "items": { "type": "string", "enum": ["retryable", "timeout", "upstream_unavailable"] },
+              "default": ["retryable", "timeout", "upstream_unavailable"],
+              "description": "Error classes that trigger automatic retry."
+            },
+            "escalateTo": {
+              "type": "string",
+              "enum": ["decision_sprint", "exception_inbox", "reject"],
+              "default": "exception_inbox",
+              "description": "Where to route failures after retries are exhausted."
+            },
+            "stuckRunThresholdMs": {
+              "type": "integer",
+              "minimum": 60000,
+              "default": 900000,
+              "description": "Duration in ms after which a 'running' job is considered stuck and eligible for recovery (default 15 min)."
+            },
+            "perJobType": {
+              "type": "object",
+              "description": "Per job-type overrides for retry policy fields.",
+              "additionalProperties": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "maxAttempts": { "type": "integer", "minimum": 1 },
+                  "backoffMode": { "type": "string", "enum": ["fixed", "exponential"] },
+                  "baseDelayMs": { "type": "integer", "minimum": 100 },
+                  "maxDelayMs": { "type": "integer", "minimum": 100 },
+                  "jitterPct": { "type": "number", "minimum": 0, "maximum": 1 },
+                  "retryOn": {
+                    "type": "array",
+                    "items": { "type": "string", "enum": ["retryable", "timeout", "upstream_unavailable"] }
+                  },
+                  "escalateTo": { "type": "string", "enum": ["decision_sprint", "exception_inbox", "reject"] }
+                }
+              }
+            }
+          }
+        },
+        "circuitBreakerPolicy": {
+          "type": "object",
+          "description": "Global blast-radius circuit breaker defaults for automation rules.",
+          "additionalProperties": false,
+          "properties": {
+            "enabled": { "type": "boolean", "default": true },
+            "defaultMaxTriggersPerMinute": { "type": "number", "minimum": 0.1, "default": 10 },
+            "defaultMaxQueueDepthRatio": { "type": "number", "minimum": 0.1, "default": 5 },
+            "defaultCooldownMs": { "type": "integer", "minimum": 1000, "default": 60000 },
+            "defaultHalfOpenTestCount": { "type": "integer", "minimum": 1, "default": 3 }
+          }
         }
       }
     },

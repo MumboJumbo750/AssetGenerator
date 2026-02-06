@@ -16,6 +16,7 @@ console.log("- npm run backend:dev    # start backend (Fastify)");
 console.log("- npm run worker:dev     # start worker (job runner)");
 console.log("- npm run frontend:dev   # start frontend (Vite)");
 console.log("- npm run comfyui:setup   # clone ComfyUI + create repo-local venv + install deps");
+console.log("                          # (also installs torch wheels from comfyui.torchIndexUrl, if configured)");
 console.log("- npm run comfyui:start   # start ComfyUI using the repo-local venv");
 console.log("- npm run comfyui:stop    # stop ComfyUI (kills pids listening on its port)");
 console.log("- npm run comfyui:restart # stop then start ComfyUI");

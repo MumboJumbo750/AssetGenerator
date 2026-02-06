@@ -1,0 +1,95 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "compile-trace.schema.json",
+  "title": "Prompt Compile Trace",
+  "description": "Evidence record capturing each layer of the prompt compilation pipeline. Generated at asset generation time and stored alongside generation evidence to enable deterministic replay, drift detection, and compile-audit.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["specId", "checkpointId", "createdAt", "compiled", "trace", "packageHash"],
+  "properties": {
+    "specId": {
+      "type": "string",
+      "minLength": 1,
+      "description": "The spec that triggered prompt compilation."
+    },
+    "checkpointId": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Checkpoint used for compilation."
+    },
+    "checkpointProfileId": {
+      "type": "string",
+      "description": "Checkpoint profile used for compilation."
+    },
+    "checkpointProfileVersion": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Version of the checkpoint profile at compilation time."
+    },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "tagFamily": {
+      "type": "string",
+      "description": "Primary tag family for the spec (e.g. scenario, style) — used for drift grouping."
+    },
+    "compiled": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["positive", "negative"],
+      "description": "Final compiled positive and negative prompts.",
+      "properties": {
+        "positive": { "type": "string" },
+        "negative": { "type": "string" }
+      }
+    },
+    "trace": {
+      "type": "array",
+      "description": "Ordered list of prompt compilation layers applied during compilation.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["layer", "sourceId", "order"],
+        "properties": {
+          "layer": {
+            "type": "string",
+            "enum": [
+              "checkpoint_base",
+              "checkpoint_asset_type",
+              "baseline_hints",
+              "tag_prompt_map",
+              "spec_prompt",
+              "spec_override",
+              "runtime_safety"
+            ],
+            "description": "Which compilation layer produced this entry."
+          },
+          "sourceId": {
+            "type": "string",
+            "description": "Identifier of the source (checkpoint id, profile id, tag name, spec id, etc.)."
+          },
+          "order": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Compilation order index."
+          },
+          "positive": {
+            "type": "string",
+            "description": "Positive prompt fragment contributed by this layer."
+          },
+          "negative": {
+            "type": "string",
+            "description": "Negative prompt fragment contributed by this layer."
+          }
+        }
+      }
+    },
+    "packageHash": {
+      "type": "string",
+      "minLength": 1,
+      "description": "SHA-256 hash of the {compiled, trace} object for deterministic replay and drift detection."
+    },
+    "compileHash": {
+      "type": "string",
+      "description": "Short hash of compiled output only (for drift metric grouping). May differ from packageHash if trace metadata changes."
+    }
+  }
+}

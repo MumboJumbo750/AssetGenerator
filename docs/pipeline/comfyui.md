@@ -30,12 +30,18 @@ Store templates in a predictable folder:
 
 ```
 pipeline/comfyui/workflows/
-  base-txt2img.json
-  assetType/
+  txt2img.json              # ← exists today
+  txt2img.bindings.json     # ← exists today
+  base-txt2img.json         # planned
+  assetType/                # planned
     character.json
     prop.json
     ui_icon.json
 ```
+
+> **Current state:** only `txt2img.json` + `txt2img.bindings.json` exist.
+> The per-asset-type template folder (`assetType/`) is a planned extension.
+> A `manifest.json` (+ `manifest.example.json`) tracks available workflows.
 
 Templates should be treated like code:
 
@@ -94,6 +100,26 @@ If ComfyUI fails:
 - job status becomes `failed`
 - store error text and last-known progress/log path
 - leave partial outputs on disk but do not mark asset as approved
+
+## Worker execution model
+
+The generation worker (`apps/worker/src/worker.ts`) drives ComfyUI:
+
+1. **Poll-based queue**: infinite loop polls `data/projects/<id>/jobs/` for `status: "queued"` files every 1.5 s (configurable via `ASSETGEN_WORKER_POLL_MS`).
+2. **File-based locking**: uses exclusive file open (`"wx"`) per project to prevent concurrent workers from processing the same project.
+3. **Heartbeat**: writes `runtime/worker-heartbeat.json` every 5 s for liveness monitoring.
+4. **Prompt compilation**: 7-layer compile trace (`checkpoint_base` → `checkpoint_asset_type` → `baseline_hints` → `tag_prompt_map` → `spec_prompt` → `spec_override` → `runtime_safety`). Produces a SHA-256 `packageHash` for drift detection. Schema: `schemas/compile-trace.schema.json`.
+5. **Retry / escalation**: classified error types (`retryable`, `non_retryable`, `timeout`, `upstream_unavailable`). Default policy: 3 attempts, exponential backoff (2 s base / 60 s max, 15 % jitter), escalate to `exception_inbox`.
+6. **Circuit breaker**: schema defined (`schemas/circuit-breaker.schema.json`); runtime implementation is planned but not yet wired.
+7. **Single-pass mode**: `--once` flag runs one poll cycle and exits (useful for CI or manual runs).
+
+## Compile-trace schema
+
+The prompt compile trace is validated by `schemas/compile-trace.schema.json` and persisted per job output. It enables:
+
+- deterministic prompt reproduction
+- entity prompt drift detection (`promptPackageHash`)
+- debugging prompt ordering issues across checkpoint profiles
 
 ## Reproducible environments
 

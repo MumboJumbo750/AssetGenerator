@@ -99,7 +99,7 @@ export async function registerAssetRoutes(app: FastifyInstance, opts: { dataRoot
       assetId: string;
       versionId: string;
     };
-    const body = req.body as { status?: string } | null;
+    const body = req.body as { status?: string; generationPatch?: Record<string, unknown> } | null;
     const before = await getAsset(projectsRoot, projectId, assetId);
     const prevStatus = before?.versions.find((v) => v.id === versionId)?.status;
 

@@ -1,0 +1,39 @@
+{
+  "id": "spec_astroduck_boss2_drilling_core",
+  "projectId": "astroduck_demo",
+  "specListId": "specList_astroduck_demo",
+  "createdAt": "2026-02-03T00:00:00.000Z",
+  "updatedAt": "2026-02-03T00:00:00.000Z",
+  "title": "Boss 2: Mars drilling core (idle + attack frames)",
+  "assetType": "spritesheet",
+  "style": "comic",
+  "scenario": "scifi",
+  "tags": [
+    "assetType:spritesheet",
+    "enemy:boss",
+    "boss:2",
+    "level:mars",
+    "style:comic"
+  ],
+  "output": {
+    "kind": "animation",
+    "background": "transparent_required",
+    "animation": {
+      "fps": 10,
+      "loop": true,
+      "frameCount": 10
+    }
+  },
+  "prompt": {
+    "positive": "Massive alien drilling core boss on Mars, rotating drill glow, sci-fi comic style, strong silhouette, transparent background",
+    "negative": "photo, watermark, text, messy background, tiny details"
+  },
+  "generationParams": {
+    "width": 1024,
+    "height": 1024,
+    "variants": 10
+  },
+  "tier": 3,
+  "status": "draft",
+  "checkpointId": "ckpt_sd15_demo"
+}

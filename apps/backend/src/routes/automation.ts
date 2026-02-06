@@ -7,16 +7,19 @@ import type { SchemaRegistry } from "../lib/schemas";
 import {
   createAutomationRule,
   createAutomationRun,
-  executeAutomationRun,
   getAutomationRule,
   listAutomationRules,
   listAutomationRuns,
   triggerAutomationEvent,
   updateAutomationRule,
+  updateAutomationRun,
   type AutomationRule,
 } from "../services/automation";
 
-export async function registerAutomationRoutes(app: FastifyInstance, opts: { dataRoot: string; schemas: SchemaRegistry }) {
+export async function registerAutomationRoutes(
+  app: FastifyInstance,
+  opts: { dataRoot: string; schemas: SchemaRegistry },
+) {
   const projectsRoot = path.join(opts.dataRoot, "projects");
 
   app.get("/api/projects/:projectId/automation/rules", async (req) => {
@@ -105,13 +108,27 @@ export async function registerAutomationRoutes(app: FastifyInstance, opts: { dat
     return reply.code(201).send({ run });
   });
 
+  /**
+   * Execute a single run — now queue-only (sets status to "queued").
+   * The worker picks up queued runs asynchronously.
+   */
   app.post("/api/projects/:projectId/automation/runs/:runId/execute", async (req, reply) => {
     const { projectId, runId } = req.params as { projectId: string; runId: string };
-    const run = await executeAutomationRun({ projectsRoot, schemas: opts.schemas, projectId, runId });
+    const run = await updateAutomationRun({
+      projectsRoot,
+      schemas: opts.schemas,
+      projectId,
+      runId,
+      patch: { status: "queued" },
+    });
     if (!run) return reply.code(404).send({ error: "Run not found" });
     return { run };
   });
 
+  /**
+   * Create + queue a run — now queue-only (creates with status "queued").
+   * The worker picks up queued runs asynchronously.
+   */
   app.post("/api/projects/:projectId/automation/runs/execute", async (req, reply) => {
     const { projectId } = req.params as { projectId: string };
     const body = req.body as { ruleId?: string; dryRun?: boolean; meta?: Record<string, unknown> } | null;
@@ -128,10 +145,8 @@ export async function registerAutomationRoutes(app: FastifyInstance, opts: { dat
       dryRun: body.dryRun,
       meta: body.meta,
     });
-
-    const executed = await executeAutomationRun({ projectsRoot, schemas: opts.schemas, projectId, runId: run.id });
-    if (!executed) return reply.code(404).send({ error: "Run not found" });
-    return reply.code(201).send({ run: executed });
+    // Run stays queued — worker will execute it asynchronously
+    return reply.code(201).send({ run });
   });
 
   app.post("/api/projects/:projectId/automation/events", async (req, reply) => {

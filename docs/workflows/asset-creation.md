@@ -1,5 +1,9 @@
 # Workflow: asset creation
 
+For recreated specs and new autopilot-ready specs, also follow:
+
+- `docs/workflows/spec-recreation-happy-loop.md`
+
 ## 0) Create/select a project
 
 Project defines defaults:
@@ -39,6 +43,7 @@ Refinement produces one JSON per asset spec:
 - `prompt.positive` and `prompt.negative` (examples stored per spec)
 - `tags` (project-wide + spec-specific)
 - `generationParams` (size, steps, sampler, CFG, seed rules)
+- `baselineProfileId`, `loraPolicy`, `styleConsistency`, `qualityContract` (required for happy-loop automation)
 
 Data: `data/projects/<projectId>/specs/<specId>.json`
 

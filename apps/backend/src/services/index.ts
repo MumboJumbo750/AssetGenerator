@@ -11,3 +11,8 @@ export * from "./loras";
 export * from "./evals";
 export * from "./automation";
 export * from "./loraResolver";
+export * from "./baselineProfiles";
+export * from "./events";
+export * from "./indexes";
+export * from "./metrics";
+export * from "./releaseGates";

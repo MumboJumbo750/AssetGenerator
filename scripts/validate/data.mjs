@@ -34,12 +34,17 @@ function schemaForDataPath(absolutePath) {
 
   // Project data
   if (rel.match(/^data\/projects\/[^/]+\/project\.json$/)) return "project.schema.json";
+  if (rel.match(/^data\/projects\/[^/]+\/baseline-profile\.json$/)) return "baseline-profile.schema.json";
 
   if (rel.match(/^data\/projects\/[^/]+\/catalogs\/asset-types\.json$/)) return "catalog.asset-types.schema.json";
   if (rel.match(/^data\/projects\/[^/]+\/catalogs\/styles\.json$/)) return "catalog.styles.schema.json";
   if (rel.match(/^data\/projects\/[^/]+\/catalogs\/scenarios\.json$/)) return "catalog.scenarios.schema.json";
   if (rel.match(/^data\/projects\/[^/]+\/catalogs\/palettes\.json$/)) return "catalog.palettes.schema.json";
   if (rel.match(/^data\/projects\/[^/]+\/catalogs\/tags\.json$/)) return "catalog.tags.schema.json";
+  if (rel.match(/^data\/projects\/[^/]+\/catalogs\/checkpoints\/[^/]+\/styles\.json$/)) return "catalog.styles.schema.json";
+  if (rel.match(/^data\/projects\/[^/]+\/catalogs\/checkpoints\/[^/]+\/scenarios\.json$/))
+    return "catalog.scenarios.schema.json";
+  if (rel.match(/^data\/projects\/[^/]+\/catalogs\/checkpoints\/[^/]+\/tags\.json$/)) return "catalog.tags.schema.json";
 
   if (rel.match(/^data\/projects\/[^/]+\/checkpoints\/[^/]+\.json$/)) return "checkpoint.schema.json";
   if (rel.match(/^data\/projects\/[^/]+\/loras\/[^/]+\.json$/)) return "lora.schema.json";
@@ -52,8 +57,13 @@ function schemaForDataPath(absolutePath) {
   if (rel.match(/^data\/projects\/[^/]+\/export-profiles\/[^/]+\.json$/)) return "export-profile.schema.json";
   if (rel.match(/^data\/projects\/[^/]+\/exports\/[^/]+\.json$/)) return "export.schema.json";
   if (rel.match(/^data\/projects\/[^/]+\/jobs\/[^/]+\.json$/)) return "job.schema.json";
+  if (rel.match(/^data\/projects\/[^/]+\/jobs-index\.json$/)) return "jobs-index.schema.json";
+  if (rel.match(/^data\/projects\/[^/]+\/events\/seq\.json$/)) return "event-cursor.schema.json";
+  if (rel.match(/^data\/projects\/[^/]+\/events\/idempotency-index\.json$/)) return "event-idempotency-index.schema.json";
+  if (rel.match(/^data\/projects\/[^/]+\/events\/cursor\.json$/)) return "event-cursor.schema.json";
   if (rel.match(/^data\/projects\/[^/]+\/automation-rules\/[^/]+\.json$/)) return "automation-rule.schema.json";
   if (rel.match(/^data\/projects\/[^/]+\/automation-runs\/[^/]+\.json$/)) return "automation-run.schema.json";
+  if (rel.match(/^data\/projects\/[^/]+\/automation-runs-index\.json$/)) return "automation-runs-index.schema.json";
 
   return "__UNKNOWN__";
 }

@@ -1,7 +1,9 @@
 {
   "comfyui": {
     "baseUrl": "http://127.0.0.1:8188",
-    "pythonBin": "C:/path/to/ComfyUI/venv/Scripts/python.exe"
+    "pythonBin": "C:/path/to/ComfyUI/venv/Scripts/python.exe",
+    "torchIndexUrl": "https://download.pytorch.org/whl/cu128",
+    "torchPackages": "torch torchvision torchaudio"
   },
   "paths": {
     "modelsRoot": "D:/ai/models",

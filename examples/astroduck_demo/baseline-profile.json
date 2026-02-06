@@ -1,0 +1,97 @@
+{
+  "id": "baseline_astroduck_demo_default",
+  "projectId": "astroduck_demo",
+  "checkpointId": "ckpt_sd15_demo",
+  "name": "Astroduck baseline defaults",
+  "version": 1,
+  "createdAt": "2026-02-05T10:00:00.000Z",
+  "updatedAt": "2026-02-05T10:00:00.000Z",
+  "global": {
+    "noDropShadows": true,
+    "background": "white_or_transparent",
+    "alphaEdgeClean": "required",
+    "allowPerspective": false
+  },
+  "assetTypeProfiles": {
+    "texture": {
+      "lighting": "flat",
+      "tileableEdges": "required",
+      "requiredStates": [],
+      "stateAlignment": "n/a",
+      "paddingPx": 0,
+      "promptHints": [
+        "seamless tile texture",
+        "flat lighting",
+        "uniform material detail"
+      ],
+      "negativePromptHints": [
+        "drop shadow",
+        "directional shadow",
+        "vignette"
+      ]
+    },
+    "ui_button": {
+      "lighting": "flat",
+      "tileableEdges": "optional",
+      "requiredStates": ["default", "hover", "pressed", "disabled"],
+      "stateAlignment": "exact",
+      "paddingPx": 8,
+      "promptHints": [
+        "game ui button set",
+        "consistent geometry across states",
+        "transparent or white background"
+      ],
+      "negativePromptHints": [
+        "cast shadow",
+        "state size mismatch",
+        "busy background texture"
+      ]
+    },
+    "ui_select": {
+      "lighting": "flat",
+      "tileableEdges": "optional",
+      "requiredStates": ["default", "hover", "open", "disabled"],
+      "stateAlignment": "exact",
+      "paddingPx": 8,
+      "promptHints": [
+        "ui dropdown/select control set",
+        "clean readable labels",
+        "consistent frame geometry between states"
+      ],
+      "negativePromptHints": [
+        "drop shadow",
+        "misaligned state variants"
+      ]
+    },
+    "icon": {
+      "lighting": "flat",
+      "tileableEdges": "optional",
+      "requiredStates": [],
+      "stateAlignment": "n/a",
+      "paddingPx": 8,
+      "promptHints": [
+        "clean icon silhouette",
+        "high contrast shape",
+        "transparent background"
+      ],
+      "negativePromptHints": [
+        "shadow",
+        "background clutter",
+        "motion blur"
+      ]
+    }
+  },
+  "validatorPolicy": {
+    "shadowCheck": { "enabled": true, "threshold": 0.8 },
+    "backgroundCheck": { "enabled": true, "mode": "white_or_transparent", "threshold": 0.9 },
+    "stateCompletenessCheck": { "enabled": true, "threshold": 1.0 },
+    "stateAlignmentCheck": { "enabled": true, "maxPixelDrift": 1 },
+    "edgeCleanlinessCheck": { "enabled": true, "threshold": 0.85 }
+  },
+  "routingPolicy": {
+    "onPass": "auto_advance",
+    "onFail": "auto_regenerate",
+    "onUncertain": "queue_decision_sprint"
+  },
+  "specOverrides": {}
+}

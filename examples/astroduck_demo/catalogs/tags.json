@@ -1,0 +1,235 @@
+{
+  "id": "tags",
+  "createdAt": "2026-02-03T00:00:00.000Z",
+  "updatedAt": "2026-02-03T00:00:00.000Z",
+  "groups": [
+    {
+      "id": "assetType",
+      "label": "Asset Type",
+      "exclusive": true,
+      "tags": [
+        {
+          "id": "assetType:ui_icon",
+          "label": "UI Icon",
+          "reviewTools": [
+            {
+              "type": "safe_area"
+            }
+          ]
+        },
+        {
+          "id": "assetType:logo",
+          "label": "Logo",
+          "reviewTools": [
+            {
+              "type": "safe_area"
+            }
+          ]
+        },
+        {
+          "id": "assetType:sprite",
+          "label": "Sprite"
+        },
+        {
+          "id": "assetType:spritesheet",
+          "label": "Spritesheet",
+          "reviewTools": [
+            {
+              "type": "onion_skin"
+            }
+          ]
+        },
+        {
+          "id": "assetType:texture",
+          "label": "Texture"
+        },
+        {
+          "id": "assetType:tile",
+          "label": "Tile"
+        },
+        {
+          "id": "assetType:overlay",
+          "label": "Overlay/VFX"
+        }
+      ]
+    },
+    {
+      "id": "level",
+      "label": "Level",
+      "exclusive": true,
+      "tags": [
+        {
+          "id": "level:earth",
+          "label": "Earth"
+        },
+        {
+          "id": "level:mars",
+          "label": "Mars"
+        },
+        {
+          "id": "level:sun",
+          "label": "Sun"
+        }
+      ]
+    },
+    {
+      "id": "ui",
+      "label": "UI",
+      "exclusive": false,
+      "tags": [
+        {
+          "id": "ui:menu",
+          "label": "Menu"
+        },
+        {
+          "id": "ui:hud",
+          "label": "HUD"
+        },
+        {
+          "id": "ui:level_select",
+          "label": "Level Select"
+        },
+        {
+          "id": "ui:difficulty",
+          "label": "Difficulty"
+        }
+      ]
+    },
+    {
+      "id": "vfx",
+      "label": "VFX",
+      "exclusive": false,
+      "tags": [
+        {
+          "id": "vfx:projectile",
+          "label": "Projectile"
+        },
+        {
+          "id": "vfx:muzzle_flash",
+          "label": "Muzzle Flash"
+        },
+        {
+          "id": "vfx:impact",
+          "label": "Impact"
+        },
+        {
+          "id": "vfx:explosion",
+          "label": "Explosion"
+        },
+        {
+          "id": "vfx:warp",
+          "label": "Warp"
+        },
+        {
+          "id": "vfx:thruster",
+          "label": "Thruster"
+        },
+        {
+          "id": "vfx:shield",
+          "label": "Shield"
+        }
+      ]
+    },
+    {
+      "id": "view",
+      "label": "View/Perspective",
+      "exclusive": true,
+      "tags": [
+        {
+          "id": "view:isometric",
+          "label": "Isometric",
+          "promptToken": "isometric view, orthographic",
+          "reviewTools": [
+            {
+              "type": "overlay_grid"
+            }
+          ]
+        },
+        {
+          "id": "view:top_down",
+          "label": "Top Down",
+          "promptToken": "top-down view, directly from above, map styling"
+        },
+        {
+          "id": "view:side",
+          "label": "Side View (Platformer)",
+          "promptToken": "side view, flat 2d profile, platformer style",
+          "reviewTools": [
+            {
+              "type": "horizon_line"
+            }
+          ]
+        },
+        {
+          "id": "view:portrait",
+          "label": "Portrait/Icon",
+          "promptToken": "portrait view, front facing, centered composition"
+        }
+      ]
+    },
+    {
+      "id": "state",
+      "label": "State/Action",
+      "exclusive": true,
+      "tags": [
+        {
+          "id": "state:idle",
+          "label": "Idle",
+          "promptToken": "idle pose, standing still"
+        },
+        {
+          "id": "state:locomotion",
+          "label": "Walk/Run",
+          "promptToken": "running, walking, in motion, dynamic pose"
+        },
+        {
+          "id": "state:combat",
+          "label": "Attack/Combat",
+          "promptToken": "attacking, aggressive pose, weapon raised"
+        },
+        {
+          "id": "state:damaged",
+          "label": "Damaged/Hit",
+          "promptToken": "hurt, taking damage, impact frame"
+        },
+        {
+          "id": "state:defeated",
+          "label": "Defeated/Dead",
+          "promptToken": "defeated, lying on ground, corpse"
+        }
+      ]
+    },
+    {
+      "id": "material",
+      "label": "Material/Finish",
+      "exclusive": false,
+      "tags": [
+        {
+          "id": "material:metallic",
+          "label": "Metallic",
+          "promptToken": "metal texture, shiny, reflective"
+        },
+        {
+          "id": "material:organic",
+          "label": "Organic",
+          "promptToken": "organic biological texture, flesh, matte"
+        },
+        {
+          "id": "material:ethereal",
+          "label": "Ethereal/Ghostly",
+          "promptToken": "transparent, glowing, ghostly, spirit",
+          "reviewTools": [
+            {
+              "type": "bg_cycler"
+            }
+          ]
+        },
+        {
+          "id": "material:tech",
+          "label": "High-Tech",
+          "promptToken": "circuitry, panels, industrial, manufactured"
+        }
+      ]
+    }
+  ]
+}

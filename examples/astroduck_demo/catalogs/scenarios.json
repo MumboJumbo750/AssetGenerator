@@ -1,0 +1,31 @@
+{
+  "id": "scenarios",
+  "createdAt": "2026-02-03T00:00:00.000Z",
+  "updatedAt": "2026-02-03T00:00:00.000Z",
+  "scenarios": [
+    {
+      "id": "scifi",
+      "label": "Sci-Fi",
+      "promptTokens": [
+        "sci-fi",
+        "space",
+        "neon lights"
+      ]
+    },
+    {
+      "id": "fantasy",
+      "label": "Fantasy",
+      "promptTokens": [
+        "fantasy"
+      ]
+    },
+    {
+      "id": "cyberpunk",
+      "label": "Cyberpunk",
+      "promptTokens": [
+        "cyberpunk",
+        "neon city"
+      ]
+    }
+  ]
+}

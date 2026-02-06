@@ -19,6 +19,14 @@
         "pythonBin": {
           "type": "string",
           "description": "Optional path to the ComfyUI venv python for dependency verification (e.g. C:/path/to/venv/Scripts/python.exe)."
+        },
+        "torchIndexUrl": {
+          "type": "string",
+          "description": "Optional custom package index URL used when installing torch dependencies."
+        },
+        "torchPackages": {
+          "type": "string",
+          "description": "Optional space-delimited torch package list used during dependency setup."
         }
       }
     },

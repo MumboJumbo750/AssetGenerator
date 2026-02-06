@@ -26,6 +26,19 @@
       },
       "description": "How to locate checkpoint weights without hardcoding absolute paths (see docs/setup/local-config.md)."
     },
+    "vaeWeights": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind"],
+      "properties": {
+        "kind": { "type": "string", "enum": ["repo_relative", "config_relative", "absolute", "external"] },
+        "base": { "type": "string", "enum": ["modelsRoot", "checkpointsRoot", "lorasRoot"] },
+        "path": { "type": "string" },
+        "uri": { "type": "string" },
+        "sha256": { "type": "string", "minLength": 16 }
+      },
+      "description": "Optional companion VAE weights. Some checkpoints (e.g. Pony V6 XL) require an external VAE for correct color reproduction."
+    },
     "supportedAssetTypes": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
     "promptTemplates": {
       "type": "object",

@@ -1,0 +1,39 @@
+{
+  "id": "spec_astroduck_boss1_cruiser",
+  "projectId": "astroduck_demo",
+  "specListId": "specList_astroduck_demo",
+  "createdAt": "2026-02-03T00:00:00.000Z",
+  "updatedAt": "2026-02-03T00:00:00.000Z",
+  "title": "Boss 1: alien cruiser (idle + attack frames)",
+  "assetType": "spritesheet",
+  "style": "comic",
+  "scenario": "scifi",
+  "tags": [
+    "assetType:spritesheet",
+    "enemy:boss",
+    "boss:1",
+    "faction:aliens",
+    "style:comic"
+  ],
+  "output": {
+    "kind": "animation",
+    "background": "transparent_required",
+    "animation": {
+      "fps": 10,
+      "loop": true,
+      "frameCount": 8
+    }
+  },
+  "prompt": {
+    "positive": "Huge alien cruiser boss sprite, sci-fi comic style, glowing cannons, strong silhouette, transparent background",
+    "negative": "photo, watermark, text, messy background, tiny details"
+  },
+  "generationParams": {
+    "width": 1024,
+    "height": 768,
+    "variants": 6
+  },
+  "tier": 1,
+  "status": "draft",
+  "checkpointId": "ckpt_sd15_demo"
+}

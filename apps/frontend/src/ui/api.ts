@@ -37,6 +37,19 @@ export type Job = {
   input: Record<string, unknown>;
   output?: Record<string, unknown>;
   error?: string;
+  errorClass?: "retryable" | "non_retryable" | "timeout" | "upstream_unavailable";
+  attempt?: number;
+  maxAttempts?: number;
+  nextRetryAt?: string;
+  retryHistory?: Array<{
+    attempt: number;
+    error: string;
+    errorClass: string;
+    ts: string;
+    durationMs?: number;
+  }>;
+  escalatedAt?: string;
+  escalationTarget?: "decision_sprint" | "exception_inbox" | "reject";
   logPath?: string;
 };
 
@@ -119,6 +132,94 @@ export type ExportProfile = {
   };
 };
 
+type ThresholdCheck = {
+  enabled: boolean;
+  threshold: number;
+};
+
+type BackgroundCheck = {
+  enabled: boolean;
+  mode: "white_or_transparent" | "transparent_only" | "white_only" | "any";
+  threshold: number;
+};
+
+type AlignmentCheck = {
+  enabled: boolean;
+  maxPixelDrift: number;
+};
+
+export type BaselineProfile = {
+  id: string;
+  projectId: string;
+  checkpointId: string;
+  checkpointProfileId?: string;
+  name: string;
+  version: number;
+  createdAt: string;
+  updatedAt: string;
+  global: {
+    noDropShadows: boolean;
+    background: "white_or_transparent" | "transparent_only" | "white_only" | "any";
+    alphaEdgeClean: "required" | "preferred" | "off";
+    allowPerspective: boolean;
+  };
+  assetTypeProfiles: Record<
+    string,
+    {
+      lighting: "flat" | "soft" | "dramatic" | "any";
+      tileableEdges: "required" | "optional" | "off";
+      requiredStates: Array<
+        | "default"
+        | "hover"
+        | "pressed"
+        | "disabled"
+        | "open"
+        | "focused"
+        | "selected"
+        | "active"
+        | "checked"
+        | "unchecked"
+      >;
+      stateAlignment: "exact" | "aligned" | "n/a";
+      paddingPx: number;
+      promptHints: string[];
+      negativePromptHints: string[];
+      validatorOverrides?: {
+        shadowCheck?: ThresholdCheck;
+        backgroundCheck?: BackgroundCheck;
+        stateCompletenessCheck?: ThresholdCheck;
+        stateAlignmentCheck?: AlignmentCheck;
+        edgeCleanlinessCheck?: ThresholdCheck;
+      };
+    }
+  >;
+  validatorPolicy: {
+    shadowCheck: ThresholdCheck;
+    backgroundCheck: BackgroundCheck;
+    stateCompletenessCheck: ThresholdCheck;
+    stateAlignmentCheck: AlignmentCheck;
+    edgeCleanlinessCheck: ThresholdCheck;
+  };
+  routingPolicy: {
+    onPass: "auto_advance" | "manual_review" | "queue_decision_sprint";
+    onFail: "auto_regenerate" | "manual_review" | "queue_decision_sprint" | "reject";
+    onUncertain: "queue_decision_sprint" | "manual_review" | "auto_regenerate";
+  };
+  specOverrides?: Record<
+    string,
+    {
+      reason: string;
+      global?: {
+        noDropShadows?: boolean;
+        background?: "white_or_transparent" | "transparent_only" | "white_only" | "any";
+        alphaEdgeClean?: "required" | "preferred" | "off";
+        allowPerspective?: boolean;
+      };
+      assetTypeProfile?: BaselineProfile["assetTypeProfiles"][string];
+    }
+  >;
+};
+
 export type LoraRelease = {
   id: string;
   createdAt: string;
@@ -149,6 +250,14 @@ export type LoraUpdatePatch = {
   releaseUpdates?: Array<{ id: string; status?: LoraRelease["status"]; notes?: string | null }>;
 };
 
+export type LoraActivateRenderResult = {
+  lora: LoraRecord;
+  releaseId: string;
+  queuedJobs: string[];
+  queuedSpecIds: string[];
+  automationRuns: string[];
+};
+
 export type LoraEval = {
   id: string;
   loraId: string;
@@ -168,6 +277,16 @@ async function api<T>(method: string, path: string, body?: unknown): Promise<T> 
   });
   if (!res.ok) throw new Error(await res.text());
   return (await res.json()) as T;
+}
+
+async function apiWithResponse(method: string, path: string, body?: unknown): Promise<Response> {
+  const res = await fetch(path, {
+    method,
+    headers: body ? { "content-type": "application/json" } : undefined,
+    body: body ? JSON.stringify(body) : undefined,
+  });
+  if (!res.ok) throw new Error(await res.text());
+  return res;
 }
 
 async function apiText(method: string, path: string): Promise<string> {
@@ -274,6 +393,18 @@ export async function updateExportProfile(projectId: string, profileId: string, 
   return api<ExportProfile>("PATCH", `/api/projects/${projectId}/export-profiles/${profileId}`, patch);
 }
 
+export async function listBaselineProfiles(projectId: string) {
+  return api<{ profiles: BaselineProfile[] }>("GET", `/api/projects/${projectId}/baseline-profiles`);
+}
+
+export async function createBaselineProfile(projectId: string, body: Partial<BaselineProfile>) {
+  return api<BaselineProfile>("POST", `/api/projects/${projectId}/baseline-profiles`, body);
+}
+
+export async function updateBaselineProfile(projectId: string, profileId: string, patch: Partial<BaselineProfile>) {
+  return api<BaselineProfile>("PATCH", `/api/projects/${projectId}/baseline-profiles/${profileId}`, patch);
+}
+
 export async function listProjectLoras(projectId: string) {
   return api<{ loras: LoraRecord[] }>("GET", `/api/projects/${projectId}/loras`);
 }
@@ -284,6 +415,21 @@ export async function listSharedLoras() {
 
 export async function updateProjectLora(projectId: string, loraId: string, patch: LoraUpdatePatch) {
   return api<LoraRecord>("PATCH", `/api/projects/${projectId}/loras/${loraId}`, patch);
+}
+
+export async function activateProjectLoraReleaseRender(
+  projectId: string,
+  loraId: string,
+  body: {
+    releaseId?: string;
+    templateId?: string;
+    statuses?: Array<"draft" | "ready" | "deprecated">;
+    limit?: number;
+    strengthModel?: number;
+    strengthClip?: number;
+  } = {},
+) {
+  return api<LoraActivateRenderResult>("POST", `/api/projects/${projectId}/loras/${loraId}/activate-render`, body);
 }
 
 export async function updateSharedLora(loraId: string, patch: LoraUpdatePatch) {
@@ -321,6 +467,267 @@ export type SystemStatus = {
 
 export async function getSystemStatus() {
   return api<SystemStatus>("GET", "/api/system/status");
+}
+
+export type ProjectEvent = {
+  id: string;
+  projectId: string;
+  seq: number;
+  ts: string;
+  type: string;
+  entityType: string;
+  entityId: string;
+  causalChainId: string;
+  idempotencyKey: string;
+  payload: Record<string, unknown>;
+};
+
+export type ProjectEventCursor = {
+  projectId: string;
+  lastSeq: number;
+  updatedAt: string;
+};
+
+export async function listProjectEvents(projectId: string, opts: { since?: number; limit?: number } = {}) {
+  const qs = new URLSearchParams();
+  if (opts.since !== undefined) qs.set("since", String(opts.since));
+  if (opts.limit !== undefined) qs.set("limit", String(opts.limit));
+  const path = qs.size > 0 ? `/api/projects/${projectId}/events?${qs.toString()}` : `/api/projects/${projectId}/events`;
+  return api<{ events: ProjectEvent[]; cursor: ProjectEventCursor }>("GET", path);
+}
+
+export async function getProjectEventCursor(projectId: string) {
+  return api<ProjectEventCursor>("GET", `/api/projects/${projectId}/events/cursor`);
+}
+
+// ── Phase 8: Continuous Improvement Types ─────────────────────────────
+
+export type MetricSnapshot = {
+  totalAssets?: number;
+  approvedCount?: number;
+  rejectedCount?: number;
+  firstPassApprovalRate?: number;
+  validatorPassRate?: number;
+  avgValidatorScore?: number;
+  escalationCount?: number;
+  avgGenerationTimeMs?: number;
+  cohesionScore?: number;
+  driftScore?: number;
+  sampledAt?: string;
+};
+
+export type MetricDelta = {
+  firstPassApprovalRateDelta?: number;
+  validatorPassRateDelta?: number;
+  avgValidatorScoreDelta?: number;
+  escalationCountDelta?: number;
+  cohesionScoreDelta?: number;
+  driftScoreDelta?: number;
+  qualityLiftPct?: number;
+};
+
+export type ImprovementRun = {
+  id: string;
+  projectId: string;
+  name: string;
+  description?: string;
+  status: "draft" | "running" | "completed" | "failed" | "rolled_back";
+  cohort: {
+    selectionMethod: string;
+    assetType?: string;
+    checkpointId?: string;
+    tag?: string;
+    entityFamily?: string;
+    specIds?: string[];
+    resolvedSpecIds?: string[];
+    resolvedCount?: number;
+  };
+  intervention: {
+    type: string;
+    ruleId?: string;
+    baselineProfileId?: string;
+    checkpointId?: string;
+    description?: string;
+    params?: Record<string, unknown>;
+  };
+  metrics?: {
+    before?: MetricSnapshot;
+    after?: MetricSnapshot;
+    delta?: MetricDelta;
+  };
+  promotionDecision?: string;
+  promotedAt?: string;
+  rolledBackAt?: string;
+  notes?: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type CircuitBreaker = {
+  id: string;
+  projectId: string;
+  ruleId?: string;
+  type: "velocity" | "queue_depth";
+  state: "closed" | "open" | "half_open";
+  config?: {
+    maxTriggersPerMinute?: number;
+    maxQueueDepthRatio?: number;
+    cooldownMs?: number;
+    halfOpenTestCount?: number;
+  };
+  triggerLog?: string[];
+  trippedAt?: string;
+  trippedReason?: string;
+  stats?: {
+    totalTrips?: number;
+    lastTripAt?: string;
+    blockedTriggers?: number;
+  };
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type TrendSnapshot = {
+  id: string;
+  projectId: string;
+  period: { from: string; to: string; granularity: string };
+  scope?: { checkpointId?: string; assetType?: string; entityFamily?: string; tag?: string };
+  metrics: {
+    totalJobs?: number;
+    succeededJobs?: number;
+    failedJobs?: number;
+    totalAssets?: number;
+    approvedAssets?: number;
+    rejectedAssets?: number;
+    firstPassApprovalRate?: number;
+    validatorPassRate?: number;
+    avgValidatorScore?: number;
+    escalationCount?: number;
+    autoResolvedDecisions?: number;
+    manualDecisions?: number;
+    autoResolvedRate?: number;
+    avgJobDurationMs?: number;
+    cohesionScore?: number;
+    driftScore?: number;
+    validatorGapCount?: number;
+    validatorGapRate?: number;
+  };
+  createdAt: string;
+};
+
+export type BacktestReport = {
+  ruleId: string;
+  ruleName: string;
+  periodFrom: string;
+  periodTo: string;
+  totalEventsScanned: number;
+  matchedEvents: number;
+  wouldHaveTriggered: number;
+  estimatedJobsEnqueued: number;
+  triggerTimestamps: string[];
+  peakTriggersPerMinute: number;
+  avgTriggersPerHour: number;
+  warning?: string;
+};
+
+export type ValidatorGapEntry = {
+  assetId: string;
+  versionId: string;
+  specId?: string;
+  validatorStatus: string;
+  validatorScore?: number;
+  humanDecision: string;
+  checkId?: string;
+  checkScore?: number;
+  checkThreshold?: number;
+  suggestedAction?: string;
+};
+
+export type ValidatorGapReport = {
+  projectId: string;
+  totalValidatorPasses: number;
+  humanRejectedAfterPass: number;
+  gapRate: number;
+  entries: ValidatorGapEntry[];
+  suggestions: string[];
+  generatedAt: string;
+};
+
+// ── Phase 8: Improvement Run API functions ────────────────────────────
+
+export async function listImprovementRuns(projectId: string) {
+  return api<{ runs: ImprovementRun[] }>("GET", `/api/projects/${projectId}/improvement-runs`);
+}
+
+export async function getImprovementRun(projectId: string, runId: string) {
+  return api<{ run: ImprovementRun }>("GET", `/api/projects/${projectId}/improvement-runs/${runId}`);
+}
+
+export async function createImprovementRun(projectId: string, body: Partial<ImprovementRun>) {
+  return api<{ run: ImprovementRun }>("POST", `/api/projects/${projectId}/improvement-runs`, body);
+}
+
+export async function startImprovementRun(projectId: string, runId: string) {
+  return api<{ run: ImprovementRun }>("POST", `/api/projects/${projectId}/improvement-runs/${runId}/start`);
+}
+
+export async function completeImprovementRun(projectId: string, runId: string) {
+  return api<{ run: ImprovementRun }>("POST", `/api/projects/${projectId}/improvement-runs/${runId}/complete`);
+}
+
+export async function promoteImprovementRun(projectId: string, runId: string) {
+  return api<{ run: ImprovementRun }>("POST", `/api/projects/${projectId}/improvement-runs/${runId}/promote`);
+}
+
+export async function rollbackImprovementRun(projectId: string, runId: string) {
+  return api<{ run: ImprovementRun }>("POST", `/api/projects/${projectId}/improvement-runs/${runId}/rollback`);
+}
+
+// ── Phase 8: Circuit Breaker API functions ────────────────────────────
+
+export async function listCircuitBreakers(projectId: string) {
+  return api<{ breakers: CircuitBreaker[] }>("GET", `/api/projects/${projectId}/circuit-breakers`);
+}
+
+export async function resetCircuitBreaker(projectId: string, breakerId: string) {
+  return api<{ breaker: CircuitBreaker }>("POST", `/api/projects/${projectId}/circuit-breakers/${breakerId}/reset`);
+}
+
+// ── Phase 8: Trend Snapshot API functions ─────────────────────────────
+
+export async function listTrendSnapshots(projectId: string, opts?: { granularity?: string; limit?: number }) {
+  const qs = new URLSearchParams();
+  if (opts?.granularity) qs.set("granularity", opts.granularity);
+  if (opts?.limit) qs.set("limit", String(opts.limit));
+  const path = qs.size > 0 ? `/api/projects/${projectId}/trends?${qs.toString()}` : `/api/projects/${projectId}/trends`;
+  return api<{ snapshots: TrendSnapshot[] }>("GET", path);
+}
+
+export async function generateTrendSnapshot(
+  projectId: string,
+  body: { from: string; to: string; granularity?: string; scope?: Record<string, string> },
+) {
+  return api<{ snapshot: TrendSnapshot }>("POST", `/api/projects/${projectId}/trends/generate`, body);
+}
+
+// ── Phase 8: Rule Backtesting API function ────────────────────────────
+
+export async function backtestRule(
+  projectId: string,
+  ruleId: string,
+  body?: { periodFrom?: string; periodTo?: string },
+) {
+  return api<{ report: BacktestReport }>(
+    "POST",
+    `/api/projects/${projectId}/automation/rules/${ruleId}/backtest`,
+    body ?? {},
+  );
+}
+
+// ── Phase 8: Validator Gap API function ───────────────────────────────
+
+export async function getValidatorGapReport(projectId: string) {
+  return api<{ report: ValidatorGapReport }>("GET", `/api/projects/${projectId}/validator-gaps`);
 }
 
 export type ComfyUiVerify = {
@@ -375,7 +782,43 @@ export type AssetSpec = {
   title: string;
   assetType: string;
   checkpointId?: string;
+  checkpointProfileId?: string;
+  checkpointProfileVersion?: number;
   loraIds?: string[];
+  baselineProfileId?: string;
+  loraPolicy?: {
+    mode?: "manual" | "baseline_then_project" | "project_then_baseline" | "baseline_only" | "project_only";
+    preferRecommended?: boolean;
+    maxActiveLoras?: number;
+    releasePolicy?: "active_or_latest_approved" | "active_only";
+  };
+  styleConsistency?: {
+    mode?: "inherit_project" | "lock_to_spec_style" | "lock_to_anchor_set";
+    anchorRefs?: string[];
+  };
+  qualityContract?: {
+    backgroundPolicy?: "white_or_transparent" | "transparent_only" | "white_only" | "any";
+    requiredStates?: string[];
+    alignmentTolerancePx?: number;
+    perspectiveMode?: "strict" | "allow_minor" | "any";
+    silhouetteDriftTolerance?: number;
+  };
+  entityLink?: {
+    entityId?: string;
+    role?: "animation" | "pickup_icon" | "portrait" | "ui_card";
+  };
+  promptPolicy?: {
+    compileMode?: "checkpoint_profile_default" | "spec_override";
+    tagOrderMode?: "checkpoint_default" | "explicit";
+    tagOrder?: string[];
+    promptPresetId?: string;
+  };
+  seedPolicy?: {
+    mode?: "fixed" | "derived" | "random_recorded";
+    baseSeed?: number;
+    deriveFrom?: string[];
+    hashAlgo?: string;
+  };
   output?: {
     kind?: "single_image" | "animation" | "ui_states" | "logo_set";
     background?: "transparent_required" | "any";
@@ -398,6 +841,10 @@ export type AssetSpec = {
 
 export async function listSpecs(projectId: string) {
   return api<{ specs: AssetSpec[] }>("GET", `/api/projects/${projectId}/specs`);
+}
+
+export async function getSpec(projectId: string, specId: string) {
+  return api<AssetSpec>("GET", `/api/projects/${projectId}/specs/${specId}`);
 }
 
 export async function createSpec(projectId: string, spec: Partial<AssetSpec>) {
@@ -444,20 +891,79 @@ export type TagCatalog = {
     id: string;
     label: string;
     exclusive?: boolean;
-    tags: Array<{ id: string; label: string }>;
+    tags: Array<{
+      id: string;
+      label: string;
+      promptToken?: string;
+      aliases?: string[];
+      reviewTools?: Array<{ type: string; config?: Record<string, unknown> }>;
+    }>;
   }>;
 };
 
-export async function getTagCatalog(projectId: string) {
-  return api<TagCatalog>("GET", `/api/projects/${projectId}/catalogs/tags`);
+export async function getTagCatalog(projectId: string, opts: { checkpointId?: string } = {}) {
+  return api<TagCatalog>("GET", withCheckpointQuery(`/api/projects/${projectId}/catalogs/tags`, opts.checkpointId));
 }
 
-export async function getCatalog(projectId: string, catalogId: string) {
-  return api<Record<string, unknown>>("GET", `/api/projects/${projectId}/catalogs/${catalogId}`);
+function withCheckpointQuery(path: string, checkpointId?: string) {
+  if (!checkpointId) return path;
+  const qs = new URLSearchParams({ checkpointId });
+  return `${path}?${qs.toString()}`;
 }
 
-export async function updateCatalog(projectId: string, catalogId: string, body: Record<string, unknown>) {
-  return api<Record<string, unknown>>("PUT", `/api/projects/${projectId}/catalogs/${catalogId}`, body);
+export async function getCatalog(projectId: string, catalogId: string, opts: { checkpointId?: string } = {}) {
+  return api<Record<string, unknown>>(
+    "GET",
+    withCheckpointQuery(`/api/projects/${projectId}/catalogs/${catalogId}`, opts.checkpointId),
+  );
+}
+
+export async function getCatalogWithMeta(
+  projectId: string,
+  catalogId: string,
+  opts: { checkpointId?: string } = {},
+): Promise<{ catalog: Record<string, unknown>; resolvedScope: "project" | "checkpoint"; checkpointId: string | null }> {
+  const path = withCheckpointQuery(`/api/projects/${projectId}/catalogs/${catalogId}`, opts.checkpointId);
+  const separator = path.includes("?") ? "&" : "?";
+  const res = await apiWithResponse("GET", `${path}${separator}includeMeta=1`);
+  return (await res.json()) as {
+    catalog: Record<string, unknown>;
+    resolvedScope: "project" | "checkpoint";
+    checkpointId: string | null;
+  };
+}
+
+export async function updateCatalog(
+  projectId: string,
+  catalogId: string,
+  body: Record<string, unknown>,
+  opts: { checkpointId?: string } = {},
+) {
+  return api<Record<string, unknown>>(
+    "PUT",
+    withCheckpointQuery(`/api/projects/${projectId}/catalogs/${catalogId}`, opts.checkpointId),
+    body,
+  );
+}
+
+export async function getCheckpointCatalog(projectId: string, checkpointId: string, catalogId: string) {
+  return api<Record<string, unknown>>(
+    "GET",
+    `/api/projects/${projectId}/checkpoints/${checkpointId}/catalogs/${catalogId}`,
+  );
+}
+
+export async function updateCheckpointCatalog(
+  projectId: string,
+  checkpointId: string,
+  catalogId: string,
+  body: Record<string, unknown>,
+) {
+  return api<Record<string, unknown>>(
+    "PUT",
+    `/api/projects/${projectId}/checkpoints/${checkpointId}/catalogs/${catalogId}`,
+    body,
+  );
 }
 
 export type AssetTypeCatalog = {
@@ -510,7 +1016,10 @@ export async function updateAssetVersion(
   projectId: string,
   assetId: string,
   versionId: string,
-  patch: { status?: "draft" | "review" | "approved" | "rejected" | "deprecated" },
+  patch: {
+    status?: "draft" | "review" | "approved" | "rejected" | "deprecated";
+    generationPatch?: Record<string, unknown>;
+  },
 ) {
   return api<{ ok: true }>("PATCH", `/api/projects/${projectId}/assets/${assetId}/versions/${versionId}`, patch);
 }
@@ -545,4 +1054,99 @@ export async function updateAtlasFrames(
   frames: Array<{ id: string; pivot?: { x: number; y: number } }>,
 ) {
   return api<AtlasRecord>("PATCH", `/api/projects/${projectId}/atlases/${atlasId}`, { frames });
+}
+
+// ── Section 9: Operational Metrics types ──────────────────────────────
+
+export type OperationalMetrics = {
+  autopilotReadySpecsPct?: number;
+  completeContractSpecsPct?: number;
+  checkpointCompatibleSpecsPct?: number;
+  validatorFailCategoryDistribution?: Record<string, number>;
+  exceptionQueueVolume?: number;
+  exceptionQueueAgingHours?: number;
+  loraActivationToApprovalHours?: number | null;
+  promptCompileDriftByCheckpoint?: Record<string, number>;
+  promptCompileDriftByTagFamily?: Record<string, number>;
+  automationTriggerToRunLatencyMs?: number | null;
+  idempotencyDedupeHitRate?: number;
+  escalationReasonCodeDistribution?: Record<string, number>;
+  pinnedProfileDriftViolations?: number;
+};
+
+export type MetricsSnapshotRecord = {
+  id: string;
+  projectId: string;
+  createdAt: string;
+  metrics: OperationalMetrics;
+};
+
+export type GateResult = {
+  id: string;
+  name: string;
+  threshold: string;
+  measured: number | null;
+  unit: string;
+  status: "pass" | "fail" | "insufficient_data";
+  detail: string;
+};
+
+export type BenchmarkProfileResult = {
+  targetJobs: number;
+  targetAssets: number;
+  targetSpecs: number;
+  targetAutomationRules: number;
+  actualJobs: number;
+  actualAssets: number;
+  actualSpecs: number;
+  actualAutomationRules: number;
+  satisfied: boolean;
+  warmCacheJobsListMs?: number;
+  coldCacheJobsListMs?: number;
+};
+
+export type ReleaseGateReport = {
+  id: string;
+  projectId: string;
+  createdAt: string;
+  overallStatus: "pass" | "fail" | "insufficient_data";
+  benchmarkProfile: BenchmarkProfileResult;
+  gates: GateResult[];
+};
+
+// ── Section 9: Metrics API functions ──────────────────────────────────
+
+export async function listMetricsSnapshots(projectId: string, opts?: { limit?: number }) {
+  const qs = new URLSearchParams();
+  if (opts?.limit) qs.set("limit", String(opts.limit));
+  const p = qs.size > 0 ? `/api/projects/${projectId}/metrics?${qs.toString()}` : `/api/projects/${projectId}/metrics`;
+  return api<{ snapshots: MetricsSnapshotRecord[] }>("GET", p);
+}
+
+export async function getMetricsSnapshot(projectId: string, snapshotId: string) {
+  return api<{ snapshot: MetricsSnapshotRecord }>("GET", `/api/projects/${projectId}/metrics/${snapshotId}`);
+}
+
+export async function generateMetricsSnapshot(projectId: string) {
+  return api<{ snapshot: MetricsSnapshotRecord }>("POST", `/api/projects/${projectId}/metrics/generate`);
+}
+
+// ── Section 9: Release Gate API functions ─────────────────────────────
+
+export async function listReleaseGateReports(projectId: string, opts?: { limit?: number }) {
+  const qs = new URLSearchParams();
+  if (opts?.limit) qs.set("limit", String(opts.limit));
+  const p =
+    qs.size > 0
+      ? `/api/projects/${projectId}/release-gates?${qs.toString()}`
+      : `/api/projects/${projectId}/release-gates`;
+  return api<{ reports: ReleaseGateReport[] }>("GET", p);
+}
+
+export async function getReleaseGateReport(projectId: string, reportId: string) {
+  return api<{ report: ReleaseGateReport }>("GET", `/api/projects/${projectId}/release-gates/${reportId}`);
+}
+
+export async function evaluateReleaseGates(projectId: string) {
+  return api<{ report: ReleaseGateReport }>("POST", `/api/projects/${projectId}/release-gates/evaluate`);
 }

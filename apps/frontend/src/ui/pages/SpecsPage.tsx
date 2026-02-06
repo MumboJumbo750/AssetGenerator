@@ -64,6 +64,51 @@ const SPEC_TEMPLATES = [
   },
 ];
 
+type ChainedJobDraft = {
+  type: "bg_remove" | "atlas_pack" | "export";
+  bgRemoveOriginalPath: string;
+  bgRemoveThreshold: number;
+  bgRemoveFeather: number;
+  bgRemoveErode: number;
+  atlasFramePathsCsv: string;
+  atlasPadding: number;
+  atlasMaxSize: number;
+  atlasPowerOfTwo: boolean;
+  atlasTrim: boolean;
+  atlasExtrude: number;
+  atlasSort: string;
+  exportAssetIdsCsv: string;
+  exportAtlasIdsCsv: string;
+  exportProfileId: string;
+};
+
+function splitCsv(value: string) {
+  return value
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
+function emptyChainedJob(type: ChainedJobDraft["type"] = "bg_remove"): ChainedJobDraft {
+  return {
+    type,
+    bgRemoveOriginalPath: "$output.originalPath",
+    bgRemoveThreshold: 245,
+    bgRemoveFeather: 1,
+    bgRemoveErode: 0,
+    atlasFramePathsCsv: "$output.alphaPath",
+    atlasPadding: 2,
+    atlasMaxSize: 2048,
+    atlasPowerOfTwo: false,
+    atlasTrim: false,
+    atlasExtrude: 0,
+    atlasSort: "area",
+    exportAssetIdsCsv: "$output.assetId",
+    exportAtlasIdsCsv: "",
+    exportProfileId: "",
+  };
+}
+
 export function SpecsPage() {
   const {
     selectedProjectId,
@@ -91,7 +136,7 @@ export function SpecsPage() {
   const [genVariants, setGenVariants] = useState(4);
   const [useSpecDefaults, setUseSpecDefaults] = useState(true);
   const [chainEnabled, setChainEnabled] = useState(false);
-  const [nextJobs, setNextJobs] = useState<Array<{ type: string; inputText: string }>>([]);
+  const [nextJobs, setNextJobs] = useState<ChainedJobDraft[]>([]);
   const [chainError, setChainError] = useState<string | null>(null);
 
   const selectedSpecList = useMemo(
@@ -210,6 +255,48 @@ export function SpecsPage() {
     }
   }
 
+  function buildChainedJobInput(job: ChainedJobDraft, idx: number) {
+    if (job.type === "bg_remove") {
+      const originalPath = job.bgRemoveOriginalPath.trim();
+      if (!originalPath) throw new Error(`Chained job ${idx + 1} (bg_remove) requires original path.`);
+      return {
+        type: "bg_remove" as const,
+        input: {
+          originalPath,
+          threshold: job.bgRemoveThreshold,
+          feather: job.bgRemoveFeather,
+          erode: job.bgRemoveErode,
+        },
+      };
+    }
+
+    if (job.type === "atlas_pack") {
+      const framePaths = splitCsv(job.atlasFramePathsCsv);
+      if (framePaths.length === 0) throw new Error(`Chained job ${idx + 1} (atlas_pack) requires frame paths.`);
+      return {
+        type: "atlas_pack" as const,
+        input: {
+          framePaths,
+          padding: job.atlasPadding,
+          maxSize: job.atlasMaxSize,
+          powerOfTwo: job.atlasPowerOfTwo,
+          trim: job.atlasTrim,
+          extrude: job.atlasExtrude,
+          sort: job.atlasSort || "area",
+        },
+      };
+    }
+
+    return {
+      type: "export" as const,
+      input: {
+        assetIds: splitCsv(job.exportAssetIdsCsv),
+        atlasIds: splitCsv(job.exportAtlasIdsCsv),
+        ...(job.exportProfileId.trim() ? { profileId: job.exportProfileId.trim() } : {}),
+      },
+    };
+  }
+
   async function onQueueGenerate(spec: AssetSpec) {
     if (!selectedProjectId) return;
     setError(null);
@@ -227,15 +314,7 @@ export function SpecsPage() {
         baseInput.variants = genVariants;
       }
       if (chainEnabled && nextJobs.length > 0) {
-        const parsed = nextJobs.map((job, idx) => {
-          const raw = job.inputText.trim();
-          const inputObj = raw ? JSON.parse(raw) : {};
-          if (typeof inputObj !== "object" || Array.isArray(inputObj)) {
-            throw new Error(`Chained job ${idx + 1} input must be a JSON object`);
-          }
-          return { type: job.type, input: inputObj as Record<string, unknown> };
-        });
-        baseInput.nextJobs = parsed;
+        baseInput.nextJobs = nextJobs.map((job, idx) => buildChainedJobInput(job, idx));
       }
 
       const frameNames = spec.output?.animation?.frameNames ?? [];
@@ -411,15 +490,8 @@ export function SpecsPage() {
             setNextJobs((items) => items.map((it, i) => (i === idx ? { ...it, ...patch } : it)))
           }
           onRemoveJob={(idx) => setNextJobs((items) => items.filter((_, i) => i !== idx))}
-          onApplyPreset={() =>
-            setNextJobs([
-              { type: "bg_remove", inputText: '{"originalPath":"$output.originalsDir/.."}' },
-              { type: "export", inputText: '{"assetIds":["$output.assetId"]}' },
-            ])
-          }
-          onAddJob={() =>
-            setNextJobs((items) => [...items, { type: "export", inputText: '{"assetIds":["$output.assetId"]}' }])
-          }
+          onApplyPreset={() => setNextJobs([emptyChainedJob("bg_remove"), emptyChainedJob("export")])}
+          onAddJob={() => setNextJobs((items) => [...items, emptyChainedJob("export")])}
         />
         <Card withBorder radius="md" p="md">
           <Stack gap="md">

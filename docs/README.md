@@ -35,6 +35,8 @@ This repository is intentionally **data-first**: the project database is version
   - Logging & error visibility: `docs/setup/logging.md`
 - Workflows
   - Asset creation (spec -> generate -> review/tag -> export): `docs/workflows/asset-creation.md`
+  - Microgame use-case hierarchy and automation matrix: `docs/workflows/microgame-use-case-matrix.md`
+  - Spec recreation for autopilot (happy loop checklist + template): `docs/workflows/spec-recreation-happy-loop.md`
   - Asset administration (curation, versions, deprecations): `docs/workflows/asset-administration.md`
   - Spec refinement (SpecList -> AssetSpecs): `docs/workflows/spec-refinement.md`
   - Variants and versions: `docs/workflows/variants.md`
@@ -56,6 +58,7 @@ This repository is intentionally **data-first**: the project database is version
   - Export overview: `docs/exports/README.md`
   - PixiJS kit export: `docs/exports/pixijs-kit.md`
 - UI
+  - Full automatism and determinism master plan: `docs/ui/happy-loop-implementation-backlog.md`
   - In-app guidance plan: `docs/ui/in-app-guidance.md`
   - UX workflows (noob-first): `docs/ui/ux-workflows.md`
   - Design system tokens: `docs/ui/design-system.md`

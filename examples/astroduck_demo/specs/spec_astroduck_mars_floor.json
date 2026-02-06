@@ -1,0 +1,33 @@
+{
+  "id": "spec_astroduck_mars_floor",
+  "projectId": "astroduck_demo",
+  "specListId": "specList_astroduck_demo",
+  "createdAt": "2026-02-03T00:00:00.000Z",
+  "updatedAt": "2026-02-03T00:00:00.000Z",
+  "title": "Mars floor texture (tileable)",
+  "assetType": "texture",
+  "style": "comic",
+  "scenario": "scifi",
+  "tags": [
+    "assetType:texture",
+    "tileable",
+    "level:mars",
+    "style:comic"
+  ],
+  "output": {
+    "kind": "single_image",
+    "background": "any"
+  },
+  "prompt": {
+    "positive": "Seamless tileable Mars surface texture, rocky dust, sci-fi comic style, subtle details, not too noisy",
+    "negative": "photo, watermark, harsh seams, extreme contrast"
+  },
+  "generationParams": {
+    "width": 1024,
+    "height": 1024,
+    "variants": 6
+  },
+  "tier": 2,
+  "status": "draft",
+  "checkpointId": "ckpt_sd15_demo"
+}

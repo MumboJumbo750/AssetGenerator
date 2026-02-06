@@ -35,6 +35,7 @@ async function main() {
   const host = url.hostname || "127.0.0.1";
   const port = url.port ? Number(url.port) : 8188;
   const killInUse = process.argv.includes("--kill");
+  const extraArgs = process.argv.slice(2).filter((arg) => arg !== "--kill");
 
   const pids = await findListeningPids(port);
   if (pids.size > 0) {
@@ -54,10 +55,14 @@ async function main() {
   console.log(`[comfyui:start] Using venv python: ${pythonInVenv}`);
   console.log(`[comfyui:start] Working dir: ${comfyuiDir}`);
 
-  await run(pythonInVevnCompat(pythonInVenv), ["main.py", "--listen", host, "--port", String(port)], {
-    cwd: comfyuiDir,
-    env: process.env,
-  });
+  await run(
+    pythonInVevnCompat(pythonInVenv),
+    ["main.py", "--listen", host, "--port", String(port), ...extraArgs],
+    {
+      cwd: comfyuiDir,
+      env: process.env,
+    },
+  );
 }
 
 function pythonInVevnCompat(pythonPath) {

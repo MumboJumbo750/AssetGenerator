@@ -16,12 +16,50 @@ export function getCatalogEntry(catalogId: string) {
   return catalogMap[catalogId] ?? null;
 }
 
-export async function getCatalog(opts: { projectsRoot: string; projectId: string; catalogId: string }) {
+export type ResolvedCatalogScope = "project" | "checkpoint";
+
+function projectCatalogPath(opts: { projectsRoot: string; projectId: string; fileName: string }) {
+  return path.join(opts.projectsRoot, opts.projectId, "catalogs", opts.fileName);
+}
+
+function checkpointCatalogPath(opts: {
+  projectsRoot: string;
+  projectId: string;
+  checkpointId: string;
+  fileName: string;
+}) {
+  return path.join(opts.projectsRoot, opts.projectId, "catalogs", "checkpoints", opts.checkpointId, opts.fileName);
+}
+
+export async function getCatalog(opts: {
+  projectsRoot: string;
+  projectId: string;
+  catalogId: string;
+  checkpointId?: string;
+  resolveFallback?: boolean;
+}) {
   const entry = getCatalogEntry(opts.catalogId);
   if (!entry) return null;
-  const filePath = path.join(opts.projectsRoot, opts.projectId, "catalogs", entry.fileName);
-  if (!(await fileExists(filePath))) return null;
-  return readJson(filePath);
+
+  if (opts.checkpointId) {
+    const scopedPath = checkpointCatalogPath({
+      projectsRoot: opts.projectsRoot,
+      projectId: opts.projectId,
+      checkpointId: opts.checkpointId,
+      fileName: entry.fileName,
+    });
+    if (await fileExists(scopedPath))
+      return { catalog: await readJson(scopedPath), resolvedScope: "checkpoint" as const };
+    if (!opts.resolveFallback) return null;
+  }
+
+  const fallbackPath = projectCatalogPath({
+    projectsRoot: opts.projectsRoot,
+    projectId: opts.projectId,
+    fileName: entry.fileName,
+  });
+  if (!(await fileExists(fallbackPath))) return null;
+  return { catalog: await readJson(fallbackPath), resolvedScope: "project" as const };
 }
 
 export async function putCatalog(opts: {
@@ -29,6 +67,7 @@ export async function putCatalog(opts: {
   schemas: SchemaRegistry;
   projectId: string;
   catalogId: string;
+  checkpointId?: string;
   body: unknown;
 }) {
   const entry = getCatalogEntry(opts.catalogId);
@@ -36,7 +75,18 @@ export async function putCatalog(opts: {
 
   opts.schemas.validateOrThrow(entry.schemaId, opts.body);
 
-  const filePath = path.join(opts.projectsRoot, opts.projectId, "catalogs", entry.fileName);
+  const filePath = opts.checkpointId
+    ? checkpointCatalogPath({
+        projectsRoot: opts.projectsRoot,
+        projectId: opts.projectId,
+        checkpointId: opts.checkpointId,
+        fileName: entry.fileName,
+      })
+    : projectCatalogPath({
+        projectsRoot: opts.projectsRoot,
+        projectId: opts.projectId,
+        fileName: entry.fileName,
+      });
   await fs.mkdir(path.dirname(filePath), { recursive: true });
   await writeJsonAtomic(filePath, opts.body);
   return { ok: true };

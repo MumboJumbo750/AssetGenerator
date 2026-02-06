@@ -9,6 +9,7 @@ import {
   ScrollArea,
   Select,
   Stack,
+  Switch,
   Text,
   TextInput,
   Title,
@@ -17,21 +18,22 @@ import { NavLink as RouterNavLink, Outlet, useLocation } from "react-router-dom"
 
 import { createProject } from "../api";
 import { useAppData } from "../context/AppDataContext";
+import { useExpertMode } from "../context/ExpertModeContext";
+import { AutopilotStatusBar } from "../components/AutopilotStatusBar";
 
-const NAV_ITEMS = [
-  { to: "/", label: "Overview", description: "Project status and next steps" },
-  { to: "/specs", label: "Specs", description: "SpecLists → AssetSpecs" },
-  { to: "/review", label: "Review", description: "Focused variant review" },
-  { to: "/jobs", label: "Jobs", description: "Queue and logs" },
-  { to: "/assets", label: "Assets", description: "Review & tagging" },
-  { to: "/atlases", label: "Atlases", description: "Frames & animations" },
-  { to: "/exports", label: "Exports", description: "Profiles & Pixi kits" },
-  { to: "/training", label: "Training", description: "LoRA eval comparison" },
-  { to: "/automation", label: "Automation", description: "Rule-based job orchestration" },
-  { to: "/admin", label: "Admin", description: "Catalogs & governance" },
-  { to: "/pixi", label: "Pixi", description: "Export preview" },
-  { to: "/help", label: "Help", description: "FAQ and workflows" },
-  { to: "/logs", label: "Logs", description: "Backend & worker" },
+const PRIMARY_NAV_ITEMS = [
+  { to: "/pipeline", label: "Pipeline", description: "Kanban view of spec flow" },
+  { to: "/dashboard", label: "Dashboard", description: "System health and activity" },
+  { to: "/review", label: "Review", description: "Immersive decision mode" },
+  { to: "/library", label: "Library", description: "Assets, atlases, and LoRAs" },
+  { to: "/export", label: "Export", description: "Wizard and live preview" },
+];
+
+const SECONDARY_NAV_ITEMS = [
+  { to: "/exceptions", label: "Exceptions", description: "Escalated failures and retries" },
+  { to: "/trends", label: "Trends", description: "Quality trends and improvement" },
+  { to: "/metrics", label: "Metrics", description: "Quality gates and release readiness" },
+  { to: "/settings", label: "Settings", description: "Automation, admin, logs, help" },
 ];
 
 export function AppShellLayout() {
@@ -46,6 +48,7 @@ export function AppShellLayout() {
     error,
     setError,
   } = useAppData();
+  const { expertMode, toggleExpertMode } = useExpertMode();
 
   const location = useLocation();
   const [newProjectName, setNewProjectName] = useState("");
@@ -56,7 +59,6 @@ export function AppShellLayout() {
   );
 
   function isActive(path: string) {
-    if (path === "/") return location.pathname === "/";
     return location.pathname.startsWith(path);
   }
 
@@ -75,25 +77,33 @@ export function AppShellLayout() {
   return (
     <AppShell padding="lg" header={{ height: 64 }} navbar={{ width: 300, breakpoint: "sm" }}>
       <AppShell.Header>
-        <Group h="100%" px="lg" justify="space-between">
+        <Group h="100%" px="lg" justify="space-between" className="ag-header-row">
           <Group gap="md">
             <Stack gap={0}>
               <Title order={3}>AssetGenerator</Title>
               <Text size="xs" c="dimmed">
-                Orbital Pipeline Studio
+                Pipeline Studio
               </Text>
             </Stack>
             <Badge variant="light" color="aurora">
               Checkpoint J
             </Badge>
           </Group>
-          <Group gap="md">
+          <Group gap="md" className="ag-header-controls">
+            <AutopilotStatusBar />
+            <Switch
+              size="xs"
+              label="Expert"
+              checked={expertMode}
+              onChange={() => toggleExpertMode()}
+              className="ag-expert-toggle"
+            />
             <Select
               placeholder="Select project"
               data={projectOptions}
               value={selectedProjectId}
               onChange={(value: string | null) => setSelectedProjectId(value ?? "")}
-              w={240}
+              w={{ base: 170, sm: 240 }}
               searchable
               nothingFoundMessage="No projects"
             />
@@ -108,7 +118,7 @@ export function AppShellLayout() {
       </AppShell.Header>
       <AppShell.Navbar p="md">
         <Stack gap="md" h="100%">
-          <Card withBorder radius="md" p="md">
+          <Card withBorder radius="md" p="md" className="ag-card-tier-2">
             <Stack gap={6}>
               <Text fw={600}>System status</Text>
               {systemStatusError && <Text size="xs">status error: {systemStatusError}</Text>}
@@ -127,19 +137,29 @@ export function AppShellLayout() {
                     </Badge>
                   </Group>
                   <Text size="xs" c="dimmed">
-                    Flow: Spec → Generate → Review → Alpha → Atlas → Export
+                    Flow: Spec -&gt; Generate -&gt; Review -&gt; Alpha -&gt; Atlas -&gt; Export
                   </Text>
                 </>
               )}
             </Stack>
           </Card>
 
-          <Card withBorder radius="md" p="md">
+          <Card withBorder radius="md" p="md" className="ag-card-tier-1">
             <Text fw={600} mb="xs">
               Navigation
             </Text>
             <Stack gap={4}>
-              {NAV_ITEMS.map((view) => (
+              {PRIMARY_NAV_ITEMS.map((view) => (
+                <NavLink
+                  key={view.to}
+                  component={RouterNavLink}
+                  to={view.to}
+                  label={view.label}
+                  description={view.description}
+                  active={isActive(view.to)}
+                />
+              ))}
+              {SECONDARY_NAV_ITEMS.map((view) => (
                 <NavLink
                   key={view.to}
                   component={RouterNavLink}
@@ -152,7 +172,7 @@ export function AppShellLayout() {
             </Stack>
           </Card>
 
-          <Card withBorder radius="md" p="md" style={{ flex: 1 }}>
+          <Card withBorder radius="md" p="md" className="ag-card-tier-1" style={{ flex: 1 }}>
             <Stack gap="xs">
               <Group justify="space-between">
                 <Text fw={600}>Projects</Text>

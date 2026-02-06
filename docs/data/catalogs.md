@@ -28,6 +28,10 @@ Checkpoint-scoped catalogs live at:
 - `data/projects/<projectId>/catalogs/checkpoints/<checkpointId>/scenarios.json`
 - `data/projects/<projectId>/catalogs/checkpoints/<checkpointId>/tags.json`
 
+Resolution behavior:
+- GET with `checkpointId` first checks checkpoint-scoped file, then falls back to project-scoped catalog.
+- PUT with `checkpointId` writes checkpoint-scoped catalog only.
+
 ## Styles
 Style = rendering approach (how it looks), e.g.:
 - drawn, realistic, anime, cartoon, comic, pixel-art, watercolor, …

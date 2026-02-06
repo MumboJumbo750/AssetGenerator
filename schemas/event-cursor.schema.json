@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "event-cursor.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["projectId", "lastSeq", "updatedAt"],
+  "properties": {
+    "projectId": { "type": "string", "minLength": 1 },
+    "lastSeq": { "type": "integer", "minimum": 0 },
+    "updatedAt": { "type": "string", "format": "date-time" }
+  }
+}
+

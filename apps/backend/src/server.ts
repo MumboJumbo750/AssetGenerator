@@ -24,6 +24,10 @@ import { registerSystemLogRoutes } from "./routes/systemLogs";
 import { registerSystemStatusRoutes } from "./routes/systemStatus";
 import { registerComfyUiVerifyRoutes } from "./routes/comfyuiVerify";
 import { registerAutomationRoutes } from "./routes/automation";
+import { registerBaselineProfileRoutes } from "./routes/baselineProfiles";
+import { registerEventRoutes } from "./routes/events";
+import { registerImprovementRoutes } from "./routes/improvement";
+import { registerMetricsRoutes } from "./routes/metrics";
 
 const repoRoot = repoRootFromHere(import.meta.url);
 
@@ -83,6 +87,7 @@ async function main() {
   await registerLoraRoutes(app, { dataRoot, schemas });
   await registerEvalRoutes(app, { dataRoot });
   await registerAutomationRoutes(app, { dataRoot, schemas });
+  await registerBaselineProfileRoutes(app, { dataRoot, schemas });
   await registerImportRoutes(app, { dataRoot, schemas });
   await registerSystemLogRoutes(app, { dataRoot });
   await registerSystemStatusRoutes(app, { dataRoot, comfyBaseUrl: local?.comfyui?.baseUrl ?? "http://127.0.0.1:8188" });
@@ -92,6 +97,9 @@ async function main() {
     comfyBaseUrl: local?.comfyui?.baseUrl ?? "http://127.0.0.1:8188",
     local,
   });
+  await registerEventRoutes(app, { dataRoot });
+  await registerImprovementRoutes(app, { dataRoot, schemas });
+  await registerMetricsRoutes(app, { dataRoot, schemas });
 
   const port = Number(process.env.ASSETGEN_BACKEND_PORT ?? 3030);
   const host = process.env.ASSETGEN_BACKEND_HOST ?? "127.0.0.1";

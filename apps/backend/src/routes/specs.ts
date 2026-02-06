@@ -16,6 +16,13 @@ export async function registerSpecRoutes(app: FastifyInstance, opts: { dataRoot:
     return { specs };
   });
 
+  app.get("/api/projects/:projectId/specs/:specId", async (req, reply) => {
+    const { projectId, specId } = req.params as { projectId: string; specId: string };
+    const spec = await getSpec(projectsRoot, projectId, specId);
+    if (!spec) return reply.code(404).send({ error: "Spec not found" });
+    return spec;
+  });
+
   app.post("/api/projects/:projectId/specs", async (req, reply) => {
     const { projectId } = req.params as { projectId: string };
     const body = req.body as Partial<AssetSpec> | null;

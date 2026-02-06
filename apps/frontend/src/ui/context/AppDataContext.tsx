@@ -17,6 +17,7 @@ import {
   type TagCatalog,
 } from "../api";
 import { fetchSystemStatus, type SystemStatus } from "../services/systemService";
+import { useProjectEvents } from "../hooks/useProjectEvents";
 
 type AppData = {
   projects: Project[];
@@ -45,6 +46,9 @@ type AppData = {
 
   assetTypeCatalog: AssetTypeCatalog | null;
   assetTypeCatalogError: string | null;
+  eventStreamConnected: boolean;
+  eventStreamError: string | null;
+  eventStreamLastSeq: number;
 
   refreshProjectData: (projectId?: string) => Promise<void>;
   refreshSystemStatus: () => Promise<void>;
@@ -84,6 +88,15 @@ export function AppDataProvider({ children }: { children: React.ReactNode }) {
 
   const [assetTypeCatalog, setAssetTypeCatalog] = useState<AssetTypeCatalog | null>(null);
   const [assetTypeCatalogError, setAssetTypeCatalogError] = useState<string | null>(null);
+  const {
+    connected: eventStreamConnected,
+    error: eventStreamError,
+    lastSeq: eventStreamLastSeq,
+    recentEvents,
+  } = useProjectEvents(selectedProjectId);
+  const eventRefreshTimerRef = React.useRef<number | null>(null);
+  const eventRefreshInFlightRef = React.useRef(false);
+  const lastHandledEventSeqRef = React.useRef(0);
 
   const [error, setError] = useState<string | null>(null);
 
@@ -176,6 +189,39 @@ export function AppDataProvider({ children }: { children: React.ReactNode }) {
     return () => window.clearInterval(t);
   }, []);
 
+  useEffect(() => {
+    if (!selectedProjectId || recentEvents.length === 0) return;
+    const latest = recentEvents[recentEvents.length - 1];
+    if (!latest || latest.seq <= lastHandledEventSeqRef.current) return;
+    const eventType = String(latest.type ?? "");
+    const shouldRefresh =
+      eventType.startsWith("job.") ||
+      eventType.startsWith("automation.") ||
+      eventType.startsWith("asset.") ||
+      eventType.startsWith("spec.");
+    if (!shouldRefresh) {
+      lastHandledEventSeqRef.current = latest.seq;
+      return;
+    }
+    if (eventRefreshTimerRef.current !== null) window.clearTimeout(eventRefreshTimerRef.current);
+    eventRefreshTimerRef.current = window.setTimeout(() => {
+      if (eventRefreshInFlightRef.current) return;
+      eventRefreshInFlightRef.current = true;
+      refreshProjectData(selectedProjectId)
+        .catch(() => undefined)
+        .finally(() => {
+          eventRefreshInFlightRef.current = false;
+          lastHandledEventSeqRef.current = latest.seq;
+        });
+    }, 250);
+  }, [recentEvents, selectedProjectId]);
+
+  useEffect(() => {
+    return () => {
+      if (eventRefreshTimerRef.current !== null) window.clearTimeout(eventRefreshTimerRef.current);
+    };
+  }, []);
+
   const value = useMemo<AppData>(
     () => ({
       projects,
@@ -198,6 +244,9 @@ export function AppDataProvider({ children }: { children: React.ReactNode }) {
       tagCatalogError,
       assetTypeCatalog,
       assetTypeCatalogError,
+      eventStreamConnected,
+      eventStreamError,
+      eventStreamLastSeq,
       refreshProjectData,
       refreshSystemStatus,
       refreshTagCatalog,
@@ -221,6 +270,9 @@ export function AppDataProvider({ children }: { children: React.ReactNode }) {
       tagCatalogError,
       assetTypeCatalog,
       assetTypeCatalogError,
+      eventStreamConnected,
+      eventStreamError,
+      eventStreamLastSeq,
       error,
     ],
   );

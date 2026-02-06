@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 
 import { run } from "../lib/exec.mjs";
+import { loadLocalConfig } from "../lib/config.mjs";
 import { repoPath, platformPaths } from "../lib/paths.mjs";
 import { findBasePython } from "../lib/python.mjs";
 
@@ -16,6 +17,49 @@ function exists(p) {
   } catch {
     return false;
   }
+}
+
+function resolveTorchInstallConfig() {
+  const local = loadLocalConfig();
+  const torchIndexUrl =
+    process.env.ASSETGEN_TORCH_INDEX_URL ??
+    local?.comfyui?.torchIndexUrl ??
+    (process.platform === "win32" ? "https://download.pytorch.org/whl/cu128" : null);
+  const torchPackages =
+    process.env.ASSETGEN_TORCH_PACKAGES ??
+    local?.comfyui?.torchPackages ??
+    "torch torchvision torchaudio";
+
+  return {
+    torchIndexUrl,
+    torchPackages: String(torchPackages)
+      .split(/\s+/)
+      .map((x) => x.trim())
+      .filter(Boolean),
+  };
+}
+
+async function installTorchPackages(pythonInVenv) {
+  const { torchIndexUrl, torchPackages } = resolveTorchInstallConfig();
+  if (!torchIndexUrl) {
+    console.log("[comfyui:setup] Skipping explicit torch wheel install (no torchIndexUrl configured).");
+    return;
+  }
+  if (torchPackages.length === 0) {
+    console.log("[comfyui:setup] Skipping explicit torch wheel install (no torchPackages configured).");
+    return;
+  }
+
+  console.log(
+    `[comfyui:setup] Installing torch packages from ${torchIndexUrl}: ${torchPackages.join(" ")}`,
+  );
+  await run(
+    pythonInVenv,
+    ["-m", "pip", "install", "--upgrade", "--no-cache-dir", ...torchPackages, "--index-url", torchIndexUrl],
+    {
+      cwd: repoPath(),
+    },
+  );
 }
 
 async function main() {
@@ -48,6 +92,8 @@ async function main() {
   await run(pythonInVenv, ["-m", "pip", "install", "-r", path.join(comfyuiDir, "requirements.txt")], {
     cwd: repoPath(),
   });
+
+  await installTorchPackages(pythonInVenv);
 
   console.log("[comfyui:setup] Done.");
   console.log("Next: npm run comfyui:start");

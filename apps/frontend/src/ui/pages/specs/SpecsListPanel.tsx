@@ -1,5 +1,6 @@
 import React from "react";
 import { Badge, Button, Card, Group, ScrollArea, Stack, Text } from "@mantine/core";
+import { useNavigate } from "react-router-dom";
 
 import { HelpTip } from "../../components/HelpTip";
 import type { AssetSpec } from "../../api";
@@ -13,6 +14,7 @@ type Props = {
 };
 
 export function SpecsListPanel(props: Props) {
+  const navigate = useNavigate();
   return (
     <Card withBorder radius="md" p="md">
       <Stack gap="md">
@@ -56,6 +58,9 @@ export function SpecsListPanel(props: Props) {
                       {spec.assetType} · {spec.style}/{spec.scenario}
                     </Text>
                   </div>
+                  <Button variant="subtle" size="xs" onClick={() => navigate(`/classic/specs/${spec.id}`)}>
+                    Edit
+                  </Button>
                   <Button variant="light" onClick={() => props.onQueueGenerate(spec)}>
                     Queue generate
                   </Button>

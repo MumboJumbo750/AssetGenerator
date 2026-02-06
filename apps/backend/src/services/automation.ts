@@ -8,6 +8,9 @@ import type { SchemaRegistry } from "../lib/schemas";
 import { getAsset, listAssets, updateAssetVariant, updateAssetVersion } from "./assets";
 import { createJob, type Job } from "./jobs";
 import { getSpec, listSpecs } from "./specs";
+import { appendProjectEvent } from "./events";
+import { upsertAutomationRunIndexEntry } from "./indexes";
+import { recordTriggerAndCheck } from "./circuitBreakers";
 
 export type AutomationRule = {
   id: string;
@@ -228,32 +231,107 @@ export async function triggerAutomationEvent(opts: {
 }) {
   const rules = await listAutomationRules(opts.projectsRoot, opts.projectId);
   const payload = opts.event.payload ?? {};
+  const causalDepth = Number(payload.causalDepth ?? 0);
+  const visitedRuleIds = Array.isArray(payload.visitedRuleIds)
+    ? payload.visitedRuleIds.map((item) => String(item))
+    : [];
+  if (causalDepth > 8) {
+    await appendProjectEvent({
+      projectsRoot: opts.projectsRoot,
+      schemas: opts.schemas,
+      event: {
+        projectId: opts.projectId,
+        type: "automation_loop_guard_triggered",
+        entityType: "automation_event",
+        entityId: opts.event.type,
+        idempotencyKey: `automation_loop_guard:${opts.event.type}:${causalDepth}`,
+        payload: { causalDepth, visitedRuleIds },
+      },
+    }).catch(() => undefined);
+    return [];
+  }
   const matching = rules.filter(
-    (rule) => rule.enabled && rule.trigger?.type === opts.event.type && matchesConditions(rule.conditions, payload),
+    (rule) =>
+      rule.enabled &&
+      rule.trigger?.type === opts.event.type &&
+      !visitedRuleIds.includes(rule.id) &&
+      matchesConditions(rule.conditions, payload),
   );
 
   const runs: AutomationRun[] = [];
+  await appendProjectEvent({
+    projectsRoot: opts.projectsRoot,
+    schemas: opts.schemas,
+    event: {
+      projectId: opts.projectId,
+      type: "automation_event_received",
+      entityType: "automation_event",
+      entityId: opts.event.type,
+      idempotencyKey: `automation_event:${opts.event.type}:${JSON.stringify(payload)}`,
+      payload,
+    },
+  }).catch(() => undefined);
   for (const rule of matching) {
+    // Circuit breaker check: skip rule if breaker is open
+    const breakerResult = await recordTriggerAndCheck({
+      projectsRoot: opts.projectsRoot,
+      schemas: opts.schemas,
+      projectId: opts.projectId,
+      ruleId: rule.id,
+    }).catch((): { allowed: boolean; reason?: string; breakerId?: string } => ({ allowed: true }));
+
+    if (!breakerResult.allowed) {
+      await appendProjectEvent({
+        projectsRoot: opts.projectsRoot,
+        schemas: opts.schemas,
+        event: {
+          projectId: opts.projectId,
+          type: "circuit_breaker_blocked",
+          entityType: "automation_rule",
+          entityId: rule.id,
+          idempotencyKey: `circuit_breaker:${rule.id}:${Date.now()}`,
+          payload: { reason: breakerResult.reason, breakerId: breakerResult.breakerId },
+        },
+      }).catch(() => undefined);
+      continue;
+    }
+
     const run = await createAutomationRun({
       projectsRoot: opts.projectsRoot,
       schemas: opts.schemas,
       projectId: opts.projectId,
       ruleId: rule.id,
       dryRun: false,
-      meta: { event: opts.event },
+      meta: {
+        event: {
+          ...opts.event,
+          payload: { ...payload, causalDepth: causalDepth + 1, visitedRuleIds: [...visitedRuleIds, rule.id] },
+        },
+      },
     });
-    const executed = await executeAutomationRun({
-      projectsRoot: opts.projectsRoot,
-      schemas: opts.schemas,
-      projectId: opts.projectId,
-      runId: run.id,
-    });
-    if (executed) runs.push(executed);
+    runs.push(run);
   }
   return runs;
 }
 
 export async function listAutomationRuns(projectsRoot: string, projectId: string) {
+  const indexPath = path.join(projectsRoot, projectId, "automation-runs-index.json");
+  if (await fileExists(indexPath)) {
+    try {
+      const index = await readJson<{ items?: Array<{ id: string }> }>(indexPath);
+      const ids = Array.isArray(index.items) ? index.items.map((item) => item.id).filter(Boolean) : [];
+      const fromIndex: AutomationRun[] = [];
+      for (const id of ids) {
+        const filePath = path.join(projectsRoot, projectId, "automation-runs", `${id}.json`);
+        if (!(await fileExists(filePath))) continue;
+        fromIndex.push(await readJson<AutomationRun>(filePath));
+      }
+      if (fromIndex.length > 0) return fromIndex;
+    } catch {
+      // fall back to full scan
+    }
+  }
+
   const root = path.join(projectsRoot, projectId, "automation-runs");
   try {
     const entries = await fs.readdir(root, { withFileTypes: true });
@@ -296,6 +374,23 @@ export async function createAutomationRun(opts: {
   await ensureDir(root);
   const filePath = path.join(root, `${id}.json`);
   await writeJsonAtomic(filePath, run);
+  await upsertAutomationRunIndexEntry({
+    projectsRoot: opts.projectsRoot,
+    projectId: opts.projectId,
+    entry: { id: run.id, ruleId: run.ruleId, status: run.status, createdAt: run.createdAt, updatedAt: run.updatedAt },
+  }).catch(() => undefined);
+  await appendProjectEvent({
+    projectsRoot: opts.projectsRoot,
+    schemas: opts.schemas,
+    event: {
+      projectId: opts.projectId,
+      type: "automation_run_queued",
+      entityType: "automation_run",
+      entityId: run.id,
+      idempotencyKey: `automation_run:${run.id}:queued`,
+      payload: { ruleId: run.ruleId, status: run.status, dryRun: Boolean(run.dryRun) },
+    },
+  }).catch(() => undefined);
   return run;
 }
 
@@ -322,6 +417,31 @@ export async function updateAutomationRun(opts: {
   };
   opts.schemas.validateOrThrow("automation-run.schema.json", next);
   await writeJsonAtomic(filePath, next);
+  await upsertAutomationRunIndexEntry({
+    projectsRoot: opts.projectsRoot,
+    projectId: opts.projectId,
+    entry: {
+      id: next.id,
+      ruleId: next.ruleId,
+      status: next.status,
+      createdAt: next.createdAt,
+      updatedAt: next.updatedAt,
+    },
+  }).catch(() => undefined);
+  if (current.status !== next.status) {
+    await appendProjectEvent({
+      projectsRoot: opts.projectsRoot,
+      schemas: opts.schemas,
+      event: {
+        projectId: opts.projectId,
+        type: `automation_run_${next.status}`,
+        entityType: "automation_run",
+        entityId: next.id,
+        idempotencyKey: `automation_run:${next.id}:status:${next.status}:${next.updatedAt}`,
+        payload: { ruleId: next.ruleId, from: current.status, to: next.status },
+      },
+    }).catch(() => undefined);
+  }
   return next;
 }
 
@@ -354,6 +474,18 @@ export async function executeAutomationRun(opts: {
   };
   opts.schemas.validateOrThrow("automation-run.schema.json", nextRun);
   await writeJsonAtomic(path.join(opts.projectsRoot, opts.projectId, "automation-runs", `${opts.runId}.json`), nextRun);
+  await appendProjectEvent({
+    projectsRoot: opts.projectsRoot,
+    schemas: opts.schemas,
+    event: {
+      projectId: opts.projectId,
+      type: "automation_run_running",
+      entityType: "automation_run",
+      entityId: nextRun.id,
+      idempotencyKey: `automation_run:${nextRun.id}:running`,
+      payload: { ruleId: nextRun.ruleId, status: nextRun.status },
+    },
+  }).catch(() => undefined);
 
   for (const action of rule.actions) {
     const stepId = ulid();

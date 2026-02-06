@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "circuit-breaker.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "projectId", "type", "state", "createdAt", "updatedAt"],
+  "properties": {
+    "id": { "type": "string", "minLength": 1 },
+    "projectId": { "type": "string", "minLength": 1 },
+    "ruleId": {
+      "type": "string",
+      "description": "The automation rule this breaker applies to (omit for project-global breakers)."
+    },
+    "type": {
+      "type": "string",
+      "enum": ["velocity", "queue_depth"],
+      "description": "velocity = trigger rate limit; queue_depth = queue/throughput ratio limit."
+    },
+    "state": {
+      "type": "string",
+      "enum": ["closed", "open", "half_open"],
+      "description": "closed = normal, open = tripped (blocking), half_open = cooldown test."
+    },
+    "config": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "maxTriggersPerMinute": {
+          "type": "number", "minimum": 0.1,
+          "description": "Velocity breaker: max trigger rate per minute before tripping."
+        },
+        "maxQueueDepthRatio": {
+          "type": "number", "minimum": 0.1,
+          "description": "Queue depth breaker: queue_size / throughput_per_min ratio limit."
+        },
+        "cooldownMs": {
+          "type": "integer", "minimum": 1000, "default": 60000,
+          "description": "How long the breaker stays open before moving to half_open."
+        },
+        "halfOpenTestCount": {
+          "type": "integer", "minimum": 1, "default": 3,
+          "description": "Number of triggers to allow in half_open before re-evaluating."
+        }
+      }
+    },
+    "triggerLog": {
+      "type": "array",
+      "description": "Rolling window of recent trigger timestamps for velocity computation.",
+      "items": { "type": "string", "format": "date-time" },
+      "maxItems": 1000
+    },
+    "trippedAt": { "type": "string", "format": "date-time" },
+    "trippedReason": { "type": "string" },
+    "halfOpenAt": { "type": "string", "format": "date-time" },
+    "halfOpenTestsRemaining": { "type": "integer", "minimum": 0 },
+    "stats": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "totalTrips": { "type": "integer", "minimum": 0 },
+        "lastTripAt": { "type": "string", "format": "date-time" },
+        "blockedTriggers": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "updatedAt": { "type": "string", "format": "date-time" }
+  }
+}

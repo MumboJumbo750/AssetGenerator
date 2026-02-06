@@ -11,10 +11,11 @@ This document defines the **minimum guidance layer** for the UI so first-time us
 
 ## 2) Empty state rules (by workflow)
 
-### Specs (SpecLists → AssetSpecs)
+### Specs (Pipeline → SpecWizard → SpecDetail)
 
-- If no SpecLists: show “Create first SpecList” CTA and explain refinement.
-- If no specs: remind the user to refine the SpecList or create a spec manually.
+- If no specs: show "Create first Spec" CTA linking to the SpecWizard and explain the Pipeline flow.
+- If specs exist but none are `ready`: remind the user to complete the spec checklist (see §6a) or use the SpecDetailPage tabs.
+- The primary creation path is `Pipeline → New Spec (Wizard)`.
 
 ### Assets (Review + tagging)
 
@@ -50,14 +51,14 @@ This document defines the **minimum guidance layer** for the UI so first-time us
 
 ## 2b) Onboarding wizard
 
-- Provide a stepper on the Overview page with:
-  - Verify ComfyUI
-  - Create SpecList
-  - Refine into Specs
-  - Queue Jobs
-  - Review Assets
+- Provide a stepper on the Dashboard page or Pipeline page with:
+  - Verify ComfyUI connection
+  - Create first Spec (via SpecWizard)
+  - Fill spec policy tabs (SpecDetailPage: General, Prompt, Quality, LoRA, Seed, Entity)
+  - Run Pipeline
+  - Review Assets (Decision Sprint)
   - Export + Pixi preview
-- Each step should include a direct CTA (link to Specs/Assets/Logs).
+- Each step should include a direct CTA linking to the relevant route (`/pipeline`, `/review`, `/export`).
 
 ## 2c) Help Center (searchable FAQ)
 
@@ -88,8 +89,55 @@ Help tips should deep-link to the Help Center topic when possible (e.g., tagging
 
 ## 5) CTA list (preferred)
 
-- “Create first SpecList”
-- “Go to Specs”
-- “Review assets”
-- “View jobs”
-- “Preview Pixi export”
+- "Create first Spec" (links to SpecWizard)
+- "Open Pipeline" (links to /pipeline)
+- "Run Pipeline" (primary action on Pipeline board)
+- "Review assets" (links to /review)
+- "View exceptions" (links to /exceptions)
+- "View jobs" (links to /classic/jobs)
+- "Preview Pixi export"
+
+## 6) Copy/Paste QA Checklist (spec recreation + new specs)
+
+Use this checklist in onboarding tips, review handoff notes, and release QA.
+
+### 6a) Spec is autopilot-ready
+
+- [ ] `checkpointId` is set.
+- [ ] `checkpointProfileId` is set (or deterministically derived).
+- [ ] `checkpointProfileVersion` matches current profile version.
+- [ ] `baselineProfileId` is set (or explicitly defaulted).
+- [ ] `loraPolicy.mode` is selected.
+- [ ] `styleConsistency.mode` is selected.
+- [ ] `seedPolicy.mode` is set (`random_recorded` recommended; `fixed` for repro tests; `derived` for entity-coherent batches).
+- [ ] `entityLink` is set for identity-bearing assets (`entityId` + `role`).
+- [ ] `qualityContract.backgroundPolicy` is set.
+- [ ] `qualityContract.requiredStates` is set for stateful assets.
+- [ ] `qualityContract.alignmentTolerancePx` is set when alignment matters.
+- [ ] `output.kind` + output-specific fields are complete.
+- [ ] `generationParams.width/height/variants` are set.
+- [ ] `prompt.positive` + `prompt.negative` are both populated.
+
+### 6b) Pipeline UI checks after first run
+
+- [ ] Pipeline card shows policy badges (`Baseline`, `LoRA`, `Style`, `Quality`).
+- [ ] Pipeline card shows evidence indicator (`none`, `X/4`, or `ready`).
+- [ ] Primary action is correct for stage (`Run Pipeline`, `Review`, `Export`, etc.).
+
+### 6c) Review UI checks
+
+- [ ] Review header shows policy badges.
+- [ ] Evidence badges appear when generation metadata is present.
+- [ ] Keyboard controls work: Left/Right, `A`, `R`, `1-5`.
+
+### 6d) Library discoverability checks
+
+- [ ] Asset appears under expected policy filters:
+  - LoRA policy
+  - style consistency
+  - quality background
+- [ ] Detail drawer shows policy and evidence details for the latest version.
+
+For the full recreation workflow and canonical spec template, see:
+
+- `docs/workflows/spec-recreation-happy-loop.md`

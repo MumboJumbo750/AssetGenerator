@@ -1,0 +1,38 @@
+{
+  "id": "spec_astroduck_warp_effect",
+  "projectId": "astroduck_demo",
+  "specListId": "specList_astroduck_demo",
+  "createdAt": "2026-02-03T00:00:00.000Z",
+  "updatedAt": "2026-02-03T00:00:00.000Z",
+  "title": "Warp transition effect (looping)",
+  "assetType": "spritesheet",
+  "style": "comic",
+  "scenario": "scifi",
+  "tags": [
+    "assetType:spritesheet",
+    "vfx:warp",
+    "transition",
+    "style:comic"
+  ],
+  "output": {
+    "kind": "animation",
+    "background": "transparent_required",
+    "animation": {
+      "fps": 18,
+      "loop": true,
+      "frameCount": 12
+    }
+  },
+  "prompt": {
+    "positive": "Comic sci-fi warp tunnel effect, streaking stars, neon swirl, centered loop animation frames, transparent background",
+    "negative": "photo, watermark, text, non-looping, noisy artifacts"
+  },
+  "generationParams": {
+    "width": 1024,
+    "height": 512,
+    "variants": 8
+  },
+  "tier": 3,
+  "status": "draft",
+  "checkpointId": "ckpt_sd15_demo"
+}

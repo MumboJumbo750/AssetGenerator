@@ -1,0 +1,93 @@
+{
+  "id": "baseline_pony",
+  "projectId": "astroduck_demo",
+  "checkpointId": "ckpt_pony_v6xl",
+  "checkpointProfileId": "pony_v6xl_v1",
+  "name": "Pony V6 XL baseline defaults",
+  "version": 1,
+  "createdAt": "2026-02-06T10:00:00.000Z",
+  "updatedAt": "2026-02-06T10:00:00.000Z",
+  "global": {
+    "noDropShadows": true,
+    "background": "transparent_only",
+    "alphaEdgeClean": "required",
+    "allowPerspective": false
+  },
+  "assetTypeProfiles": {
+    "texture": {
+      "lighting": "flat",
+      "tileableEdges": "required",
+      "requiredStates": [],
+      "stateAlignment": "n/a",
+      "paddingPx": 0,
+      "promptHints": [
+        "score_9, score_8_up, seamless tile texture",
+        "flat lighting, uniform material"
+      ],
+      "negativePromptHints": [
+        "score_4, score_3, drop shadow",
+        "directional shadow, vignette"
+      ]
+    },
+    "ui_button": {
+      "lighting": "flat",
+      "tileableEdges": "optional",
+      "requiredStates": ["default", "hover", "pressed", "disabled"],
+      "stateAlignment": "exact",
+      "paddingPx": 8,
+      "promptHints": [
+        "score_9, score_8_up, game ui button set",
+        "consistent geometry across states",
+        "transparent background"
+      ],
+      "negativePromptHints": [
+        "score_4, score_3, cast shadow",
+        "state size mismatch, busy background"
+      ]
+    },
+    "ui_select": {
+      "lighting": "flat",
+      "tileableEdges": "optional",
+      "requiredStates": ["default", "hover", "open", "disabled"],
+      "stateAlignment": "exact",
+      "paddingPx": 8,
+      "promptHints": [
+        "score_9, score_8_up, ui dropdown control set",
+        "clean readable labels",
+        "consistent frame geometry"
+      ],
+      "negativePromptHints": [
+        "score_4, score_3, drop shadow",
+        "misaligned state variants"
+      ]
+    },
+    "icon": {
+      "lighting": "flat",
+      "tileableEdges": "optional",
+      "requiredStates": [],
+      "stateAlignment": "n/a",
+      "paddingPx": 8,
+      "promptHints": [
+        "score_9, score_8_up, clean icon silhouette",
+        "high contrast shape, transparent background"
+      ],
+      "negativePromptHints": [
+        "score_4, score_3, shadow",
+        "background clutter, motion blur"
+      ]
+    }
+  },
+  "validatorPolicy": {
+    "shadowCheck": { "enabled": true, "threshold": 0.8 },
+    "backgroundCheck": { "enabled": true, "mode": "transparent_only", "threshold": 0.95 },
+    "stateCompletenessCheck": { "enabled": true, "threshold": 1.0 },
+    "stateAlignmentCheck": { "enabled": true, "maxPixelDrift": 1 },
+    "edgeCleanlinessCheck": { "enabled": true, "threshold": 0.9 }
+  },
+  "routingPolicy": {
+    "onPass": "auto_advance",
+    "onFail": "auto_regenerate",
+    "onUncertain": "queue_decision_sprint"
+  },
+  "specOverrides": {}
+}

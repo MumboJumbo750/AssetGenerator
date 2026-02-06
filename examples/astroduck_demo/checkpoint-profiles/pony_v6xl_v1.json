@@ -1,0 +1,48 @@
+{
+  "profileId": "pony_v6xl_v1",
+  "version": 1,
+  "checkpointId": "ckpt_pony_v6xl",
+  "createdAt": "2026-02-06T00:00:00.000Z",
+  "updatedAt": "2026-02-06T00:00:00.000Z",
+  "defaultForCheckpoint": true,
+  "basePositive": "score_9, score_8_up, score_7_up, detailed, sharp",
+  "baseNegative": "score_4, score_3, score_2, score_1, worst quality, low quality, blurry, watermark, text",
+  "perAssetType": {
+    "sprite": {
+      "positive": "score_9, game sprite, transparent background, centered, clean edges, isolated character",
+      "negative": "score_4, background clutter, cropped, partial"
+    },
+    "ui_icon": {
+      "positive": "score_9, flat icon, minimal, centered symbol, clean vector style",
+      "negative": "score_4, photo, 3d render, complex background"
+    },
+    "logo": {
+      "positive": "score_9, logo design, bold typography, clean geometry, brand identity",
+      "negative": "score_4, photo, complex scene, cluttered"
+    },
+    "texture": {
+      "positive": "score_9, seamless tileable texture, uniform lighting, no borders",
+      "negative": "score_4, object, face, text, watermark"
+    },
+    "tile": {
+      "positive": "score_9, seamless tileable pattern, uniform, repeating design",
+      "negative": "score_4, object, face, text, asymmetric"
+    },
+    "overlay": {
+      "positive": "score_9, transparent overlay, VFX element, clean alpha edges",
+      "negative": "score_4, opaque background, solid fill"
+    },
+    "spritesheet": {
+      "positive": "score_9, game spritesheet, multiple frames, consistent character, uniform spacing, transparent background",
+      "negative": "score_4, single image, background clutter, overlapping frames"
+    }
+  },
+  "tagOrderPolicy": "checkpoint_default",
+  "tagOrder": [],
+  "runtimeSafety": {
+    "enabled": true,
+    "positive": [],
+    "negative": ["nsfw", "gore", "violence", "nude"]
+  },
+  "notes": "Default profile for Pony Diffusion V6 XL. Uses score-based quality tags native to the Pony V6 training data."
+}

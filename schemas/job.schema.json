@@ -14,6 +14,53 @@
     "input": { "type": "object", "additionalProperties": true },
     "output": { "type": "object", "additionalProperties": true },
     "error": { "type": "string" },
+    "errorClass": {
+      "type": "string",
+      "enum": ["retryable", "non_retryable", "timeout", "upstream_unavailable"],
+      "description": "Classification of the error for retry/escalation policy decisions."
+    },
+    "attempt": {
+      "type": "integer",
+      "minimum": 1,
+      "default": 1,
+      "description": "Current attempt number (1-based). Incremented on each retry."
+    },
+    "maxAttempts": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Maximum attempts allowed by the active retry policy."
+    },
+    "nextRetryAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Earliest time the next retry should be attempted (set when status=queued after a retry)."
+    },
+    "retryHistory": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["attempt", "error", "errorClass", "ts"],
+        "properties": {
+          "attempt": { "type": "integer", "minimum": 1 },
+          "error": { "type": "string" },
+          "errorClass": { "type": "string" },
+          "ts": { "type": "string", "format": "date-time" },
+          "durationMs": { "type": "integer", "minimum": 0 }
+        }
+      },
+      "description": "History of prior failed attempts before the final outcome."
+    },
+    "escalatedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp when this job was escalated after exhausting retries."
+    },
+    "escalationTarget": {
+      "type": "string",
+      "enum": ["decision_sprint", "exception_inbox", "reject"],
+      "description": "Where this job was escalated to after retries exhausted."
+    },
     "logPath": { "type": "string" }
   }
 }

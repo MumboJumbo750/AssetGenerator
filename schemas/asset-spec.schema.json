@@ -13,7 +13,79 @@
     "title": { "type": "string", "minLength": 1 },
     "assetType": { "type": "string", "minLength": 1 },
     "checkpointId": { "type": "string" },
+    "checkpointProfileId": { "type": "string" },
+    "checkpointProfileVersion": { "type": "integer", "minimum": 1 },
     "loraIds": { "type": "array", "items": { "type": "string" } },
+    "baselineProfileId": { "type": "string" },
+    "loraPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "mode": {
+          "type": "string",
+          "enum": ["manual", "baseline_then_project", "project_then_baseline", "baseline_only", "project_only"]
+        },
+        "preferRecommended": { "type": "boolean" },
+        "maxActiveLoras": { "type": "integer", "minimum": 0 },
+        "releasePolicy": {
+          "type": "string",
+          "enum": ["active_or_latest_approved", "active_only"]
+        }
+      }
+    },
+    "styleConsistency": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "mode": {
+          "type": "string",
+          "enum": ["inherit_project", "lock_to_spec_style", "lock_to_anchor_set"]
+        },
+        "anchorRefs": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "qualityContract": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "backgroundPolicy": {
+          "type": "string",
+          "enum": ["white_or_transparent", "transparent_only", "white_only", "any"]
+        },
+        "requiredStates": { "type": "array", "items": { "type": "string" } },
+        "alignmentTolerancePx": { "type": "number", "minimum": 0 },
+        "perspectiveMode": { "type": "string", "enum": ["strict", "allow_minor", "any"] },
+        "silhouetteDriftTolerance": { "type": "number", "minimum": 0, "maximum": 1 }
+      }
+    },
+    "entityLink": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "entityId": { "type": "string" },
+        "role": { "type": "string", "enum": ["animation", "pickup_icon", "portrait", "ui_card"] }
+      }
+    },
+    "promptPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "compileMode": { "type": "string", "enum": ["checkpoint_profile_default", "spec_override"] },
+        "tagOrderMode": { "type": "string", "enum": ["checkpoint_default", "explicit"] },
+        "tagOrder": { "type": "array", "items": { "type": "string" } },
+        "promptPresetId": { "type": "string" }
+      }
+    },
+    "seedPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "mode": { "type": "string", "enum": ["fixed", "derived", "random_recorded"] },
+        "baseSeed": { "type": "integer" },
+        "deriveFrom": { "type": "array", "items": { "type": "string" } },
+        "hashAlgo": { "type": "string" }
+      }
+    },
     "style": { "type": "string" },
     "scenario": { "type": "string" },
     "tags": { "type": "array", "items": { "type": "string" } },
@@ -109,6 +181,12 @@
       "type": "string",
       "enum": ["draft", "ready", "deprecated"],
       "default": "draft"
+    },
+    "tier": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 3,
+      "description": "Priority tier for incremental game build-out. T0 = playable loop, T1 = full first level, T2 = menus + multi-level, T3 = polish + meta-game."
     }
   }
 }

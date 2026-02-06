@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "checkpoint-profile.schema.json",
+  "title": "Checkpoint Profile",
+  "description": "A standalone checkpoint-specific prompt dialect profile. Profiles define base prompts, per-asset-type overrides, tag ordering, and runtime safety tokens for a single checkpoint.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["profileId", "version", "checkpointId", "createdAt", "updatedAt"],
+  "properties": {
+    "profileId": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Deterministic profile id, typically checkpointId + profileVersion."
+    },
+    "version": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Monotonically increasing profile version."
+    },
+    "checkpointId": {
+      "type": "string",
+      "minLength": 1,
+      "description": "The checkpoint this profile is bound to."
+    },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "updatedAt": { "type": "string", "format": "date-time" },
+    "defaultForCheckpoint": {
+      "type": "boolean",
+      "default": false,
+      "description": "If true, this profile is the default for the checkpoint when no explicit profile is selected."
+    },
+    "basePositive": {
+      "type": "string",
+      "description": "Base positive prompt fragment injected for all assets using this checkpoint."
+    },
+    "baseNegative": {
+      "type": "string",
+      "description": "Base negative prompt fragment injected for all assets using this checkpoint."
+    },
+    "perAssetType": {
+      "type": "object",
+      "description": "Per-asset-type prompt overrides keyed by asset type id.",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "positive": { "type": "string" },
+          "negative": { "type": "string" }
+        }
+      }
+    },
+    "tagOrderPolicy": {
+      "type": "string",
+      "enum": ["checkpoint_default", "explicit"],
+      "default": "checkpoint_default",
+      "description": "How to order tag prompt fragments: use checkpoint defaults or an explicit ordered list."
+    },
+    "tagOrder": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Explicit tag ordering when tagOrderPolicy is 'explicit'."
+    },
+    "runtimeSafety": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Safety tokens appended/prepended to final compiled prompts.",
+      "properties": {
+        "enabled": { "type": "boolean", "default": true },
+        "positive": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Safety tokens added to positive prompt."
+        },
+        "negative": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Safety tokens added to negative prompt."
+        }
+      }
+    },
+    "notes": {
+      "type": "string",
+      "description": "Human-readable notes about the profile."
+    }
+  }
+}

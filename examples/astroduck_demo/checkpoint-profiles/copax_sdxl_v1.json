@@ -1,0 +1,48 @@
+{
+  "profileId": "copax_sdxl_v1",
+  "version": 1,
+  "checkpointId": "ckpt_copax_sdxl",
+  "createdAt": "2026-02-06T00:00:00.000Z",
+  "updatedAt": "2026-02-06T00:00:00.000Z",
+  "defaultForCheckpoint": true,
+  "basePositive": "masterpiece, best quality, highly detailed, sharp focus",
+  "baseNegative": "worst quality, low quality, blurry, watermark, text, signature, jpeg artifacts, deformed",
+  "perAssetType": {
+    "sprite": {
+      "positive": "game sprite, transparent background, centered, clean edges, isolated character",
+      "negative": "background clutter, cropped, partial"
+    },
+    "ui_icon": {
+      "positive": "flat icon, minimal, centered symbol, clean vector style",
+      "negative": "photo, 3d render, complex background"
+    },
+    "logo": {
+      "positive": "logo design, bold typography, clean geometry, brand identity",
+      "negative": "photo, complex scene, cluttered"
+    },
+    "texture": {
+      "positive": "seamless tileable texture, uniform lighting, no borders",
+      "negative": "object, face, text, watermark"
+    },
+    "tile": {
+      "positive": "seamless tileable pattern, uniform, repeating design",
+      "negative": "object, face, text, asymmetric"
+    },
+    "overlay": {
+      "positive": "transparent overlay, VFX element, clean alpha edges",
+      "negative": "opaque background, solid fill"
+    },
+    "spritesheet": {
+      "positive": "game spritesheet, multiple frames, consistent character, uniform spacing, transparent background",
+      "negative": "single image, background clutter, overlapping frames"
+    }
+  },
+  "tagOrderPolicy": "checkpoint_default",
+  "tagOrder": [],
+  "runtimeSafety": {
+    "enabled": true,
+    "positive": [],
+    "negative": ["nsfw", "gore", "violence", "nude"]
+  },
+  "notes": "Default profile for Copax TimeLess SDXL. Optimized for game-art and 2D asset generation."
+}

@@ -45,12 +45,9 @@ __pycache__/
 tmp/
 cache/
 
-# Runtime logs (generated locally; not committed)
-data/**/files/logs/
-data/runtime/logs/
-data/runtime/worker-heartbeat.json
-data/runtime/worker-locks/
-data/runtime/worker-locks/**
+# Data directory — runtime-only, not committed.
+# Bootstrap with: npm run seed (copies from examples/)
+data/
 
 # Local config (machine-specific)
 config/local.json

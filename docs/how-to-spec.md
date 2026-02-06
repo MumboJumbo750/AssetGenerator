@@ -2,6 +2,10 @@
 
 This guide helps you write “SpecLists” that convert cleanly into `data/projects/<projectId>/specs/<specId>.json` (see `schemas/asset-spec.schema.json`).
 
+If you are recreating old specs for the automated happy loop, use this companion workflow:
+
+- `docs/workflows/spec-recreation-happy-loop.md`
+
 The raw SpecList should also be saved for traceability:
 
 - `data/projects/<projectId>/spec-lists/<specListId>.json` (schema: `schemas/spec-list.schema.json`)
@@ -112,4 +116,5 @@ Minimal shape (example):
 Notes:
 
 - `checkpointId` and `loraIds` may be set explicitly or chosen by rules in the UI/admin.
+- For autopilot-ready specs also set: `baselineProfileId`, `loraPolicy`, `styleConsistency`, `qualityContract`.
 - The generator stores the _resolved_ prompts/settings per output in the Asset record (`schemas/asset.schema.json`).

@@ -45,6 +45,15 @@
             "stateCompletenessCheck",
             "stateAlignmentCheck",
             "edgeCleanlinessCheck",
+            "baseline_checkpoint_compat",
+            "prompt_policy_evidence",
+            "prompt_policy_tag_order",
+            "background_policy",
+            "state_alignment",
+            "silhouette_consistency",
+            "perspective_consistency",
+            "required_states_output_kind",
+            "entity_prompt_continuity",
             "custom"
           ]
         },

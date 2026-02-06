@@ -11,5 +11,5 @@
     "types": ["node"],
     "noEmit": true
   },
-  "include": ["apps/**/*", "scripts/**/*", "schemas/**/*"]
+  "include": ["apps/**/*", "scripts/**/*", "schemas/**/*", "tests/**/*"]
 }

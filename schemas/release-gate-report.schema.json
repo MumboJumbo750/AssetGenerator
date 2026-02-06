@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "release-gate-report.schema.json",
+  "title": "Release Gate Report",
+  "description": "Evaluation of all Section-9 release gates for a project. Each gate has a pass/fail status and measured value.",
+  "type": "object",
+  "required": ["id", "projectId", "createdAt", "gates", "overallStatus", "benchmarkProfile"],
+  "properties": {
+    "id": { "type": "string", "minLength": 1 },
+    "projectId": { "type": "string", "minLength": 1 },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "overallStatus": {
+      "type": "string",
+      "enum": ["pass", "fail", "insufficient_data"],
+      "description": "Overall release readiness: pass only when all gates pass."
+    },
+    "benchmarkProfile": {
+      "type": "object",
+      "properties": {
+        "targetJobs": { "type": "number" },
+        "targetAssets": { "type": "number" },
+        "targetSpecs": { "type": "number" },
+        "targetAutomationRules": { "type": "number" },
+        "actualJobs": { "type": "number" },
+        "actualAssets": { "type": "number" },
+        "actualSpecs": { "type": "number" },
+        "actualAutomationRules": { "type": "number" },
+        "satisfied": { "type": "boolean" },
+        "warmCacheJobsListMs": { "type": "number", "description": "Jobs-list read latency (ms) with warm OS page cache" },
+        "coldCacheJobsListMs": { "type": "number", "description": "Jobs-list read latency (ms) with cold OS page cache" }
+      },
+      "required": ["targetJobs", "targetAssets", "targetSpecs", "targetAutomationRules", "actualJobs", "actualAssets", "actualSpecs", "actualAutomationRules", "satisfied"],
+      "additionalProperties": false
+    },
+    "gates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "threshold", "measured", "status", "unit", "detail"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "enum": [
+              "deterministic_stack_reproducibility",
+              "first_pass_validator_success",
+              "event_delivery_latency_p95",
+              "jobs_list_api_latency_p95",
+              "decision_sprint_throughput",
+              "auto_resolved_decisions",
+              "cross_output_entity_cohesion",
+              "duplicate_action_rate",
+              "checkpoint_switch_replay"
+            ]
+          },
+          "name": { "type": "string" },
+          "threshold": { "type": "string", "description": "Human-readable threshold e.g. '>= 99%'" },
+          "measured": { "type": ["number", "null"], "description": "Measured value (null if insufficient data)" },
+          "unit": { "type": "string", "description": "Unit of measurement e.g. '%', 'ms', 'assets/min'" },
+          "status": {
+            "type": "string",
+            "enum": ["pass", "fail", "insufficient_data"]
+          },
+          "detail": { "type": "string", "description": "Human-readable detail about the measurement" }
+        },
+        "additionalProperties": false
+      },
+      "minItems": 9,
+      "maxItems": 9
+    }
+  },
+  "additionalProperties": false
+}

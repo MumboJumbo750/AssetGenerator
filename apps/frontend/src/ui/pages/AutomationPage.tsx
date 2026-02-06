@@ -3,16 +3,15 @@ import {
   Badge,
   Button,
   Card,
-  Divider,
   Group,
-  List,
+  NumberInput,
   Select,
   SimpleGrid,
   Stack,
   Switch,
   Text,
-  Textarea,
   TextInput,
+  Textarea,
   Title,
 } from "@mantine/core";
 
@@ -27,6 +26,13 @@ import {
 import { HelpTip } from "../components/HelpTip";
 import { useAppData } from "../context/AppDataContext";
 
+type ConditionDraft = {
+  id: string;
+  field: string;
+  op: "equals" | "in";
+  value: string;
+};
+
 type ActionDraft = {
   id: string;
   type:
@@ -37,7 +43,27 @@ type ActionDraft = {
     | "set_status"
     | "export"
     | "auto_atlas_pack";
-  config: string;
+  jobType: "generate" | "bg_remove" | "atlas_pack" | "export";
+  specId: string;
+  checkpointName: string;
+  templateId: string;
+  promptsText: string;
+  variants: number;
+  limit: number;
+  statusesCsv: string;
+  addTagsCsv: string;
+  removeTagsCsv: string;
+  setTagsCsv: string;
+  assetId: string;
+  versionId: string;
+  variantId: string;
+  statusValue: string;
+  exportAssetIdsCsv: string;
+  exportAtlasIdsCsv: string;
+  profileId: string;
+  padding: number;
+  maxSize: number;
+  trim: boolean;
 };
 
 const TRIGGER_OPTIONS = [
@@ -62,62 +88,69 @@ const ACTION_OPTIONS = [
 const PRESETS = [
   {
     id: "approve-bg-atlas",
-    label: "Approve -> bg remove -> atlas",
-    description: "Auto-queue background removal then atlas pack when an asset version is approved.",
-    ruleName: "Auto-pack approved assets",
+    label: "Approved -> auto atlas pack",
+    description: "When an asset is approved, auto-pack atlas for animation sequences.",
     triggerType: "asset_approved" as const,
-    actions: [
-      { type: "enqueue_job" as const, config: '{ "type": "bg_remove", "input": { "assetId": "<assetId>" } }' },
-      { type: "enqueue_job" as const, config: '{ "type": "atlas_pack", "input": { "assetId": "<assetId>" } }' },
-    ],
-  },
-  {
-    id: "atlas-export",
-    label: "Atlas ready -> export",
-    description: "Auto-export when an atlas is updated (manual mapping required).",
-    ruleName: "Export on atlas ready",
-    triggerType: "atlas_ready" as const,
-    actions: [{ type: "enqueue_job" as const, config: '{ "type": "export", "input": { "atlasId": "<atlasId>" } }' }],
+    actionTypes: ["auto_atlas_pack" as const],
   },
   {
     id: "spec-ready-generate",
-    label: "Spec ready -> generate",
-    description: "Queue generation when a spec is marked ready.",
-    ruleName: "Generate on spec ready",
+    label: "Spec refined -> generate",
+    description: "Queue generate jobs when specs are refined.",
     triggerType: "spec_refined" as const,
-    actions: [{ type: "enqueue_job" as const, config: '{ "type": "generate", "input": { "specId": "<specId>" } }' }],
+    actionTypes: ["enqueue_job" as const],
   },
   {
-    id: "lora-activated-render",
-    label: "LoRA activated -> render",
-    description: "When a LoRA release is activated, run smoke eval prompts and queue compatible renders.",
-    ruleName: "LoRA activation autopilot",
+    id: "lora-activate",
+    label: "LoRA activation autopilot",
+    description: "Run eval grid and queue compatible renders after activation.",
     triggerType: "lora_release_activated" as const,
-    actions: [
-      {
-        type: "run_eval_grid" as const,
-        config:
-          '{ "prompts": ["clean ui icon set, consistent style", "pixel sprite character, front view"], "templateId": "txt2img", "variants": 2 }',
-      },
-      {
-        type: "enqueue_lora_renders" as const,
-        config: '{ "templateId": "txt2img", "limit": 20, "statuses": ["draft", "ready"], "requireApproved": true }',
-      },
-    ],
+    actionTypes: ["run_eval_grid" as const, "enqueue_lora_renders" as const],
   },
 ];
 
-function createEmptyAction(id: string): ActionDraft {
-  return { id, type: "enqueue_job", config: "{}" };
+function splitCsv(value: string) {
+  return value
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean);
 }
 
-function parseJson(input: string) {
-  if (!input.trim()) return { ok: true as const, value: undefined };
-  try {
-    return { ok: true as const, value: JSON.parse(input) };
-  } catch (error: any) {
-    return { ok: false as const, error: error?.message ?? String(error) };
-  }
+function parsePrimitive(value: string) {
+  const raw = value.trim();
+  if (!raw.length) return "";
+  if (raw === "true") return true;
+  if (raw === "false") return false;
+  const num = Number(raw);
+  return Number.isFinite(num) && String(num) === raw ? num : raw;
+}
+
+function emptyAction(id: string): ActionDraft {
+  return {
+    id,
+    type: "enqueue_job",
+    jobType: "generate",
+    specId: "",
+    checkpointName: "",
+    templateId: "txt2img",
+    promptsText: "",
+    variants: 2,
+    limit: 20,
+    statusesCsv: "draft,ready",
+    addTagsCsv: "",
+    removeTagsCsv: "",
+    setTagsCsv: "",
+    assetId: "",
+    versionId: "",
+    variantId: "",
+    statusValue: "approved",
+    exportAssetIdsCsv: "",
+    exportAtlasIdsCsv: "",
+    profileId: "",
+    padding: 2,
+    maxSize: 2048,
+    trim: true,
+  };
 }
 
 export function AutomationPage() {
@@ -134,8 +167,8 @@ export function AutomationPage() {
   const [triggerType, setTriggerType] = useState<AutomationRule["trigger"]["type"]>("asset_approved");
   const [scheduleCron, setScheduleCron] = useState("0 2 * * *");
   const [scheduleTz, setScheduleTz] = useState("UTC");
-  const [conditionsJson, setConditionsJson] = useState("{}");
-  const [actions, setActions] = useState<ActionDraft[]>([createEmptyAction("action-1")]);
+  const [conditions, setConditions] = useState<ConditionDraft[]>([]);
+  const [actions, setActions] = useState<ActionDraft[]>([emptyAction("action-1")]);
   const [presetId, setPresetId] = useState<string | null>(null);
   const [selectedRuleId, setSelectedRuleId] = useState("");
   const [dryRun, setDryRun] = useState(true);
@@ -163,67 +196,140 @@ export function AutomationPage() {
     refresh().catch((e) => setError(e?.message ?? String(e)));
   }, [selectedProjectId]);
 
-  const ruleSummary = useMemo(() => {
-    if (!rules.length) return "No rules configured yet.";
-    const enabled = rules.filter((rule) => rule.enabled).length;
-    return `${enabled} enabled / ${rules.length} total`;
-  }, [rules]);
-
-  const conditionsParsed = useMemo(() => parseJson(conditionsJson), [conditionsJson]);
-  const actionErrors = useMemo(() => {
-    return actions.map((action) => ({ id: action.id, result: parseJson(action.config) }));
-  }, [actions]);
-  const isSaveDisabled = useMemo(() => {
-    if (!isReady) return true;
-    if (!ruleName.trim()) return true;
-    if (!conditionsParsed.ok) return true;
-    if (actions.length === 0) return true;
-    return actionErrors.some((entry) => !entry.result.ok);
-  }, [actions.length, actionErrors, conditionsParsed.ok, isReady, ruleName]);
-
-  function addAction() {
-    setActions((prev) => [...prev, createEmptyAction(`action-${prev.length + 1}`)]);
+  function updateAction(id: string, patch: Partial<ActionDraft>) {
+    setActions((prev) => prev.map((item) => (item.id === id ? { ...item, ...patch } : item)));
   }
 
-  function updateAction(id: string, patch: Partial<ActionDraft>) {
-    setActions((prev) => prev.map((action) => (action.id === id ? { ...action, ...patch } : action)));
+  function addAction() {
+    setActions((prev) => [...prev, emptyAction(`action-${prev.length + 1}`)]);
   }
 
   function removeAction(id: string) {
-    setActions((prev) => prev.filter((action) => action.id !== id));
+    setActions((prev) => prev.filter((item) => item.id !== id));
   }
 
   function applyPreset(id: string) {
     const preset = PRESETS.find((item) => item.id === id);
     if (!preset) return;
-    setRuleName(preset.ruleName);
+    setRuleName(preset.label);
     setRuleDescription(preset.description);
     setTriggerType(preset.triggerType);
-    setActions(preset.actions.map((action, index) => ({ id: `action-${index + 1}`, ...action })));
+    setActions(preset.actionTypes.map((type, idx) => ({ ...emptyAction(`action-${idx + 1}`), type })));
   }
+
+  function buildConditions() {
+    if (conditions.length === 0) return undefined;
+    return {
+      all: conditions
+        .filter((item) => item.field.trim())
+        .map((item) =>
+          item.op === "in"
+            ? { field: item.field.trim(), in: splitCsv(item.value).map(parsePrimitive) }
+            : { field: item.field.trim(), equals: parsePrimitive(item.value) },
+        ),
+    };
+  }
+
+  function buildAction(action: ActionDraft) {
+    if (action.type === "enqueue_job") {
+      return {
+        type: action.type,
+        config: {
+          type: action.jobType,
+          input: {
+            ...(action.specId.trim() ? { specId: action.specId.trim() } : {}),
+            ...(action.templateId.trim() ? { templateId: action.templateId.trim() } : {}),
+            ...(action.checkpointName.trim() ? { checkpointName: action.checkpointName.trim() } : {}),
+          },
+        },
+      };
+    }
+    if (action.type === "run_eval_grid") {
+      return {
+        type: action.type,
+        config: {
+          prompts: action.promptsText
+            .split("\n")
+            .map((line) => line.trim())
+            .filter(Boolean),
+          variants: action.variants,
+          templateId: action.templateId || "txt2img",
+        },
+      };
+    }
+    if (action.type === "enqueue_lora_renders") {
+      return {
+        type: action.type,
+        config: {
+          limit: action.limit,
+          statuses: splitCsv(action.statusesCsv),
+          templateId: action.templateId || "txt2img",
+        },
+      };
+    }
+    if (action.type === "apply_tags") {
+      return {
+        type: action.type,
+        config: {
+          ...(action.assetId.trim() ? { assetId: action.assetId.trim() } : {}),
+          ...(action.versionId.trim() ? { versionId: action.versionId.trim() } : {}),
+          ...(action.variantId.trim() ? { variantId: action.variantId.trim() } : {}),
+          ...(action.setTagsCsv.trim() ? { set: splitCsv(action.setTagsCsv) } : {}),
+          ...(action.addTagsCsv.trim() ? { add: splitCsv(action.addTagsCsv) } : {}),
+          ...(action.removeTagsCsv.trim() ? { remove: splitCsv(action.removeTagsCsv) } : {}),
+        },
+      };
+    }
+    if (action.type === "set_status") {
+      return {
+        type: action.type,
+        config: {
+          ...(action.assetId.trim() ? { assetId: action.assetId.trim() } : {}),
+          ...(action.versionId.trim() ? { versionId: action.versionId.trim() } : {}),
+          ...(action.variantId.trim() ? { variantId: action.variantId.trim() } : {}),
+          status: action.statusValue || "approved",
+        },
+      };
+    }
+    if (action.type === "export") {
+      return {
+        type: action.type,
+        config: {
+          assetIds: splitCsv(action.exportAssetIdsCsv),
+          atlasIds: splitCsv(action.exportAtlasIdsCsv),
+          ...(action.profileId.trim() ? { profileId: action.profileId.trim() } : {}),
+        },
+      };
+    }
+    return {
+      type: action.type,
+      config: {
+        padding: action.padding,
+        maxSize: action.maxSize,
+        trim: action.trim,
+      },
+    };
+  }
+
+  const naturalPreview = useMemo(() => {
+    const conditionsText = conditions.length
+      ? ` and ${conditions
+          .map((item) =>
+            item.op === "in"
+              ? `${item.field} in [${splitCsv(item.value).join(", ")}]`
+              : `${item.field} equals ${item.value || "(empty)"}`,
+          )
+          .join(" and ")}`
+      : "";
+    const actionsText = actions.map((item) => item.type).join(" then ");
+    return `When ${triggerType}${conditionsText}, then ${actionsText || "(no actions)"}.`;
+  }, [actions, conditions, triggerType]);
 
   async function onCreateRule() {
     if (!selectedProjectId) return;
     setBuilderError(null);
-    if (!conditionsParsed.ok) return setBuilderError(`Conditions JSON invalid: ${conditionsParsed.error}`);
-
-    const actionPayload = [];
-    for (const action of actions) {
-      const parsed = parseJson(action.config);
-      if (!parsed.ok) {
-        setBuilderError(`Action "${action.id}" JSON invalid: ${parsed.error}`);
-        return;
-      }
-      actionPayload.push({ type: action.type, config: parsed.value });
-    }
-    if (!ruleName.trim()) {
-      setBuilderError("Rule name is required.");
-      return;
-    }
-    if (actionPayload.length === 0) {
-      setBuilderError("Add at least one action.");
-      return;
-    }
+    if (!ruleName.trim()) return setBuilderError("Rule name is required.");
+    if (actions.length === 0) return setBuilderError("Add at least one action.");
 
     const trigger: AutomationRule["trigger"] =
       triggerType === "schedule"
@@ -237,14 +343,14 @@ export function AutomationPage() {
         notes: ruleNotes.trim() || undefined,
         enabled: ruleEnabled,
         trigger,
-        actions: actionPayload,
-        conditions: conditionsParsed.value,
+        conditions: buildConditions() as Record<string, unknown> | undefined,
+        actions: actions.map(buildAction),
       });
       setRuleName("");
       setRuleDescription("");
       setRuleNotes("");
-      setConditionsJson("{}");
-      setActions([createEmptyAction("action-1")]);
+      setConditions([]);
+      setActions([emptyAction("action-1")]);
       await refresh();
     } catch (e: any) {
       setBuilderError(e?.message ?? String(e));
@@ -253,7 +359,6 @@ export function AutomationPage() {
 
   async function onRunRule() {
     if (!selectedProjectId || !selectedRuleId) return;
-    setBuilderError(null);
     try {
       await executeAutomationRun(selectedProjectId, { ruleId: selectedRuleId, dryRun });
       await refresh();
@@ -269,72 +374,41 @@ export function AutomationPage() {
           <Title order={2}>Automation</Title>
           <HelpTip label="Workflow automation basics" topicId="workflow-automation" />
         </Group>
-        <Group>
-          <Button variant="light" onClick={() => refresh()} disabled={!isReady || loading}>
-            Refresh
-          </Button>
-          <Button disabled>New rule (soon)</Button>
-        </Group>
+        <Button variant="light" onClick={() => refresh()} disabled={!isReady || loading}>
+          Refresh
+        </Button>
       </Group>
-      <Text c="dimmed">
-        Define rules that trigger multi-step jobs. Start with safe presets, then expand to custom triggers and actions.
-      </Text>
+      <Text c="dimmed">Sentence-style rule builder with structured action forms.</Text>
 
       <Card withBorder radius="md" p="md">
         <Stack gap="md">
           <Group justify="space-between">
-            <div>
-              <Title order={4}>Rule builder</Title>
-              <Text size="sm" c="dimmed">
-                Draft a rule and save it to the project.
-              </Text>
-            </div>
-            <Button onClick={onCreateRule} disabled={isSaveDisabled}>
+            <Title order={4}>Rule builder</Title>
+            <Button onClick={() => onCreateRule().catch(() => undefined)} disabled={!isReady}>
               Save rule
             </Button>
           </Group>
-          {builderError && (
-            <Text size="sm" c="red">
-              {builderError}
-            </Text>
-          )}
-          <Card withBorder radius="md" p="sm">
-            <Stack gap="xs">
-              <Text fw={600}>Presets</Text>
-              <Text size="sm" c="dimmed">
-                Start with a preset, then customize the fields below.
-              </Text>
-              <Group>
-                <Select
-                  placeholder="Select preset"
-                  data={PRESETS.map((preset) => ({ value: preset.id, label: preset.label }))}
-                  value={presetId}
-                  onChange={(value) => setPresetId(value)}
-                  w={260}
-                />
-                <Button
-                  variant="light"
-                  disabled={!presetId}
-                  onClick={() => {
-                    if (presetId) applyPreset(presetId);
-                  }}
-                >
-                  Apply preset
-                </Button>
-              </Group>
-              {presetId && (
-                <Text size="xs" c="dimmed">
-                  {PRESETS.find((preset) => preset.id === presetId)?.description}
-                </Text>
-              )}
-            </Stack>
-          </Card>
+
+          {builderError && <Text c="red">{builderError}</Text>}
+
+          <Group>
+            <Select
+              placeholder="Select preset"
+              data={PRESETS.map((preset) => ({ value: preset.id, label: preset.label }))}
+              value={presetId}
+              onChange={setPresetId}
+              w={280}
+            />
+            <Button variant="light" disabled={!presetId} onClick={() => presetId && applyPreset(presetId)}>
+              Apply preset
+            </Button>
+          </Group>
+
           <SimpleGrid cols={{ base: 1, md: 2 }}>
             <TextInput
               label="Rule name"
-              placeholder="Auto-pack approved sprites"
               value={ruleName}
-              onChange={(event: React.ChangeEvent<HTMLInputElement>) => setRuleName(event.currentTarget.value)}
+              onChange={(event) => setRuleName(event.currentTarget.value)}
             />
             <Switch
               label="Enabled"
@@ -342,96 +416,322 @@ export function AutomationPage() {
               onChange={(event) => setRuleEnabled(event.currentTarget.checked)}
             />
           </SimpleGrid>
-          <Textarea
+          <TextInput
             label="Description"
-            placeholder="Runs bg removal and atlas packing after approval"
             value={ruleDescription}
             onChange={(event) => setRuleDescription(event.currentTarget.value)}
-            minRows={2}
           />
-          <Textarea
-            label="Notes"
-            placeholder="Optional internal notes"
-            value={ruleNotes}
-            onChange={(event) => setRuleNotes(event.currentTarget.value)}
-            minRows={2}
-          />
-          <Divider label="Trigger" />
-          <SimpleGrid cols={{ base: 1, md: 2 }}>
+          <TextInput label="Notes" value={ruleNotes} onChange={(event) => setRuleNotes(event.currentTarget.value)} />
+
+          <SimpleGrid cols={{ base: 1, md: 3 }}>
             <Select
-              label="Trigger type"
+              label="When"
               data={TRIGGER_OPTIONS}
               value={triggerType}
-              onChange={(value) => setTriggerType((value ?? "asset_approved") as AutomationRule["trigger"]["type"])}
+              onChange={(value) => setTriggerType((value as any) ?? "asset_approved")}
             />
             {triggerType === "schedule" && (
-              <Stack gap="xs">
+              <>
                 <TextInput
                   label="Cron"
                   value={scheduleCron}
-                  onChange={(event: React.ChangeEvent<HTMLInputElement>) => setScheduleCron(event.currentTarget.value)}
+                  onChange={(event) => setScheduleCron(event.currentTarget.value)}
                 />
                 <TextInput
                   label="Timezone"
                   value={scheduleTz}
-                  onChange={(event: React.ChangeEvent<HTMLInputElement>) => setScheduleTz(event.currentTarget.value)}
+                  onChange={(event) => setScheduleTz(event.currentTarget.value)}
                 />
-              </Stack>
+              </>
             )}
           </SimpleGrid>
-          <Textarea
-            label="Conditions (JSON)"
-            value={conditionsJson}
-            onChange={(event) => setConditionsJson(event.currentTarget.value)}
-            minRows={3}
-            error={conditionsParsed.ok ? undefined : "Invalid JSON"}
-          />
-          <Divider label="Actions" />
-          <Stack gap="sm">
-            {actions.map((action) => (
-              <Card key={action.id} withBorder radius="md" p="sm">
-                <Stack gap="sm">
-                  <Group justify="space-between">
-                    <Select
-                      label="Action type"
-                      data={ACTION_OPTIONS}
-                      value={action.type}
-                      onChange={(value) =>
-                        updateAction(action.id, {
-                          type: (value ?? "enqueue_job") as ActionDraft["type"],
-                        })
-                      }
-                    />
-                    <Button
-                      variant="light"
-                      color="red"
-                      onClick={() => removeAction(action.id)}
-                      disabled={actions.length <= 1}
-                    >
-                      Remove
-                    </Button>
-                  </Group>
-                  <Textarea
-                    label="Action config (JSON)"
-                    value={action.config}
-                    onChange={(event) => updateAction(action.id, { config: event.currentTarget.value })}
-                    minRows={3}
-                    error={actionErrors.find((entry) => entry.id === action.id)?.result.ok ? undefined : "Invalid JSON"}
+
+          <Card withBorder radius="sm" p="sm">
+            <Stack gap="xs">
+              <Group justify="space-between">
+                <Text fw={600}>Conditions</Text>
+                <Button
+                  size="xs"
+                  variant="light"
+                  onClick={() =>
+                    setConditions((prev) => [
+                      ...prev,
+                      { id: `cond-${prev.length + 1}`, field: "assetType", op: "equals", value: "" },
+                    ])
+                  }
+                >
+                  Add condition
+                </Button>
+              </Group>
+              {conditions.map((condition, index) => (
+                <SimpleGrid key={condition.id} cols={{ base: 1, md: 4 }}>
+                  <TextInput
+                    label="Field"
+                    value={condition.field}
+                    onChange={(event) =>
+                      setConditions((prev) =>
+                        prev.map((item, i) => (i === index ? { ...item, field: event.currentTarget.value } : item)),
+                      )
+                    }
                   />
-                </Stack>
-              </Card>
-            ))}
-            <Button variant="light" onClick={addAction}>
-              Add action
-            </Button>
-          </Stack>
-          <Divider label="Guardrails" />
-          <List size="sm" spacing="xs">
-            <List.Item>Use dry-run before enabling rules.</List.Item>
-            <List.Item>Keep actions narrow and explicit.</List.Item>
-            <List.Item>Prefer idempotent rules to avoid repeated jobs.</List.Item>
-          </List>
-          <Divider label="Test run" />
+                  <Select
+                    label="Operator"
+                    data={[
+                      { value: "equals", label: "equals" },
+                      { value: "in", label: "in list" },
+                    ]}
+                    value={condition.op}
+                    onChange={(value) =>
+                      setConditions((prev) =>
+                        prev.map((item, i) => (i === index ? { ...item, op: (value as any) ?? "equals" } : item)),
+                      )
+                    }
+                  />
+                  <TextInput
+                    label={condition.op === "in" ? "Values (csv)" : "Value"}
+                    value={condition.value}
+                    onChange={(event) =>
+                      setConditions((prev) =>
+                        prev.map((item, i) => (i === index ? { ...item, value: event.currentTarget.value } : item)),
+                      )
+                    }
+                  />
+                  <Button
+                    mt={24}
+                    color="red"
+                    variant="light"
+                    onClick={() => setConditions((prev) => prev.filter((_, i) => i !== index))}
+                  >
+                    Remove
+                  </Button>
+                </SimpleGrid>
+              ))}
+            </Stack>
+          </Card>
+
+          <Card withBorder radius="sm" p="sm">
+            <Stack gap="xs">
+              <Group justify="space-between">
+                <Text fw={600}>Actions</Text>
+                <Button size="xs" variant="light" onClick={addAction}>
+                  Add action
+                </Button>
+              </Group>
+              {actions.map((action, index) => (
+                <Card key={action.id} withBorder radius="sm" p="sm">
+                  <Stack gap="xs">
+                    <Group justify="space-between">
+                      <Select
+                        label="Then"
+                        data={ACTION_OPTIONS}
+                        value={action.type}
+                        onChange={(value) => updateAction(action.id, { type: (value as any) ?? "enqueue_job" })}
+                      />
+                      <Button
+                        color="red"
+                        variant="light"
+                        onClick={() => removeAction(action.id)}
+                        disabled={actions.length <= 1}
+                      >
+                        Remove
+                      </Button>
+                    </Group>
+
+                    {action.type === "enqueue_job" && (
+                      <SimpleGrid cols={{ base: 1, md: 4 }}>
+                        <Select
+                          label="Job type"
+                          data={[
+                            { value: "generate", label: "generate" },
+                            { value: "bg_remove", label: "bg_remove" },
+                            { value: "atlas_pack", label: "atlas_pack" },
+                            { value: "export", label: "export" },
+                          ]}
+                          value={action.jobType}
+                          onChange={(value) => updateAction(action.id, { jobType: (value as any) ?? "generate" })}
+                        />
+                        <TextInput
+                          label="Spec ID"
+                          value={action.specId}
+                          onChange={(event) => updateAction(action.id, { specId: event.currentTarget.value })}
+                        />
+                        <TextInput
+                          label="Template ID"
+                          value={action.templateId}
+                          onChange={(event) => updateAction(action.id, { templateId: event.currentTarget.value })}
+                        />
+                        <TextInput
+                          label="Checkpoint"
+                          value={action.checkpointName}
+                          onChange={(event) => updateAction(action.id, { checkpointName: event.currentTarget.value })}
+                        />
+                      </SimpleGrid>
+                    )}
+
+                    {action.type === "run_eval_grid" && (
+                      <SimpleGrid cols={{ base: 1, md: 3 }}>
+                        <Textarea
+                          label="Prompts (one per line)"
+                          value={action.promptsText}
+                          onChange={(event) => updateAction(action.id, { promptsText: event.currentTarget.value })}
+                          minRows={2}
+                        />
+                        <NumberInput
+                          label="Variants"
+                          min={1}
+                          max={8}
+                          value={action.variants}
+                          onChange={(value) => updateAction(action.id, { variants: Number(value ?? 2) })}
+                        />
+                        <TextInput
+                          label="Template ID"
+                          value={action.templateId}
+                          onChange={(event) => updateAction(action.id, { templateId: event.currentTarget.value })}
+                        />
+                      </SimpleGrid>
+                    )}
+
+                    {action.type === "enqueue_lora_renders" && (
+                      <SimpleGrid cols={{ base: 1, md: 3 }}>
+                        <NumberInput
+                          label="Limit"
+                          min={1}
+                          max={200}
+                          value={action.limit}
+                          onChange={(value) => updateAction(action.id, { limit: Number(value ?? 20) })}
+                        />
+                        <TextInput
+                          label="Statuses (csv)"
+                          value={action.statusesCsv}
+                          onChange={(event) => updateAction(action.id, { statusesCsv: event.currentTarget.value })}
+                        />
+                        <TextInput
+                          label="Template ID"
+                          value={action.templateId}
+                          onChange={(event) => updateAction(action.id, { templateId: event.currentTarget.value })}
+                        />
+                      </SimpleGrid>
+                    )}
+
+                    {action.type === "apply_tags" && (
+                      <SimpleGrid cols={{ base: 1, md: 3 }}>
+                        <TextInput
+                          label="Asset ID"
+                          value={action.assetId}
+                          onChange={(event) => updateAction(action.id, { assetId: event.currentTarget.value })}
+                        />
+                        <TextInput
+                          label="Version ID"
+                          value={action.versionId}
+                          onChange={(event) => updateAction(action.id, { versionId: event.currentTarget.value })}
+                        />
+                        <TextInput
+                          label="Variant ID"
+                          value={action.variantId}
+                          onChange={(event) => updateAction(action.id, { variantId: event.currentTarget.value })}
+                        />
+                        <TextInput
+                          label="Set tags (csv)"
+                          value={action.setTagsCsv}
+                          onChange={(event) => updateAction(action.id, { setTagsCsv: event.currentTarget.value })}
+                        />
+                        <TextInput
+                          label="Add tags (csv)"
+                          value={action.addTagsCsv}
+                          onChange={(event) => updateAction(action.id, { addTagsCsv: event.currentTarget.value })}
+                        />
+                        <TextInput
+                          label="Remove tags (csv)"
+                          value={action.removeTagsCsv}
+                          onChange={(event) => updateAction(action.id, { removeTagsCsv: event.currentTarget.value })}
+                        />
+                      </SimpleGrid>
+                    )}
+
+                    {action.type === "set_status" && (
+                      <SimpleGrid cols={{ base: 1, md: 4 }}>
+                        <TextInput
+                          label="Asset ID"
+                          value={action.assetId}
+                          onChange={(event) => updateAction(action.id, { assetId: event.currentTarget.value })}
+                        />
+                        <TextInput
+                          label="Version ID"
+                          value={action.versionId}
+                          onChange={(event) => updateAction(action.id, { versionId: event.currentTarget.value })}
+                        />
+                        <TextInput
+                          label="Variant ID"
+                          value={action.variantId}
+                          onChange={(event) => updateAction(action.id, { variantId: event.currentTarget.value })}
+                        />
+                        <TextInput
+                          label="Status"
+                          value={action.statusValue}
+                          onChange={(event) => updateAction(action.id, { statusValue: event.currentTarget.value })}
+                        />
+                      </SimpleGrid>
+                    )}
+
+                    {action.type === "export" && (
+                      <SimpleGrid cols={{ base: 1, md: 3 }}>
+                        <TextInput
+                          label="Asset IDs (csv)"
+                          value={action.exportAssetIdsCsv}
+                          onChange={(event) =>
+                            updateAction(action.id, { exportAssetIdsCsv: event.currentTarget.value })
+                          }
+                        />
+                        <TextInput
+                          label="Atlas IDs (csv)"
+                          value={action.exportAtlasIdsCsv}
+                          onChange={(event) =>
+                            updateAction(action.id, { exportAtlasIdsCsv: event.currentTarget.value })
+                          }
+                        />
+                        <TextInput
+                          label="Profile ID"
+                          value={action.profileId}
+                          onChange={(event) => updateAction(action.id, { profileId: event.currentTarget.value })}
+                        />
+                      </SimpleGrid>
+                    )}
+
+                    {action.type === "auto_atlas_pack" && (
+                      <SimpleGrid cols={{ base: 1, md: 3 }}>
+                        <NumberInput
+                          label="Padding"
+                          value={action.padding}
+                          min={0}
+                          onChange={(value) => updateAction(action.id, { padding: Number(value ?? 2) })}
+                        />
+                        <NumberInput
+                          label="Max size"
+                          value={action.maxSize}
+                          min={128}
+                          step={64}
+                          onChange={(value) => updateAction(action.id, { maxSize: Number(value ?? 2048) })}
+                        />
+                        <Switch
+                          label="Trim"
+                          checked={action.trim}
+                          onChange={(event) => updateAction(action.id, { trim: event.currentTarget.checked })}
+                        />
+                      </SimpleGrid>
+                    )}
+                  </Stack>
+                </Card>
+              ))}
+            </Stack>
+          </Card>
+
+          <Card withBorder radius="sm" p="sm">
+            <Text fw={600}>Preview</Text>
+            <Text size="sm" c="dimmed">
+              {naturalPreview}
+            </Text>
+          </Card>
+
           <Group>
             <Select
               placeholder="Select rule"
@@ -441,7 +741,11 @@ export function AutomationPage() {
               w={280}
             />
             <Switch label="Dry run" checked={dryRun} onChange={(event) => setDryRun(event.currentTarget.checked)} />
-            <Button variant="light" onClick={onRunRule} disabled={!selectedRuleId || !isReady}>
+            <Button
+              variant="light"
+              onClick={() => onRunRule().catch(() => undefined)}
+              disabled={!selectedRuleId || !isReady}
+            >
               Run rule
             </Button>
           </Group>
@@ -450,53 +754,44 @@ export function AutomationPage() {
 
       <SimpleGrid cols={{ base: 1, md: 2 }}>
         <Card withBorder radius="md" p="md">
-          <Group justify="space-between" mb="xs">
+          <Group justify="space-between">
             <Text fw={600}>Rules</Text>
             <Badge variant="light">{rules.length}</Badge>
           </Group>
-          <Text size="sm" c="dimmed" mb="sm">
-            {ruleSummary}
-          </Text>
-          <Stack gap="xs">
-            {rules.length === 0 && <Text size="sm">No automation rules yet. Create one to start.</Text>}
+          <Stack gap="xs" mt="sm">
             {rules.map((rule) => (
-              <Card key={rule.id} withBorder radius="md" p="sm">
+              <Card key={rule.id} withBorder radius="sm" p="sm">
                 <Group justify="space-between">
-                  <div>
-                    <Text fw={600}>{rule.name}</Text>
-                    <Text size="xs" c="dimmed">
-                      Trigger: {rule.trigger?.type ?? "unknown"} · Actions: {rule.actions?.length ?? 0}
-                    </Text>
-                  </div>
-                  <Badge color={rule.enabled ? "green" : "gray"} variant="light">
+                  <Text fw={600}>{rule.name}</Text>
+                  <Badge variant="light" color={rule.enabled ? "green" : "gray"}>
                     {rule.enabled ? "Enabled" : "Disabled"}
                   </Badge>
                 </Group>
+                <Text size="xs" c="dimmed">
+                  Trigger: {rule.trigger.type} � Actions: {rule.actions.length}
+                </Text>
               </Card>
             ))}
+            {rules.length === 0 && (
+              <Text size="sm" c="dimmed">
+                No rules yet.
+              </Text>
+            )}
           </Stack>
         </Card>
 
         <Card withBorder radius="md" p="md">
-          <Group justify="space-between" mb="xs">
+          <Group justify="space-between">
             <Text fw={600}>Runs</Text>
             <Badge variant="light">{runs.length}</Badge>
           </Group>
-          <Text size="sm" c="dimmed" mb="sm">
-            Recent automation runs and dry-runs.
-          </Text>
-          <Stack gap="xs">
-            {runs.length === 0 && <Text size="sm">No runs yet. Trigger a rule to see history.</Text>}
-            {runs.slice(0, 6).map((run) => (
-              <Card key={run.id} withBorder radius="md" p="sm">
+          <Stack gap="xs" mt="sm">
+            {runs.slice(0, 8).map((run) => (
+              <Card key={run.id} withBorder radius="sm" p="sm">
                 <Group justify="space-between">
-                  <div>
-                    <Text fw={600}>{run.ruleId}</Text>
-                    <Text size="xs" c="dimmed">
-                      Status: {run.status} · {run.dryRun ? "Dry run" : "Live"}
-                    </Text>
-                  </div>
+                  <Text fw={600}>{run.ruleId}</Text>
                   <Badge
+                    variant="light"
                     color={
                       run.status === "succeeded"
                         ? "green"
@@ -506,13 +801,20 @@ export function AutomationPage() {
                             ? "yellow"
                             : "gray"
                     }
-                    variant="light"
                   >
                     {run.status}
                   </Badge>
                 </Group>
+                <Text size="xs" c="dimmed">
+                  {run.dryRun ? "Dry run" : "Live"}
+                </Text>
               </Card>
             ))}
+            {runs.length === 0 && (
+              <Text size="sm" c="dimmed">
+                No runs yet.
+              </Text>
+            )}
           </Stack>
         </Card>
       </SimpleGrid>

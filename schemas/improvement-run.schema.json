@@ -1,0 +1,112 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "improvement-run.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "projectId", "name", "status", "cohort", "intervention", "createdAt", "updatedAt"],
+  "properties": {
+    "id": { "type": "string", "minLength": 1 },
+    "projectId": { "type": "string", "minLength": 1 },
+    "name": { "type": "string", "minLength": 1 },
+    "description": { "type": "string" },
+    "status": {
+      "type": "string",
+      "enum": ["draft", "running", "completed", "failed", "rolled_back"]
+    },
+    "cohort": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["selectionMethod"],
+      "properties": {
+        "selectionMethod": {
+          "type": "string",
+          "enum": ["by_asset_type", "by_checkpoint", "by_tag", "by_entity_family", "by_spec_ids", "all"]
+        },
+        "assetType": { "type": "string" },
+        "checkpointId": { "type": "string" },
+        "tag": { "type": "string" },
+        "entityFamily": { "type": "string" },
+        "specIds": { "type": "array", "items": { "type": "string" } },
+        "resolvedSpecIds": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Actual spec IDs included after cohort resolution."
+        },
+        "resolvedCount": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "intervention": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "rule_change", "baseline_update", "checkpoint_switch",
+            "prompt_tweak", "lora_swap", "validator_threshold_change"
+          ]
+        },
+        "ruleId": { "type": "string", "description": "Automation rule being tested" },
+        "baselineProfileId": { "type": "string" },
+        "checkpointId": { "type": "string" },
+        "description": { "type": "string" },
+        "params": { "type": "object", "additionalProperties": true }
+      }
+    },
+    "metrics": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "before": { "$ref": "#/$defs/metricSnapshot" },
+        "after": { "$ref": "#/$defs/metricSnapshot" },
+        "delta": { "$ref": "#/$defs/metricDelta" }
+      }
+    },
+    "promotionDecision": {
+      "type": "string",
+      "enum": ["pending", "promoted", "rolled_back", "deferred"],
+      "default": "pending"
+    },
+    "promotedAt": { "type": "string", "format": "date-time" },
+    "rolledBackAt": { "type": "string", "format": "date-time" },
+    "notes": { "type": "string" },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "updatedAt": { "type": "string", "format": "date-time" }
+  },
+  "$defs": {
+    "metricSnapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "totalAssets": { "type": "integer", "minimum": 0 },
+        "approvedCount": { "type": "integer", "minimum": 0 },
+        "rejectedCount": { "type": "integer", "minimum": 0 },
+        "firstPassApprovalRate": { "type": "number", "minimum": 0, "maximum": 1 },
+        "validatorPassRate": { "type": "number", "minimum": 0, "maximum": 1 },
+        "avgValidatorScore": { "type": "number", "minimum": 0, "maximum": 1 },
+        "escalationCount": { "type": "integer", "minimum": 0 },
+        "avgGenerationTimeMs": { "type": "number", "minimum": 0 },
+        "cohesionScore": { "type": "number", "minimum": 0, "maximum": 1 },
+        "driftScore": { "type": "number", "minimum": 0, "maximum": 1 },
+        "sampledAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "metricDelta": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "firstPassApprovalRateDelta": { "type": "number" },
+        "validatorPassRateDelta": { "type": "number" },
+        "avgValidatorScoreDelta": { "type": "number" },
+        "escalationCountDelta": { "type": "integer" },
+        "cohesionScoreDelta": { "type": "number" },
+        "driftScoreDelta": { "type": "number" },
+        "qualityLiftPct": {
+          "type": "number",
+          "description": "Overall quality lift percentage: positive = improvement, negative = regression."
+        }
+      }
+    }
+  }
+}

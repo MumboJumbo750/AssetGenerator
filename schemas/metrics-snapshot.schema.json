@@ -1,0 +1,87 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "metrics-snapshot.schema.json",
+  "title": "Operational Metrics Snapshot",
+  "description": "A point-in-time snapshot of all Section-9 operational dashboard metrics for a project.",
+  "type": "object",
+  "required": ["id", "projectId", "createdAt", "metrics"],
+  "properties": {
+    "id": { "type": "string", "minLength": 1 },
+    "projectId": { "type": "string", "minLength": 1 },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "metrics": {
+      "type": "object",
+      "properties": {
+        "autopilotReadySpecsPct": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Fraction of specs that are autopilot-ready (have complete contracts + checkpoint-compatible baseline)."
+        },
+        "completeContractSpecsPct": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Fraction of specs with complete contracts (all required fields set, baseline profile assigned)."
+        },
+        "checkpointCompatibleSpecsPct": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Fraction of specs with checkpoint-compatible baseline/profile mapping."
+        },
+        "validatorFailCategoryDistribution": {
+          "type": "object",
+          "additionalProperties": { "type": "number" },
+          "description": "Map of validator fail category to count."
+        },
+        "exceptionQueueVolume": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Number of items in the exception queue."
+        },
+        "exceptionQueueAgingHours": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Median age (hours) of items in the exception queue."
+        },
+        "loraActivationToApprovalHours": {
+          "type": ["number", "null"],
+          "description": "Median hours from LoRA activation to first approved output."
+        },
+        "promptCompileDriftByCheckpoint": {
+          "type": "object",
+          "additionalProperties": { "type": "number" },
+          "description": "Map of checkpointId to drift fraction (changed compile hashes / total)."
+        },
+        "promptCompileDriftByTagFamily": {
+          "type": "object",
+          "additionalProperties": { "type": "number" },
+          "description": "Map of tag family to drift fraction (changed compile hashes / total)."
+        },
+        "automationTriggerToRunLatencyMs": {
+          "type": ["number", "null"],
+          "description": "Median latency (ms) from automation trigger event to run start."
+        },
+        "idempotencyDedupeHitRate": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Fraction of events that hit an idempotency dedup."
+        },
+        "escalationReasonCodeDistribution": {
+          "type": "object",
+          "additionalProperties": { "type": "number" },
+          "description": "Map of escalation reason to count."
+        },
+        "pinnedProfileDriftViolations": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Count of runs where a pinned profile was overridden or violated."
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

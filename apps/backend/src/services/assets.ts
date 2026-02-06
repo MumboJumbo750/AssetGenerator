@@ -137,7 +137,7 @@ export async function updateAssetVersion(opts: {
   projectId: string;
   assetId: string;
   versionId: string;
-  patch: { status?: string };
+  patch: { status?: string; generationPatch?: Record<string, unknown> };
 }) {
   const filePath = path.join(opts.projectsRoot, opts.projectId, "assets", `${opts.assetId}.json`);
   if (!(await fileExists(filePath))) return null;
@@ -147,6 +147,16 @@ export async function updateAssetVersion(opts: {
   if (!version) return null;
 
   if (typeof opts.patch?.status === "string") version.status = opts.patch.status as any;
+  if (opts.patch?.generationPatch && typeof opts.patch.generationPatch === "object") {
+    const currentGeneration =
+      version && (version as any).generation && typeof (version as any).generation === "object"
+        ? ((version as any).generation as Record<string, unknown>)
+        : {};
+    (version as any).generation = {
+      ...currentGeneration,
+      ...opts.patch.generationPatch,
+    };
+  }
 
   asset.updatedAt = nowIso();
   opts.schemas.validateOrThrow("asset.schema.json", asset);

@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "automation-queue-item.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "projectId", "runId", "ruleId", "status", "createdAt", "updatedAt"],
+  "properties": {
+    "id": { "type": "string", "minLength": 1 },
+    "projectId": { "type": "string", "minLength": 1 },
+    "runId": { "type": "string", "minLength": 1 },
+    "ruleId": { "type": "string", "minLength": 1 },
+    "status": { "type": "string", "enum": ["queued", "running", "succeeded", "failed", "canceled"] },
+    "priority": { "type": "string", "enum": ["low", "normal", "high"] },
+    "causalChainId": { "type": "string" },
+    "idempotencyKey": { "type": "string" },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "updatedAt": { "type": "string", "format": "date-time" },
+    "meta": { "type": "object", "additionalProperties": true }
+  }
+}
+
