@@ -369,7 +369,7 @@ To prevent automation from becoming a liability:
 
 1. **Rule Backtesting ("What-If"):**
    - Ability to run automation rules in "simulation mode" against the `events.jsonl` history.
-   - Reports how many jobs *would* have triggered over period $T$.
+   - Reports how many jobs _would_ have triggered over period $T$.
    - Prevents misconfigured rules from flooding the queue.
 
 2. **Global Blast Radius Breakers:**
@@ -446,35 +446,35 @@ Trigger source contract (normative):
 2. Asset metadata triggers must use explicit adapters (for example `assetType.requiresAlpha`, `assetType.multiFrame`), not free-form labels.
 3. Entity-link triggers are context-driven (`entityLink.entityId` present) and do not require a catalog tag.
 
-1.  **AlphaMatteCycler (`bg_cycler`)**:
-    -   *Trigger:* `material:ethereal` or `assetType.requiresAlpha=true` (via asset-type metadata adapter)
-    -   *Interaction:* Press `TAB` to cycle backgrounds (Black -> White -> Green -> Checkerboard).
-    -   *Goal:* Spot dirty edges or semi-transparent pixels instantly.
+4. **AlphaMatteCycler (`bg_cycler`)**:
+   - _Trigger:_ `material:ethereal` or `assetType.requiresAlpha=true` (via asset-type metadata adapter)
+   - _Interaction:_ Press `TAB` to cycle backgrounds (Black -> White -> Green -> Checkerboard).
+   - _Goal:_ Spot dirty edges or semi-transparent pixels instantly.
 
-2.  **IsoGrid Overlay (`overlay_grid`)**:
-    -   *Trigger:* `view:isometric`
-    -   *Interaction:* Overlay a 2:1 isometric grid. Drag to align with asset usage.
-    -   *Goal:* Verify foot placement and projection angle.
+5. **IsoGrid Overlay (`overlay_grid`)**:
+   - _Trigger:_ `view:isometric`
+   - _Interaction:_ Overlay a 2:1 isometric grid. Drag to align with asset usage.
+   - _Goal:_ Verify foot placement and projection angle.
 
-3.  **ReferenceGhost (`reference_ghost`)**:
-    -   *Trigger:* Entity-linked assets (e.g., `weapon:sword01` upgrades).
-    -   *Interaction:* Hold `SHIFT` to overlay the "parent" or "baseline" asset at 50% opacity.
-    -   *Goal:* Check silhouette drift and size consistency.
+6. **ReferenceGhost (`reference_ghost`)**:
+   - _Trigger:_ Entity-linked assets (e.g., `weapon:sword01` upgrades).
+   - _Interaction:_ Hold `SHIFT` to overlay the "parent" or "baseline" asset at 50% opacity.
+   - _Goal:_ Check silhouette drift and size consistency.
 
-4.  **HorizonCheck (`horizon_line`)**:
-    -   *Trigger:* `view:side`
-    -   *Interaction:* Adjustable floor line.
-    -   *Goal:* Ensure characters aren't "floating" or "sinking."
+7. **HorizonCheck (`horizon_line`)**:
+   - _Trigger:_ `view:side`
+   - _Interaction:_ Adjustable floor line.
+   - _Goal:_ Ensure characters aren't "floating" or "sinking."
 
-5.  **SafeFrame (`safe_area`)**:
-    -   *Trigger:* `assetType:ui_icon`, `assetType:logo`
-    -   *Interaction:* Shows padded bounds/bleed area.
-    -   *Goal:* Ensure icons don't touch edges.
+8. **SafeFrame (`safe_area`)**:
+   - _Trigger:_ `assetType:ui_icon`, `assetType:logo`
+   - _Interaction:_ Shows padded bounds/bleed area.
+   - _Goal:_ Ensure icons don't touch edges.
 
-6.  **OnionSkin (`onion_skin`)**:
-    -   *Trigger:* `assetType:spritesheet` or `assetType.multiFrame=true` (via asset-type metadata adapter)
-    -   *Interaction:* Playback scrubber with previous/next frame ghosting.
-    -   *Goal:* Check animation fluidity and centering.
+9. **OnionSkin (`onion_skin`)**:
+   - _Trigger:_ `assetType:spritesheet` or `assetType.multiFrame=true` (via asset-type metadata adapter)
+   - _Interaction:_ Playback scrubber with previous/next frame ghosting.
+   - _Goal:_ Check animation fluidity and centering.
 
 ## 7.3 Routing by answer
 
@@ -623,14 +623,14 @@ Exit gate:
 
 Implementation status (per task):
 
-| Task | Status | Notes |
-| --- | --- | --- |
-| 1. Improvement runs | **done** | Schema `improvement-run.schema.json`; `improvementRuns.ts` service (CRUD, cohort resolution, metric sampling, delta); routes for list/get/create/patch/start/complete/promote/rollback; frontend create-run form, run cards with lifecycle buttons |
-| 2. Promotion gates + rollback | **done** | `promoteImprovementRun` enforces quality gate (qualityLiftPct >= 0, first-pass approval drop <= 5pp); `rollbackImprovementRun` guards against draft/already-rolled-back; routes wrap errors as 400; lifecycle events emitted for all transitions |
-| 3. Drift + cohesion trends | **done** | `trend-snapshot.schema.json` has scope (checkpointId, entityFamily, assetType, tag); `generateTrendSnapshot` filters events and validation results by scope; cohesion = 1-stddev(scores); drift = fraction of current-period scores below previous-period mean |
-| 4. Rule backtesting | **done** | `backtestRule` in `backtestAndGap.ts` replays events.jsonl against rule trigger/conditions, computes peak velocity, avg triggers/hour, estimated jobs, emits warning; endpoint + frontend backtest tab (expert mode) |
-| 5. Circuit breakers | **done** | `circuit-breaker.schema.json`; `circuitBreakers.ts` with velocity (closed→open→half_open→closed) and queue-depth (open→closed on cooldown recovery) state machines; integrated in `automation.ts triggerAutomationEvent`; project-level `circuitBreakerPolicy` defaults; frontend breakers tab with reset |
-| 6. Validator gap analysis | **done** | `analyzeValidatorGaps` cross-refs validator passes with human rejections, finds weakest check, generates per-check suggestions; endpoint + frontend gaps tab (expert mode) |
+| Task                          | Status   | Notes                                                                                                                                                                                                                                                                                                     |
+| ----------------------------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1. Improvement runs           | **done** | Schema `improvement-run.schema.json`; `improvementRuns.ts` service (CRUD, cohort resolution, metric sampling, delta); routes for list/get/create/patch/start/complete/promote/rollback; frontend create-run form, run cards with lifecycle buttons                                                        |
+| 2. Promotion gates + rollback | **done** | `promoteImprovementRun` enforces quality gate (qualityLiftPct >= 0, first-pass approval drop <= 5pp); `rollbackImprovementRun` guards against draft/already-rolled-back; routes wrap errors as 400; lifecycle events emitted for all transitions                                                          |
+| 3. Drift + cohesion trends    | **done** | `trend-snapshot.schema.json` has scope (checkpointId, entityFamily, assetType, tag); `generateTrendSnapshot` filters events and validation results by scope; cohesion = 1-stddev(scores); drift = fraction of current-period scores below previous-period mean                                            |
+| 4. Rule backtesting           | **done** | `backtestRule` in `backtestAndGap.ts` replays events.jsonl against rule trigger/conditions, computes peak velocity, avg triggers/hour, estimated jobs, emits warning; endpoint + frontend backtest tab (expert mode)                                                                                      |
+| 5. Circuit breakers           | **done** | `circuit-breaker.schema.json`; `circuitBreakers.ts` with velocity (closed→open→half_open→closed) and queue-depth (open→closed on cooldown recovery) state machines; integrated in `automation.ts triggerAutomationEvent`; project-level `circuitBreakerPolicy` defaults; frontend breakers tab with reset |
+| 6. Validator gap analysis     | **done** | `analyzeValidatorGaps` cross-refs validator passes with human rejections, finds weakest check, generates per-check suggestions; endpoint + frontend gaps tab (expert mode)                                                                                                                                |
 
 ---
 
@@ -704,6 +704,7 @@ Because development is single-threaded and not parallelized:
 4. ~~Specs without explicit `checkpointProfileId` at migration time~~ `n/a` — new specs start fresh.
 
 **Implementation notes:**
+
 - `data/` added to `.gitignore` and untracked from git.
 - `examples/astroduck_demo/` committed with 40 curated seed files (project, catalogs, checkpoints, profiles, specs, automation rules, baseline profile, loras).
 - `examples/shared/loras/` committed with baseline LoRA record.
@@ -771,18 +772,18 @@ Execution source:
 
 ## 14.1 Core UI Packages and Phase Ownership
 
-| UI package | Included capabilities | Master phase owner | Status |
-| --- | --- | --- | --- |
-| Pipeline Studio shell | 9-zone IA (Pipeline, Dashboard, Review, Library, Export, Exceptions, Trends, Metrics, Settings), pipeline-first navigation, stage cards, one primary action | Phase 4 + Phase 7 hardening | done |
-| Live feedback surfaces | SSE event stream, `AutopilotStatusBar` badges, `useProjectEvents` hook with cursor reconnect, worker heartbeat | Phase 1 | done |
-| Checkpoint-aware spec UX | checkpoint profile selection, compatible baseline selection, policy conflict blockers, SpecDetailPage General tab | Phase 2 | done |
-| Prompt evidence UX | prompt policy tab (compile mode, tag order mode, tag order, preset), compile trace layer count in Review, prompt drift tables in Metrics | Phase 3 | done |
-| Resolver explainability UX | stack badges, chosen/skipped/blocked model details in Review evidence, resolver explanation object | Phase 4 | done |
-| Cohesion + validator UX | validator pass/fail in Review, cohesion/drift scores, gap analysis in Trends, fail categories in Metrics | Phase 5 | done |
-| Decision Sprint 2.0 UX | `DecisionQueue` + `BinaryQuestionCard`, keyboard Y/N/U/S/Z, apply-to-similar, review tool overlays (SafeFrame, ReferenceGhost, OnionSkin, etc.) | Phase 6 | done |
-| Exceptions-only UX | `ExceptionInbox` with escalation filters + retry/cancel, `AutopilotStatusBar`, `ExpertModeContext` hides advanced tuning | Phase 7 | done |
-| Continuous improvement UX | `TrendDashboardPage` (5 tabs: trends, improvements, breakers, backtest, gaps), `MetricsDashboardPage` (release gates, snapshots, drift) | Phase 8 | done |
-| Structured settings/admin UX | `FormBuilder`, SpecDetailPage 6-tab form, `SpecWizard`, Settings page wraps classic views; raw JSON only in expert-mode diagnostics (ExceptionInbox, JobDetailsPanel) | Phase 7 + Phase 8 | done |
+| UI package                   | Included capabilities                                                                                                                                                 | Master phase owner          | Status |
+| ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------- | ------ |
+| Pipeline Studio shell        | 9-zone IA (Pipeline, Dashboard, Review, Library, Export, Exceptions, Trends, Metrics, Settings), pipeline-first navigation, stage cards, one primary action           | Phase 4 + Phase 7 hardening | done   |
+| Live feedback surfaces       | SSE event stream, `AutopilotStatusBar` badges, `useProjectEvents` hook with cursor reconnect, worker heartbeat                                                        | Phase 1                     | done   |
+| Checkpoint-aware spec UX     | checkpoint profile selection, compatible baseline selection, policy conflict blockers, SpecDetailPage General tab                                                     | Phase 2                     | done   |
+| Prompt evidence UX           | prompt policy tab (compile mode, tag order mode, tag order, preset), compile trace layer count in Review, prompt drift tables in Metrics                              | Phase 3                     | done   |
+| Resolver explainability UX   | stack badges, chosen/skipped/blocked model details in Review evidence, resolver explanation object                                                                    | Phase 4                     | done   |
+| Cohesion + validator UX      | validator pass/fail in Review, cohesion/drift scores, gap analysis in Trends, fail categories in Metrics                                                              | Phase 5                     | done   |
+| Decision Sprint 2.0 UX       | `DecisionQueue` + `BinaryQuestionCard`, keyboard Y/N/U/S/Z, apply-to-similar, review tool overlays (SafeFrame, ReferenceGhost, OnionSkin, etc.)                       | Phase 6                     | done   |
+| Exceptions-only UX           | `ExceptionInbox` with escalation filters + retry/cancel, `AutopilotStatusBar`, `ExpertModeContext` hides advanced tuning                                              | Phase 7                     | done   |
+| Continuous improvement UX    | `TrendDashboardPage` (5 tabs: trends, improvements, breakers, backtest, gaps), `MetricsDashboardPage` (release gates, snapshots, drift)                               | Phase 8                     | done   |
+| Structured settings/admin UX | `FormBuilder`, SpecDetailPage 6-tab form, `SpecWizard`, Settings page wraps classic views; raw JSON only in expert-mode diagnostics (ExceptionInbox, JobDetailsPanel) | Phase 7 + Phase 8           | done   |
 
 ## 14.2 Non-Negotiable UX Constraints
 
@@ -900,18 +901,18 @@ Pass criteria:
 
 Use this table as the operational sign-off sheet. A phase is complete only when all checks are `pass` and evidence is linked.
 
-| Phase | Core outcome | Acceptance checks (all required) | Required evidence artifacts | Status |
-| --- | --- | --- | --- | --- |
-| Phase 0 | Contracts frozen and testable | schema RFC merged; resolver+compiler contract merged; precedence/idempotency/retry contracts approved | schema change set, contract doc, review notes | `done` |
-| Phase 1 | Event-driven runtime foundation | event stream live; SSE+replay endpoints working; async automation queue active; jobs/automation materialized indexes active; cursor recovery validated; idempotency+loop guards enabled; replay causes no duplicate runs/jobs; p95 latency checks pass on benchmark profile | event schema files, endpoint tests, replay test report, index integrity report, latency benchmark report | `done` |
-| Phase 2 | Checkpoint-aware policy foundations | checkpoint profiles implemented; baseline checkpoint scope enforced; incompatible policy blocks ready/run; profile pinning on ready enabled; ready specs remain stable across default-profile changes unless explicitly rebound | migration log, compatibility tests for `copax`/`pony`, ready-gate tests, profile-rebind test report | `done` |
-| Phase 3 | Prompt compiler determinism | precedence engine implemented; tag order deterministic per checkpoint; compile trace+hash persisted; seed policy recorded per output; repeated runs with same inputs produce equivalent compile trace/hash | compile trace snapshots, precedence test pack, seed evidence samples, determinism diff report | `done` |
-| Phase 4 | Resolver governance and explainability | strict stack order/caps active; compatibility matrix enforced; resolved stack snapshots persisted for all outputs; resolver explanation object (`chosen/skipped/blocked`) persisted; evidence surfaced in UI | resolver tests, conflict-case fixtures, stack snapshot samples, evidence UI screenshots | `done` |
-| Phase 5 | Validator and cohesion engine | validator report on every generation; perspective/silhouette/state/entity checks active; prompt-policy compliance check active | validator report samples, cohesion drift report, fail-category metrics | `done` |
-| Phase 6 | Decision Sprint 2.0 | binary question flow contract-driven; helper overlays active; apply-to-similar works; uncertain routing uses sprint queue; transitional `manual_review_queue` fallback is removed or explicitly disabled by policy | sprint integration tests, keyboard-flow demo, queue routing audit, fallback-disable config snapshot | `done` |
-| Phase 7 | Exceptions-only operations | ExceptionInbox+AutopilotStatusBar active; advanced tuning hidden by default; non-critical failures follow retry-first policy; retry/backoff/escalation contract enforced and observable | exception flow tests, escalation reason-code samples, retry policy validation report, UX acceptance checks | `done` |
-| Phase 8 | Continuous improvement loop | cohort intervention runs operational; promotion/rollback controls active; trend tracking by entity and checkpoint active; measurable weekly quality lift reported | before/after metric reports, rollback drill log, weekly trend dashboard snapshot, quality-lift summary | `done` |
-| Global Release Readiness | Product ready for broad usage | all release gates in section 9 pass; benchmark profile satisfied; gate test pack 15.5 fully pass; no open P0/P1 corrective items from prior phases | signed release-gate report, gate-pack results, corrective-item closure log | `in_progress` |
+| Phase                    | Core outcome                           | Acceptance checks (all required)                                                                                                                                                                                                                                            | Required evidence artifacts                                                                                | Status        |
+| ------------------------ | -------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- | ------------- |
+| Phase 0                  | Contracts frozen and testable          | schema RFC merged; resolver+compiler contract merged; precedence/idempotency/retry contracts approved                                                                                                                                                                       | schema change set, contract doc, review notes                                                              | `done`        |
+| Phase 1                  | Event-driven runtime foundation        | event stream live; SSE+replay endpoints working; async automation queue active; jobs/automation materialized indexes active; cursor recovery validated; idempotency+loop guards enabled; replay causes no duplicate runs/jobs; p95 latency checks pass on benchmark profile | event schema files, endpoint tests, replay test report, index integrity report, latency benchmark report   | `done`        |
+| Phase 2                  | Checkpoint-aware policy foundations    | checkpoint profiles implemented; baseline checkpoint scope enforced; incompatible policy blocks ready/run; profile pinning on ready enabled; ready specs remain stable across default-profile changes unless explicitly rebound                                             | migration log, compatibility tests for `copax`/`pony`, ready-gate tests, profile-rebind test report        | `done`        |
+| Phase 3                  | Prompt compiler determinism            | precedence engine implemented; tag order deterministic per checkpoint; compile trace+hash persisted; seed policy recorded per output; repeated runs with same inputs produce equivalent compile trace/hash                                                                  | compile trace snapshots, precedence test pack, seed evidence samples, determinism diff report              | `done`        |
+| Phase 4                  | Resolver governance and explainability | strict stack order/caps active; compatibility matrix enforced; resolved stack snapshots persisted for all outputs; resolver explanation object (`chosen/skipped/blocked`) persisted; evidence surfaced in UI                                                                | resolver tests, conflict-case fixtures, stack snapshot samples, evidence UI screenshots                    | `done`        |
+| Phase 5                  | Validator and cohesion engine          | validator report on every generation; perspective/silhouette/state/entity checks active; prompt-policy compliance check active                                                                                                                                              | validator report samples, cohesion drift report, fail-category metrics                                     | `done`        |
+| Phase 6                  | Decision Sprint 2.0                    | binary question flow contract-driven; helper overlays active; apply-to-similar works; uncertain routing uses sprint queue; transitional `manual_review_queue` fallback is removed or explicitly disabled by policy                                                          | sprint integration tests, keyboard-flow demo, queue routing audit, fallback-disable config snapshot        | `done`        |
+| Phase 7                  | Exceptions-only operations             | ExceptionInbox+AutopilotStatusBar active; advanced tuning hidden by default; non-critical failures follow retry-first policy; retry/backoff/escalation contract enforced and observable                                                                                     | exception flow tests, escalation reason-code samples, retry policy validation report, UX acceptance checks | `done`        |
+| Phase 8                  | Continuous improvement loop            | cohort intervention runs operational; promotion/rollback controls active; trend tracking by entity and checkpoint active; measurable weekly quality lift reported                                                                                                           | before/after metric reports, rollback drill log, weekly trend dashboard snapshot, quality-lift summary     | `done`        |
+| Global Release Readiness | Product ready for broad usage          | all release gates in section 9 pass; benchmark profile satisfied; gate test pack 15.5 fully pass; no open P0/P1 corrective items from prior phases                                                                                                                          | signed release-gate report, gate-pack results, corrective-item closure log                                 | `in_progress` |
 
 Sign-off rule:
 

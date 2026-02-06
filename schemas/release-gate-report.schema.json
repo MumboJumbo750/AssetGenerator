@@ -26,10 +26,26 @@
         "actualSpecs": { "type": "number" },
         "actualAutomationRules": { "type": "number" },
         "satisfied": { "type": "boolean" },
-        "warmCacheJobsListMs": { "type": "number", "description": "Jobs-list read latency (ms) with warm OS page cache" },
-        "coldCacheJobsListMs": { "type": "number", "description": "Jobs-list read latency (ms) with cold OS page cache" }
+        "warmCacheJobsListMs": {
+          "type": "number",
+          "description": "Jobs-list read latency (ms) with warm OS page cache"
+        },
+        "coldCacheJobsListMs": {
+          "type": "number",
+          "description": "Jobs-list read latency (ms) with cold OS page cache"
+        }
       },
-      "required": ["targetJobs", "targetAssets", "targetSpecs", "targetAutomationRules", "actualJobs", "actualAssets", "actualSpecs", "actualAutomationRules", "satisfied"],
+      "required": [
+        "targetJobs",
+        "targetAssets",
+        "targetSpecs",
+        "targetAutomationRules",
+        "actualJobs",
+        "actualAssets",
+        "actualSpecs",
+        "actualAutomationRules",
+        "satisfied"
+      ],
       "additionalProperties": false
     },
     "gates": {

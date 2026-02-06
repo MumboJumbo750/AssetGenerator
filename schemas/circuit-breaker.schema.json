@@ -26,19 +26,25 @@
       "additionalProperties": false,
       "properties": {
         "maxTriggersPerMinute": {
-          "type": "number", "minimum": 0.1,
+          "type": "number",
+          "minimum": 0.1,
           "description": "Velocity breaker: max trigger rate per minute before tripping."
         },
         "maxQueueDepthRatio": {
-          "type": "number", "minimum": 0.1,
+          "type": "number",
+          "minimum": 0.1,
           "description": "Queue depth breaker: queue_size / throughput_per_min ratio limit."
         },
         "cooldownMs": {
-          "type": "integer", "minimum": 1000, "default": 60000,
+          "type": "integer",
+          "minimum": 1000,
+          "default": 60000,
           "description": "How long the breaker stays open before moving to half_open."
         },
         "halfOpenTestCount": {
-          "type": "integer", "minimum": 1, "default": 3,
+          "type": "integer",
+          "minimum": 1,
+          "default": 3,
           "description": "Number of triggers to allow in half_open before re-evaluating."
         }
       }

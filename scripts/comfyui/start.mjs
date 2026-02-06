@@ -55,14 +55,10 @@ async function main() {
   console.log(`[comfyui:start] Using venv python: ${pythonInVenv}`);
   console.log(`[comfyui:start] Working dir: ${comfyuiDir}`);
 
-  await run(
-    pythonInVevnCompat(pythonInVenv),
-    ["main.py", "--listen", host, "--port", String(port), ...extraArgs],
-    {
-      cwd: comfyuiDir,
-      env: process.env,
-    },
-  );
+  await run(pythonInVevnCompat(pythonInVenv), ["main.py", "--listen", host, "--port", String(port), ...extraArgs], {
+    cwd: comfyuiDir,
+    env: process.env,
+  });
 }
 
 function pythonInVevnCompat(pythonPath) {

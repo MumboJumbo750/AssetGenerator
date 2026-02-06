@@ -8,13 +8,7 @@
   "assetType": "spritesheet",
   "style": "comic",
   "scenario": "scifi",
-  "tags": [
-    "assetType:spritesheet",
-    "enemy:boss",
-    "boss:3",
-    "level:sun",
-    "style:comic"
-  ],
+  "tags": ["assetType:spritesheet", "enemy:boss", "boss:3", "level:sun", "style:comic"],
   "output": {
     "kind": "animation",
     "background": "transparent_required",

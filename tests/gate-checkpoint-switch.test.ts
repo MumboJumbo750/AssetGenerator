@@ -44,10 +44,7 @@ before(async () => {
   }
 
   // Copy legacy baseline-profile.json
-  await fs.copyFile(
-    path.join(examplesDir, "baseline-profile.json"),
-    path.join(destDir, "baseline-profile.json"),
-  );
+  await fs.copyFile(path.join(examplesDir, "baseline-profile.json"), path.join(destDir, "baseline-profile.json"));
 });
 
 after(async () => {

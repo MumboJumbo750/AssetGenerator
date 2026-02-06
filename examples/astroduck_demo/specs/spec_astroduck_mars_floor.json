@@ -8,12 +8,7 @@
   "assetType": "texture",
   "style": "comic",
   "scenario": "scifi",
-  "tags": [
-    "assetType:texture",
-    "tileable",
-    "level:mars",
-    "style:comic"
-  ],
+  "tags": ["assetType:texture", "tileable", "level:mars", "style:comic"],
   "output": {
     "kind": "single_image",
     "background": "any"

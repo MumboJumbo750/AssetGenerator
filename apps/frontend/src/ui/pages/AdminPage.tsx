@@ -372,7 +372,10 @@ export function AdminPage() {
                   <Select
                     label="Checkpoint"
                     placeholder="Select checkpoint"
-                    data={checkpointList.map((item) => ({ value: item.id, label: item.name ? `${item.name} (${item.id})` : item.id }))}
+                    data={checkpointList.map((item) => ({
+                      value: item.id,
+                      label: item.name ? `${item.name} (${item.id})` : item.id,
+                    }))}
                     value={catalogCheckpointId}
                     onChange={(value) => setCatalogCheckpointId(value ?? "")}
                     disabled={catalogScope !== "checkpoint"}

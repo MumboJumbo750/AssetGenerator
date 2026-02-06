@@ -6,9 +6,7 @@
   "defaults": {
     "style": "comic",
     "scenario": "scifi",
-    "paletteIds": [
-      "astroduck_neon"
-    ]
+    "paletteIds": ["astroduck_neon"]
   },
   "policies": {
     "loraSelection": {
@@ -25,8 +23,14 @@
         "basePositive": "masterpiece, best quality, highly detailed, sharp focus",
         "baseNegative": "worst quality, low quality, blurry, watermark, text, signature, jpeg artifacts, deformed",
         "perAssetType": {
-          "sprite": { "positive": "game sprite, transparent background, centered, clean edges", "negative": "background clutter, cropped" },
-          "ui_icon": { "positive": "flat icon, minimal, centered symbol", "negative": "photo, 3d render, complex background" }
+          "sprite": {
+            "positive": "game sprite, transparent background, centered, clean edges",
+            "negative": "background clutter, cropped"
+          },
+          "ui_icon": {
+            "positive": "flat icon, minimal, centered symbol",
+            "negative": "photo, 3d render, complex background"
+          }
         },
         "tagOrderPolicy": "checkpoint_default",
         "runtimeSafety": { "enabled": true, "positive": [], "negative": ["nsfw", "gore", "violence"] }
@@ -38,8 +42,14 @@
         "basePositive": "score_9, score_8_up, score_7_up, detailed, sharp",
         "baseNegative": "score_4, score_3, score_2, score_1, worst quality, low quality, blurry, watermark, text",
         "perAssetType": {
-          "sprite": { "positive": "game sprite, transparent background, centered, clean edges", "negative": "background clutter, cropped" },
-          "ui_icon": { "positive": "flat icon, minimal, centered symbol", "negative": "photo, 3d render, complex background" }
+          "sprite": {
+            "positive": "game sprite, transparent background, centered, clean edges",
+            "negative": "background clutter, cropped"
+          },
+          "ui_icon": {
+            "positive": "flat icon, minimal, centered symbol",
+            "negative": "photo, 3d render, complex background"
+          }
         },
         "tagOrderPolicy": "checkpoint_default",
         "runtimeSafety": { "enabled": true, "positive": [], "negative": ["nsfw", "gore", "violence"] }
@@ -61,12 +71,32 @@
     },
     "tagPromptMap": {
       "ckpt_copax_sdxl": {
-        "scifi": { "positive": "sci-fi, futuristic, space theme, neon accents", "negative": "medieval, fantasy", "weight": 1.0, "position": "prefix" },
-        "comic": { "positive": "comic style, bold outlines, cel-shaded, flat colors", "negative": "photorealistic, 3d render", "weight": 1.0, "position": "prefix" }
+        "scifi": {
+          "positive": "sci-fi, futuristic, space theme, neon accents",
+          "negative": "medieval, fantasy",
+          "weight": 1.0,
+          "position": "prefix"
+        },
+        "comic": {
+          "positive": "comic style, bold outlines, cel-shaded, flat colors",
+          "negative": "photorealistic, 3d render",
+          "weight": 1.0,
+          "position": "prefix"
+        }
       },
       "ckpt_pony_v6xl": {
-        "scifi": { "positive": "sci-fi, futuristic, space theme, neon accents", "negative": "medieval, fantasy", "weight": 1.0, "position": "prefix" },
-        "comic": { "positive": "comic style, bold outlines, cel-shaded, flat colors", "negative": "photorealistic, 3d render", "weight": 1.0, "position": "prefix" }
+        "scifi": {
+          "positive": "sci-fi, futuristic, space theme, neon accents",
+          "negative": "medieval, fantasy",
+          "weight": 1.0,
+          "position": "prefix"
+        },
+        "comic": {
+          "positive": "comic style, bold outlines, cel-shaded, flat colors",
+          "negative": "photorealistic, 3d render",
+          "weight": 1.0,
+          "position": "prefix"
+        }
       }
     }
   },

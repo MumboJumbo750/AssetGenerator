@@ -8,12 +8,7 @@
   "assetType": "spritesheet",
   "style": "comic",
   "scenario": "scifi",
-  "tags": [
-    "assetType:spritesheet",
-    "vfx:warp",
-    "transition",
-    "style:comic"
-  ],
+  "tags": ["assetType:spritesheet", "vfx:warp", "transition", "style:comic"],
   "output": {
     "kind": "animation",
     "background": "transparent_required",

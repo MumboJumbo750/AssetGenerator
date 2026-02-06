@@ -8,21 +8,12 @@
   "assetType": "ui_icon",
   "style": "comic",
   "scenario": "scifi",
-  "tags": [
-    "assetType:ui_icon",
-    "ui:difficulty",
-    "style:comic"
-  ],
+  "tags": ["assetType:ui_icon", "ui:difficulty", "style:comic"],
   "output": {
     "kind": "ui_states",
     "background": "transparent_required",
     "uiStates": {
-      "states": [
-        "easy",
-        "normal",
-        "hard",
-        "selected"
-      ]
+      "states": ["easy", "normal", "hard", "selected"]
     }
   },
   "prompt": {

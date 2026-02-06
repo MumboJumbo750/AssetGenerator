@@ -54,10 +54,9 @@ export async function appendWorkerEvent(dataRoot: string, input: WorkerEventInpu
   await withLock(dataRoot, input.projectId, async () => {
     const dir = eventsDir(dataRoot, input.projectId);
     const seqPath = path.join(dir, "seq.json");
-    const seqState: SeqState =
-      (await fileExists(seqPath))
-        ? await readJson<SeqState>(seqPath)
-        : { projectId: input.projectId, lastSeq: 0, updatedAt: nowIso() };
+    const seqState: SeqState = (await fileExists(seqPath))
+      ? await readJson<SeqState>(seqPath)
+      : { projectId: input.projectId, lastSeq: 0, updatedAt: nowIso() };
     const seq = Number(seqState.lastSeq ?? 0) + 1;
     const event = {
       id: ulid(),
@@ -75,4 +74,3 @@ export async function appendWorkerEvent(dataRoot: string, input: WorkerEventInpu
     await writeJsonAtomic(seqPath, { projectId: input.projectId, lastSeq: seq, updatedAt: nowIso() });
   });
 }
-

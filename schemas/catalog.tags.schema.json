@@ -39,7 +39,15 @@
                     "properties": {
                       "type": {
                         "type": "string",
-                        "enum": ["overlay_grid", "bg_cycler", "reference_ghost", "safe_area", "onion_skin", "color_picker", "horizon_line"]
+                        "enum": [
+                          "overlay_grid",
+                          "bg_cycler",
+                          "reference_ghost",
+                          "safe_area",
+                          "onion_skin",
+                          "color_picker",
+                          "horizon_line"
+                        ]
                       },
                       "config": { "type": "object", "additionalProperties": true }
                     }

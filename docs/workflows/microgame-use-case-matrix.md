@@ -10,22 +10,22 @@ Purpose: define the first simple game and the exact hierarchy needed to control 
 >
 > **What exists today (Phase 11):**
 >
-> | Concept | Status | Location |
-> | --- | --- | --- |
-> | `entityLink` (`entityId` + `role`) | **Implemented** | `schemas/asset-spec.schema.json` |
-> | `seedPolicy` (fixed/derived/random_recorded) | **Implemented** | `schemas/asset-spec.schema.json` |
-> | `checkpointProfileVersion` | **Implemented** | `schemas/asset-spec.schema.json` |
-> | `qualityContract` (background, states, alignment, perspective, silhouette) | **Implemented** | `schemas/asset-spec.schema.json` |
-> | `styleConsistency` (mode, anchorRefs) | **Implemented** | `schemas/asset-spec.schema.json` |
-> | Prompt compile trace (7-layer) | **Implemented** | `apps/worker/src/worker.ts`, `schemas/compile-trace.schema.json` |
-> | Automation rules + runs | **Implemented** | `schemas/automation-rule.schema.json`, worker |
-> | Retry / escalation (retryable, non_retryable, timeout, upstream_unavailable) | **Implemented** | `apps/worker/src/worker.ts` |
-> | Circuit breaker | **Schema only** | `schemas/circuit-breaker.schema.json` |
-> | H0-H10 hierarchy nodes | **Not implemented** | — |
-> | `appProfileId`, `capabilityId`, `useCaseFamilyId` | **Not implemented** | — |
-> | `artifactSetId`, `stateGroupId`, `effectChainId`, `anchorSetId` | **Not implemented** | — |
-> | Validators / questionnaires | **Not implemented** | — |
-> | Tag → model stack resolver | **Not implemented** | — |
+> | Concept                                                                      | Status              | Location                                                         |
+> | ---------------------------------------------------------------------------- | ------------------- | ---------------------------------------------------------------- |
+> | `entityLink` (`entityId` + `role`)                                           | **Implemented**     | `schemas/asset-spec.schema.json`                                 |
+> | `seedPolicy` (fixed/derived/random_recorded)                                 | **Implemented**     | `schemas/asset-spec.schema.json`                                 |
+> | `checkpointProfileVersion`                                                   | **Implemented**     | `schemas/asset-spec.schema.json`                                 |
+> | `qualityContract` (background, states, alignment, perspective, silhouette)   | **Implemented**     | `schemas/asset-spec.schema.json`                                 |
+> | `styleConsistency` (mode, anchorRefs)                                        | **Implemented**     | `schemas/asset-spec.schema.json`                                 |
+> | Prompt compile trace (7-layer)                                               | **Implemented**     | `apps/worker/src/worker.ts`, `schemas/compile-trace.schema.json` |
+> | Automation rules + runs                                                      | **Implemented**     | `schemas/automation-rule.schema.json`, worker                    |
+> | Retry / escalation (retryable, non_retryable, timeout, upstream_unavailable) | **Implemented**     | `apps/worker/src/worker.ts`                                      |
+> | Circuit breaker                                                              | **Schema only**     | `schemas/circuit-breaker.schema.json`                            |
+> | H0-H10 hierarchy nodes                                                       | **Not implemented** | —                                                                |
+> | `appProfileId`, `capabilityId`, `useCaseFamilyId`                            | **Not implemented** | —                                                                |
+> | `artifactSetId`, `stateGroupId`, `effectChainId`, `anchorSetId`              | **Not implemented** | —                                                                |
+> | Validators / questionnaires                                                  | **Not implemented** | —                                                                |
+> | Tag → model stack resolver                                                   | **Not implemented** | —                                                                |
 >
 > When implementing items from this plan, update the status table above.
 
@@ -136,18 +136,18 @@ Hierarchy IDs are mandatory. Automation must fail fast if required links are mis
 
 ## 3) Relationship Matrix (What Controls What)
 
-| Source level | Controls | Mechanism | Deterministic rule |
-| --- | --- | --- | --- |
-| H0 App Profile | global defaults | profile policy | applies when lower levels do not override |
-| H1 Capability | family guardrails | capability config | merged with H0 using fixed precedence |
-| H2 Use-Case Family | required tags/links/validators | family contract | missing required fields blocks ready status |
-| H3 Artifact Set | cross-output cohesion boundary | shared IDs + anchors | all members evaluated for drift together |
-| H4 Entity | identity continuity | shared `entityId` | icon/world/animation must map to same identity |
-| H6 Spec Node | generation intent | explicit spec contract | no implicit role inference allowed |
-| H7 Model Policy | model stack selection | resolver | fixed stack order and bounds |
-| H8 Validation Node | pass/fail signals | validator execution | hard-rule fail cannot auto-advance |
-| H9 Questionnaire | human fallback questions | generated question set | only shown for uncertain/mixed evidence |
-| H10 Routing Node | pipeline progression | routing engine | outcome must include evidence refs |
+| Source level       | Controls                       | Mechanism              | Deterministic rule                             |
+| ------------------ | ------------------------------ | ---------------------- | ---------------------------------------------- |
+| H0 App Profile     | global defaults                | profile policy         | applies when lower levels do not override      |
+| H1 Capability      | family guardrails              | capability config      | merged with H0 using fixed precedence          |
+| H2 Use-Case Family | required tags/links/validators | family contract        | missing required fields blocks ready status    |
+| H3 Artifact Set    | cross-output cohesion boundary | shared IDs + anchors   | all members evaluated for drift together       |
+| H4 Entity          | identity continuity            | shared `entityId`      | icon/world/animation must map to same identity |
+| H6 Spec Node       | generation intent              | explicit spec contract | no implicit role inference allowed             |
+| H7 Model Policy    | model stack selection          | resolver               | fixed stack order and bounds                   |
+| H8 Validation Node | pass/fail signals              | validator execution    | hard-rule fail cannot auto-advance             |
+| H9 Questionnaire   | human fallback questions       | generated question set | only shown for uncertain/mixed evidence        |
+| H10 Routing Node   | pipeline progression           | routing engine         | outcome must include evidence refs             |
 
 ---
 
@@ -174,35 +174,35 @@ Mandatory tagging rule:
 
 ## 5) Use-Case Catalog for Microgame v1
 
-| UC_ID | Family | Scope | Required links | Primary risk handled |
-| --- | --- | --- | --- | --- |
-| UC-001 | entity_identity | weapon world sprite | `entityId`, `artifactSetId` | weapon form drift |
-| UC-002 | entity_identity | weapon pickup icon | `entityId`, `artifactSetId` | icon mismatch vs world item |
-| UC-003 | entity_identity | weapon inventory icon | `entityId`, `artifactSetId` | HUD mismatch vs pickup |
-| UC-004 | entity_identity | armor world+pickup+icon | `entityId`, `artifactSetId` | armor continuity break |
-| UC-005 | ui_state_consistency | primary button states | `stateGroupId`, `artifactSetId` | state shape/position drift |
-| UC-006 | perspective_lock | all world assets | `artifactSetId` | camera angle inconsistency |
-| UC-007 | effect_chain | projectile-impact-explosion | `effectChainId`, `artifactSetId` | chain style mismatch |
-| UC-008 | animation_consistency | entity animation strip | `entityId`, `artifactSetId` | frame-to-frame identity drift |
-| UC-009 | export_gate | atlas-ready groups | family IDs above | incomplete packs exported |
-| UC-010 | confidence_guard | any generated output | any | weak evidence auto-shipped |
+| UC_ID  | Family                | Scope                       | Required links                   | Primary risk handled          |
+| ------ | --------------------- | --------------------------- | -------------------------------- | ----------------------------- |
+| UC-001 | entity_identity       | weapon world sprite         | `entityId`, `artifactSetId`      | weapon form drift             |
+| UC-002 | entity_identity       | weapon pickup icon          | `entityId`, `artifactSetId`      | icon mismatch vs world item   |
+| UC-003 | entity_identity       | weapon inventory icon       | `entityId`, `artifactSetId`      | HUD mismatch vs pickup        |
+| UC-004 | entity_identity       | armor world+pickup+icon     | `entityId`, `artifactSetId`      | armor continuity break        |
+| UC-005 | ui_state_consistency  | primary button states       | `stateGroupId`, `artifactSetId`  | state shape/position drift    |
+| UC-006 | perspective_lock      | all world assets            | `artifactSetId`                  | camera angle inconsistency    |
+| UC-007 | effect_chain          | projectile-impact-explosion | `effectChainId`, `artifactSetId` | chain style mismatch          |
+| UC-008 | animation_consistency | entity animation strip      | `entityId`, `artifactSetId`      | frame-to-frame identity drift |
+| UC-009 | export_gate           | atlas-ready groups          | family IDs above                 | incomplete packs exported     |
+| UC-010 | confidence_guard      | any generated output        | any                              | weak evidence auto-shipped    |
 
 ---
 
 ## 6) Decision Matrix (Automation Runtime Contract)
 
-| UC_ID | Required tags | Model stack profile | Validators | Questionnaire | Route logic |
-| --- | --- | --- | --- | --- | --- |
-| UC-001 | `domain:weapon`, `role:world_sprite`, `entity:*` | baseline + project | perspective, silhouette | `q.identity.same_family` | pass=advance fail=regen uncertain=sprint |
-| UC-002 | `domain:weapon`, `role:pickup_icon`, `entity:*` | baseline + project + entity | silhouette, readability_small | `q.identity.pickup_matches_world` | pass=advance fail=regen uncertain=sprint |
-| UC-003 | `domain:weapon`, `role:inventory_icon`, `entity:*` | baseline + project + entity | silhouette, readability_small | `q.identity.icon_matches_pickup` | pass=advance fail=regen uncertain=sprint |
-| UC-004 | `domain:armor`, `entity:*` | baseline + project + entity | silhouette, perspective | `q.identity.armor_consistent` | pass=advance fail=regen uncertain=sprint |
-| UC-005 | `domain:ui`, `role:ui_button_state`, `state:*` | baseline + project | state_completeness, alignment | `q.ui.states_complete_aligned` | pass=advance fail=regen uncertain=sprint |
-| UC-006 | `perspective:*`, `role:world_sprite` | baseline(perspective) + project | perspective_lock | `q.perspective.consistent` | pass=advance fail=regen uncertain=sprint |
-| UC-007 | `domain:vfx`, `role:projectile|impact|explosion` | baseline + project + tag | palette_cohesion, sequence_cohesion | `q.vfx.same_chain` | pass=advance fail=regen uncertain=sprint |
-| UC-008 | `role:animation_frame`, `entity:*` | baseline + project + entity | temporal_alignment, silhouette_drift | `q.animation.identity_stable` | pass=advance fail=regen uncertain=sprint |
-| UC-009 | `contract:export_required` | inherited from group | pack_completeness | `q.export.safe_to_ship` | pass=advance fail=exception uncertain=sprint |
-| UC-010 | any | any | confidence_aggregator | `q.routing.need_human` | high=advance low=sprint/exception |
+| UC_ID  | Required tags                                      | Model stack profile             | Validators                           | Questionnaire                     | Route logic                                  |
+| ------ | -------------------------------------------------- | ------------------------------- | ------------------------------------ | --------------------------------- | -------------------------------------------- | ------------------ | ---------------------------------------- |
+| UC-001 | `domain:weapon`, `role:world_sprite`, `entity:*`   | baseline + project              | perspective, silhouette              | `q.identity.same_family`          | pass=advance fail=regen uncertain=sprint     |
+| UC-002 | `domain:weapon`, `role:pickup_icon`, `entity:*`    | baseline + project + entity     | silhouette, readability_small        | `q.identity.pickup_matches_world` | pass=advance fail=regen uncertain=sprint     |
+| UC-003 | `domain:weapon`, `role:inventory_icon`, `entity:*` | baseline + project + entity     | silhouette, readability_small        | `q.identity.icon_matches_pickup`  | pass=advance fail=regen uncertain=sprint     |
+| UC-004 | `domain:armor`, `entity:*`                         | baseline + project + entity     | silhouette, perspective              | `q.identity.armor_consistent`     | pass=advance fail=regen uncertain=sprint     |
+| UC-005 | `domain:ui`, `role:ui_button_state`, `state:*`     | baseline + project              | state_completeness, alignment        | `q.ui.states_complete_aligned`    | pass=advance fail=regen uncertain=sprint     |
+| UC-006 | `perspective:*`, `role:world_sprite`               | baseline(perspective) + project | perspective_lock                     | `q.perspective.consistent`        | pass=advance fail=regen uncertain=sprint     |
+| UC-007 | `domain:vfx`, `role:projectile                     | impact                          | explosion`                           | baseline + project + tag          | palette_cohesion, sequence_cohesion          | `q.vfx.same_chain` | pass=advance fail=regen uncertain=sprint |
+| UC-008 | `role:animation_frame`, `entity:*`                 | baseline + project + entity     | temporal_alignment, silhouette_drift | `q.animation.identity_stable`     | pass=advance fail=regen uncertain=sprint     |
+| UC-009 | `contract:export_required`                         | inherited from group            | pack_completeness                    | `q.export.safe_to_ship`           | pass=advance fail=exception uncertain=sprint |
+| UC-010 | any                                                | any                             | confidence_aggregator                | `q.routing.need_human`            | high=advance low=sprint/exception            |
 
 ---
 

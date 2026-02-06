@@ -86,4 +86,3 @@ export function useProjectEvents(projectId: string) {
 
   return { connected, lastSeq, error, recentEvents };
 }
-

@@ -77,7 +77,10 @@ function evidenceFromGeneration(generation: Record<string, unknown> | undefined)
   const resolverSkipped = Array.isArray(resolverExplanation?.skipped) ? resolverExplanation.skipped.length : 0;
   const resolverBlocked = Array.isArray(resolverExplanation?.blocked) ? resolverExplanation.blocked.length : 0;
   if (resolverExplanation)
-    details.push({ label: "Resolver", value: `${resolverChosen} chosen, ${resolverSkipped} skipped, ${resolverBlocked} blocked` });
+    details.push({
+      label: "Resolver",
+      value: `${resolverChosen} chosen, ${resolverSkipped} skipped, ${resolverBlocked} blocked`,
+    });
 
   const validatorReport =
     typeof generation.validatorReport === "object" && generation.validatorReport

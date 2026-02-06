@@ -8,12 +8,7 @@
   "assetType": "spritesheet",
   "style": "comic",
   "scenario": "scifi",
-  "tags": [
-    "assetType:spritesheet",
-    "enemy:drone",
-    "faction:aliens",
-    "style:comic"
-  ],
+  "tags": ["assetType:spritesheet", "enemy:drone", "faction:aliens", "style:comic"],
   "output": {
     "kind": "animation",
     "background": "transparent_required",

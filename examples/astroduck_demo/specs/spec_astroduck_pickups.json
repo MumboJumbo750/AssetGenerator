@@ -8,11 +8,7 @@
   "assetType": "sprite",
   "style": "comic",
   "scenario": "scifi",
-  "tags": [
-    "assetType:sprite",
-    "pickup",
-    "style:comic"
-  ],
+  "tags": ["assetType:sprite", "pickup", "style:comic"],
   "output": {
     "kind": "single_image",
     "background": "transparent_required"

@@ -91,14 +91,14 @@ Design requirement:
 
 The `SpecDetailPage` (route `/specs/:specId`) provides a tabbed editor:
 
-| Tab | Content |
-| --- | --- |
-| General | title, assetType, style, scenario, output, generationParams, status |
-| Prompt Policy | compileMode, tagOrderMode, tagOrder, promptPresetId |
+| Tab              | Content                                                                                           |
+| ---------------- | ------------------------------------------------------------------------------------------------- |
+| General          | title, assetType, style, scenario, output, generationParams, status                               |
+| Prompt Policy    | compileMode, tagOrderMode, tagOrder, promptPresetId                                               |
 | Quality Contract | backgroundPolicy, requiredStates, alignmentTolerancePx, perspectiveMode, silhouetteDriftTolerance |
-| LoRA Policy | mode, preferRecommended, maxActiveLoras, releasePolicy |
-| Seed Policy | mode, baseSeed, deriveFrom, hashAlgo |
-| Entity & Style | entityLink (entityId, role), styleConsistency (mode, anchorRefs) |
+| LoRA Policy      | mode, preferRecommended, maxActiveLoras, releasePolicy                                            |
+| Seed Policy      | mode, baseSeed, deriveFrom, hashAlgo                                                              |
+| Entity & Style   | entityLink (entityId, role), styleConsistency (mode, anchorRefs)                                  |
 
 ## 4.5 Settings and Admin
 
@@ -159,21 +159,21 @@ These components are implemented and validated per master plan phases.
 
 ## 9) Alignment To Master Plan Phases
 
-| Master phase | UX package focus | Status |
-| --- | --- | --- |
-| Phase 0 | Schema registry, file-based JSON DB, AJV validation | done |
-| Phase 1 | Specs, jobs, assets, exports — core CRUD and generation | done |
-| Phase 2 | Checkpoint profiles, LoRA resolver, baseline profiles | done |
-| Phase 3 | Prompt compile trace (7-layer), tag-prompt ordering | done |
-| Phase 4 | Automation rules, queue, SSE events, live status | done |
-| Phase 5 | Decision sprint, review routing, binary question UX | done |
-| Phase 6 | Exception inbox, escalation targets | done |
-| Phase 7 | Worker retry/escalation, poll queue, heartbeat | done |
-| Phase 8 | SpecDetailPage 6-tab editor, SpecWizard | done |
-| Phase 9 | Metrics snapshots, quality gates, trend dashboards | done |
-| Phase 10 | Improvement runs, circuit breaker schema, release gates | done |
-| Phase 11 | Migration: data/ gitignored, examples/ seed source | done |
-| Phase 12 | Documentation and source of truth (this update) | done |
+| Master phase | UX package focus                                        | Status |
+| ------------ | ------------------------------------------------------- | ------ |
+| Phase 0      | Schema registry, file-based JSON DB, AJV validation     | done   |
+| Phase 1      | Specs, jobs, assets, exports — core CRUD and generation | done   |
+| Phase 2      | Checkpoint profiles, LoRA resolver, baseline profiles   | done   |
+| Phase 3      | Prompt compile trace (7-layer), tag-prompt ordering     | done   |
+| Phase 4      | Automation rules, queue, SSE events, live status        | done   |
+| Phase 5      | Decision sprint, review routing, binary question UX     | done   |
+| Phase 6      | Exception inbox, escalation targets                     | done   |
+| Phase 7      | Worker retry/escalation, poll queue, heartbeat          | done   |
+| Phase 8      | SpecDetailPage 6-tab editor, SpecWizard                 | done   |
+| Phase 9      | Metrics snapshots, quality gates, trend dashboards      | done   |
+| Phase 10     | Improvement runs, circuit breaker schema, release gates | done   |
+| Phase 11     | Migration: data/ gitignored, examples/ seed source      | done   |
+| Phase 12     | Documentation and source of truth (this update)         | done   |
 
 Implementation details and gates are tracked in:
 

@@ -8,12 +8,7 @@
   "assetType": "spritesheet",
   "style": "comic",
   "scenario": "scifi",
-  "tags": [
-    "assetType:spritesheet",
-    "player:ship",
-    "theme:scifi",
-    "style:comic"
-  ],
+  "tags": ["assetType:spritesheet", "player:ship", "theme:scifi", "style:comic"],
   "output": {
     "kind": "animation",
     "background": "transparent_required",

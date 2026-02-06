@@ -8,63 +8,49 @@
       "label": "UI Icon",
       "requiresAlpha": true,
       "multiFrame": false,
-      "defaultTags": [
-        "assetType:ui_icon"
-      ]
+      "defaultTags": ["assetType:ui_icon"]
     },
     {
       "id": "logo",
       "label": "Logo",
       "requiresAlpha": true,
       "multiFrame": false,
-      "defaultTags": [
-        "assetType:logo"
-      ]
+      "defaultTags": ["assetType:logo"]
     },
     {
       "id": "sprite",
       "label": "Sprite",
       "requiresAlpha": true,
       "multiFrame": false,
-      "defaultTags": [
-        "assetType:sprite"
-      ]
+      "defaultTags": ["assetType:sprite"]
     },
     {
       "id": "spritesheet",
       "label": "Spritesheet",
       "requiresAlpha": true,
       "multiFrame": true,
-      "defaultTags": [
-        "assetType:spritesheet"
-      ]
+      "defaultTags": ["assetType:spritesheet"]
     },
     {
       "id": "texture",
       "label": "Texture",
       "tileable": true,
       "multiFrame": false,
-      "defaultTags": [
-        "assetType:texture"
-      ]
+      "defaultTags": ["assetType:texture"]
     },
     {
       "id": "tile",
       "label": "Tile",
       "tileable": true,
       "multiFrame": false,
-      "defaultTags": [
-        "assetType:tile"
-      ]
+      "defaultTags": ["assetType:tile"]
     },
     {
       "id": "overlay",
       "label": "Overlay/VFX",
       "requiresAlpha": true,
       "multiFrame": false,
-      "defaultTags": [
-        "assetType:overlay"
-      ]
+      "defaultTags": ["assetType:overlay"]
     }
   ]
 }

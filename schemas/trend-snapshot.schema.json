@@ -49,11 +49,14 @@
         "cohesionScore": { "type": "number", "minimum": 0, "maximum": 1 },
         "driftScore": { "type": "number", "minimum": 0, "maximum": 1 },
         "validatorGapCount": {
-          "type": "integer", "minimum": 0,
+          "type": "integer",
+          "minimum": 0,
           "description": "Count of human-reject vs validator-pass discrepancies."
         },
         "validatorGapRate": {
-          "type": "number", "minimum": 0, "maximum": 1,
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
           "description": "Fraction of validator passes that were human-rejected."
         }
       }

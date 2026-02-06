@@ -148,7 +148,9 @@ export function MetricsDashboardPage() {
 
         {error && (
           <Card withBorder radius="md" p="sm" bg="red.9">
-            <Text size="sm" c="white">{error}</Text>
+            <Text size="sm" c="white">
+              {error}
+            </Text>
           </Card>
         )}
 
@@ -157,35 +159,64 @@ export function MetricsDashboardPage() {
           <Card withBorder radius="md" p="md">
             <Stack gap="sm">
               <Group justify="space-between">
-                <Text fw={700} size="lg">Release Gate Status</Text>
+                <Text fw={700} size="lg">
+                  Release Gate Status
+                </Text>
                 <Group gap="xs">
                   <Badge size="lg" color={overallColor(gateReport.overallStatus)} variant="filled">
                     {gateReport.overallStatus.toUpperCase()}
                   </Badge>
-                  <Text size="xs" c="dimmed">{relTime(gateReport.createdAt)}</Text>
+                  <Text size="xs" c="dimmed">
+                    {relTime(gateReport.createdAt)}
+                  </Text>
                 </Group>
               </Group>
 
               {/* Benchmark profile bar */}
               <Card withBorder radius="sm" p="xs" bg="dark.7">
                 <Group justify="space-between" mb={4}>
-                  <Text size="sm" fw={600}>Benchmark Profile</Text>
+                  <Text size="sm" fw={600}>
+                    Benchmark Profile
+                  </Text>
                   <Badge size="sm" color={gateReport.benchmarkProfile.satisfied ? "green" : "orange"}>
                     {gateReport.benchmarkProfile.satisfied ? "Satisfied" : "Below Target"}
                   </Badge>
                 </Group>
-                <BenchmarkBar label="Jobs" actual={gateReport.benchmarkProfile.actualJobs} target={gateReport.benchmarkProfile.targetJobs} />
-                <BenchmarkBar label="Assets" actual={gateReport.benchmarkProfile.actualAssets} target={gateReport.benchmarkProfile.targetAssets} />
-                <BenchmarkBar label="Specs" actual={gateReport.benchmarkProfile.actualSpecs} target={gateReport.benchmarkProfile.targetSpecs} />
-                <BenchmarkBar label="Rules" actual={gateReport.benchmarkProfile.actualAutomationRules} target={gateReport.benchmarkProfile.targetAutomationRules} />
-                {(gateReport.benchmarkProfile.warmCacheJobsListMs != null || gateReport.benchmarkProfile.coldCacheJobsListMs != null) && (
+                <BenchmarkBar
+                  label="Jobs"
+                  actual={gateReport.benchmarkProfile.actualJobs}
+                  target={gateReport.benchmarkProfile.targetJobs}
+                />
+                <BenchmarkBar
+                  label="Assets"
+                  actual={gateReport.benchmarkProfile.actualAssets}
+                  target={gateReport.benchmarkProfile.targetAssets}
+                />
+                <BenchmarkBar
+                  label="Specs"
+                  actual={gateReport.benchmarkProfile.actualSpecs}
+                  target={gateReport.benchmarkProfile.targetSpecs}
+                />
+                <BenchmarkBar
+                  label="Rules"
+                  actual={gateReport.benchmarkProfile.actualAutomationRules}
+                  target={gateReport.benchmarkProfile.targetAutomationRules}
+                />
+                {(gateReport.benchmarkProfile.warmCacheJobsListMs != null ||
+                  gateReport.benchmarkProfile.coldCacheJobsListMs != null) && (
                   <Group gap="md" mt="xs">
-                    <Text size="xs" c="dimmed">Cache measurements:</Text>
+                    <Text size="xs" c="dimmed">
+                      Cache measurements:
+                    </Text>
                     {gateReport.benchmarkProfile.coldCacheJobsListMs != null && (
-                      <Badge size="sm" variant="light" color="blue">Cold: {gateReport.benchmarkProfile.coldCacheJobsListMs} ms</Badge>
+                      <Badge size="sm" variant="light" color="blue">
+                        Cold: {gateReport.benchmarkProfile.coldCacheJobsListMs} ms
+                      </Badge>
                     )}
                     {gateReport.benchmarkProfile.warmCacheJobsListMs != null && (
-                      <Badge size="sm" variant="light" color="green">Warm: {gateReport.benchmarkProfile.warmCacheJobsListMs} ms</Badge>
+                      <Badge size="sm" variant="light" color="green">
+                        Warm: {gateReport.benchmarkProfile.warmCacheJobsListMs} ms
+                      </Badge>
                     )}
                   </Group>
                 )}
@@ -205,8 +236,14 @@ export function MetricsDashboardPage() {
                 <Table.Tbody>
                   {gateReport.gates.map((g: GateResult) => (
                     <Table.Tr key={g.id}>
-                      <Table.Td><Text size="sm" fw={500}>{g.name}</Text></Table.Td>
-                      <Table.Td><Text size="sm">{g.threshold}</Text></Table.Td>
+                      <Table.Td>
+                        <Text size="sm" fw={500}>
+                          {g.name}
+                        </Text>
+                      </Table.Td>
+                      <Table.Td>
+                        <Text size="sm">{g.threshold}</Text>
+                      </Table.Td>
                       <Table.Td>
                         <Text size="sm">
                           {g.measured !== null
@@ -221,9 +258,15 @@ export function MetricsDashboardPage() {
                         </Text>
                       </Table.Td>
                       <Table.Td>
-                        <Badge size="sm" color={gateColor(g.status)}>{g.status}</Badge>
+                        <Badge size="sm" color={gateColor(g.status)}>
+                          {g.status}
+                        </Badge>
                       </Table.Td>
-                      <Table.Td><Text size="xs" c="dimmed">{g.detail}</Text></Table.Td>
+                      <Table.Td>
+                        <Text size="xs" c="dimmed">
+                          {g.detail}
+                        </Text>
+                      </Table.Td>
                     </Table.Tr>
                   ))}
                 </Table.Tbody>
@@ -238,8 +281,12 @@ export function MetricsDashboardPage() {
             <Card withBorder radius="md" p="md">
               <Stack gap="sm">
                 <Group justify="space-between">
-                  <Text fw={700} size="lg">Spec Readiness</Text>
-                  <Text size="xs" c="dimmed">{relTime(snapshot.createdAt)}</Text>
+                  <Text fw={700} size="lg">
+                    Spec Readiness
+                  </Text>
+                  <Text size="xs" c="dimmed">
+                    {relTime(snapshot.createdAt)}
+                  </Text>
                 </Group>
                 <Group grow>
                   <MetricCard label="Autopilot Ready" value={pct(m?.autopilotReadySpecsPct)} />
@@ -255,7 +302,12 @@ export function MetricsDashboardPage() {
                   <Text fw={700}>Exception Queue</Text>
                   <Group grow>
                     <MetricCard label="Volume" value={num(m?.exceptionQueueVolume)} />
-                    <MetricCard label="Median Age" value={m?.exceptionQueueAgingHours !== undefined ? `${m.exceptionQueueAgingHours.toFixed(1)}h` : "—"} />
+                    <MetricCard
+                      label="Median Age"
+                      value={
+                        m?.exceptionQueueAgingHours !== undefined ? `${m.exceptionQueueAgingHours.toFixed(1)}h` : "—"
+                      }
+                    />
                   </Group>
                 </Stack>
               </Card>
@@ -264,8 +316,22 @@ export function MetricsDashboardPage() {
                 <Stack gap="sm">
                   <Text fw={700}>Automation & Latency</Text>
                   <Group grow>
-                    <MetricCard label="Trigger→Run" value={m?.automationTriggerToRunLatencyMs != null ? `${num(m.automationTriggerToRunLatencyMs)} ms` : "—"} />
-                    <MetricCard label="LoRA→Approval" value={m?.loraActivationToApprovalHours != null ? `${m.loraActivationToApprovalHours.toFixed(1)}h` : "—"} />
+                    <MetricCard
+                      label="Trigger→Run"
+                      value={
+                        m?.automationTriggerToRunLatencyMs != null
+                          ? `${num(m.automationTriggerToRunLatencyMs)} ms`
+                          : "—"
+                      }
+                    />
+                    <MetricCard
+                      label="LoRA→Approval"
+                      value={
+                        m?.loraActivationToApprovalHours != null
+                          ? `${m.loraActivationToApprovalHours.toFixed(1)}h`
+                          : "—"
+                      }
+                    />
                   </Group>
                 </Stack>
               </Card>
@@ -285,7 +351,8 @@ export function MetricsDashboardPage() {
               <Card withBorder radius="md" p="md">
                 <Stack gap="sm">
                   <Text fw={700}>Validator Fail Categories</Text>
-                  {m?.validatorFailCategoryDistribution && Object.keys(m.validatorFailCategoryDistribution).length > 0 ? (
+                  {m?.validatorFailCategoryDistribution &&
+                  Object.keys(m.validatorFailCategoryDistribution).length > 0 ? (
                     <Table withTableBorder>
                       <Table.Thead>
                         <Table.Tr>
@@ -298,14 +365,20 @@ export function MetricsDashboardPage() {
                           .sort(([, a], [, b]) => b - a)
                           .map(([cat, count]) => (
                             <Table.Tr key={cat}>
-                              <Table.Td><Text size="sm">{cat}</Text></Table.Td>
-                              <Table.Td><Text size="sm">{count}</Text></Table.Td>
+                              <Table.Td>
+                                <Text size="sm">{cat}</Text>
+                              </Table.Td>
+                              <Table.Td>
+                                <Text size="sm">{count}</Text>
+                              </Table.Td>
                             </Table.Tr>
                           ))}
                       </Table.Tbody>
                     </Table>
                   ) : (
-                    <Text size="sm" c="dimmed">No validator failures recorded.</Text>
+                    <Text size="sm" c="dimmed">
+                      No validator failures recorded.
+                    </Text>
                   )}
                 </Stack>
               </Card>
@@ -326,7 +399,9 @@ export function MetricsDashboardPage() {
                       ))}
                   </Group>
                 ) : (
-                  <Text size="sm" c="dimmed">No escalations recorded.</Text>
+                  <Text size="sm" c="dimmed">
+                    No escalations recorded.
+                  </Text>
                 )}
               </Stack>
             </Card>
@@ -349,7 +424,9 @@ export function MetricsDashboardPage() {
                           .sort(([, a], [, b]) => b - a)
                           .map(([cp, drift]) => (
                             <Table.Tr key={cp}>
-                              <Table.Td><Text size="sm">{cp}</Text></Table.Td>
+                              <Table.Td>
+                                <Text size="sm">{cp}</Text>
+                              </Table.Td>
                               <Table.Td>
                                 <Badge size="sm" color={drift > 0.2 ? "red" : drift > 0.05 ? "yellow" : "green"}>
                                   {pct(drift)}
@@ -360,7 +437,9 @@ export function MetricsDashboardPage() {
                       </Table.Tbody>
                     </Table>
                   ) : (
-                    <Text size="sm" c="dimmed">No compile trace data.</Text>
+                    <Text size="sm" c="dimmed">
+                      No compile trace data.
+                    </Text>
                   )}
                 </Stack>
               </Card>
@@ -382,7 +461,9 @@ export function MetricsDashboardPage() {
                           .sort(([, a], [, b]) => b - a)
                           .map(([tf, drift]) => (
                             <Table.Tr key={tf}>
-                              <Table.Td><Text size="sm">{tf}</Text></Table.Td>
+                              <Table.Td>
+                                <Text size="sm">{tf}</Text>
+                              </Table.Td>
                               <Table.Td>
                                 <Badge size="sm" color={drift > 0.2 ? "red" : drift > 0.05 ? "yellow" : "green"}>
                                   {pct(drift)}
@@ -393,7 +474,9 @@ export function MetricsDashboardPage() {
                       </Table.Tbody>
                     </Table>
                   ) : (
-                    <Text size="sm" c="dimmed">No tag family drift data.</Text>
+                    <Text size="sm" c="dimmed">
+                      No tag family drift data.
+                    </Text>
                   )}
                 </Stack>
               </Card>
@@ -419,8 +502,12 @@ export function MetricsDashboardPage() {
 function MetricCard({ label, value }: { label: string; value: string }) {
   return (
     <Card withBorder radius="sm" p="xs" bg="dark.7">
-      <Text size="xs" c="dimmed">{label}</Text>
-      <Text fw={700} size="lg">{value}</Text>
+      <Text size="xs" c="dimmed">
+        {label}
+      </Text>
+      <Text fw={700} size="lg">
+        {value}
+      </Text>
     </Card>
   );
 }
@@ -430,11 +517,15 @@ function BenchmarkBar({ label, actual, target }: { label: string; actual: number
   const color = actual >= target ? "green" : actual >= target * 0.5 ? "yellow" : "red";
   return (
     <Group gap="xs" mt={2}>
-      <Text size="xs" w={50}>{label}</Text>
+      <Text size="xs" w={50}>
+        {label}
+      </Text>
       <Tooltip label={`${actual} / ${target}`}>
         <Progress value={pctVal} color={color} size="sm" style={{ flex: 1 }} />
       </Tooltip>
-      <Text size="xs" c="dimmed" w={70} ta="right">{actual}/{target}</Text>
+      <Text size="xs" c="dimmed" w={70} ta="right">
+        {actual}/{target}
+      </Text>
     </Group>
   );
 }

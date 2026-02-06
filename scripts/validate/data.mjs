@@ -41,7 +41,8 @@ function schemaForDataPath(absolutePath) {
   if (rel.match(/^data\/projects\/[^/]+\/catalogs\/scenarios\.json$/)) return "catalog.scenarios.schema.json";
   if (rel.match(/^data\/projects\/[^/]+\/catalogs\/palettes\.json$/)) return "catalog.palettes.schema.json";
   if (rel.match(/^data\/projects\/[^/]+\/catalogs\/tags\.json$/)) return "catalog.tags.schema.json";
-  if (rel.match(/^data\/projects\/[^/]+\/catalogs\/checkpoints\/[^/]+\/styles\.json$/)) return "catalog.styles.schema.json";
+  if (rel.match(/^data\/projects\/[^/]+\/catalogs\/checkpoints\/[^/]+\/styles\.json$/))
+    return "catalog.styles.schema.json";
   if (rel.match(/^data\/projects\/[^/]+\/catalogs\/checkpoints\/[^/]+\/scenarios\.json$/))
     return "catalog.scenarios.schema.json";
   if (rel.match(/^data\/projects\/[^/]+\/catalogs\/checkpoints\/[^/]+\/tags\.json$/)) return "catalog.tags.schema.json";
@@ -59,7 +60,8 @@ function schemaForDataPath(absolutePath) {
   if (rel.match(/^data\/projects\/[^/]+\/jobs\/[^/]+\.json$/)) return "job.schema.json";
   if (rel.match(/^data\/projects\/[^/]+\/jobs-index\.json$/)) return "jobs-index.schema.json";
   if (rel.match(/^data\/projects\/[^/]+\/events\/seq\.json$/)) return "event-cursor.schema.json";
-  if (rel.match(/^data\/projects\/[^/]+\/events\/idempotency-index\.json$/)) return "event-idempotency-index.schema.json";
+  if (rel.match(/^data\/projects\/[^/]+\/events\/idempotency-index\.json$/))
+    return "event-idempotency-index.schema.json";
   if (rel.match(/^data\/projects\/[^/]+\/events\/cursor\.json$/)) return "event-cursor.schema.json";
   if (rel.match(/^data\/projects\/[^/]+\/automation-rules\/[^/]+\.json$/)) return "automation-rule.schema.json";
   if (rel.match(/^data\/projects\/[^/]+\/automation-runs\/[^/]+\.json$/)) return "automation-run.schema.json";

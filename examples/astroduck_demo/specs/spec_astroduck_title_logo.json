@@ -8,12 +8,7 @@
   "assetType": "logo",
   "style": "comic",
   "scenario": "scifi",
-  "tags": [
-    "assetType:logo",
-    "ui:title",
-    "theme:scifi",
-    "style:comic"
-  ],
+  "tags": ["assetType:logo", "ui:title", "theme:scifi", "style:comic"],
   "output": {
     "kind": "logo_set",
     "background": "transparent_required",

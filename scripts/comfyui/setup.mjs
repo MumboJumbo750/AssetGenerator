@@ -26,9 +26,7 @@ function resolveTorchInstallConfig() {
     local?.comfyui?.torchIndexUrl ??
     (process.platform === "win32" ? "https://download.pytorch.org/whl/cu128" : null);
   const torchPackages =
-    process.env.ASSETGEN_TORCH_PACKAGES ??
-    local?.comfyui?.torchPackages ??
-    "torch torchvision torchaudio";
+    process.env.ASSETGEN_TORCH_PACKAGES ?? local?.comfyui?.torchPackages ?? "torch torchvision torchaudio";
 
   return {
     torchIndexUrl,
@@ -50,9 +48,7 @@ async function installTorchPackages(pythonInVenv) {
     return;
   }
 
-  console.log(
-    `[comfyui:setup] Installing torch packages from ${torchIndexUrl}: ${torchPackages.join(" ")}`,
-  );
+  console.log(`[comfyui:setup] Installing torch packages from ${torchIndexUrl}: ${torchPackages.join(" ")}`);
   await run(
     pythonInVenv,
     ["-m", "pip", "install", "--upgrade", "--no-cache-dir", ...torchPackages, "--index-url", torchIndexUrl],

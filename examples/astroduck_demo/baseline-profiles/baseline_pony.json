@@ -20,14 +20,8 @@
       "requiredStates": [],
       "stateAlignment": "n/a",
       "paddingPx": 0,
-      "promptHints": [
-        "score_9, score_8_up, seamless tile texture",
-        "flat lighting, uniform material"
-      ],
-      "negativePromptHints": [
-        "score_4, score_3, drop shadow",
-        "directional shadow, vignette"
-      ]
+      "promptHints": ["score_9, score_8_up, seamless tile texture", "flat lighting, uniform material"],
+      "negativePromptHints": ["score_4, score_3, drop shadow", "directional shadow, vignette"]
     },
     "ui_button": {
       "lighting": "flat",
@@ -40,10 +34,7 @@
         "consistent geometry across states",
         "transparent background"
       ],
-      "negativePromptHints": [
-        "score_4, score_3, cast shadow",
-        "state size mismatch, busy background"
-      ]
+      "negativePromptHints": ["score_4, score_3, cast shadow", "state size mismatch, busy background"]
     },
     "ui_select": {
       "lighting": "flat",
@@ -56,10 +47,7 @@
         "clean readable labels",
         "consistent frame geometry"
       ],
-      "negativePromptHints": [
-        "score_4, score_3, drop shadow",
-        "misaligned state variants"
-      ]
+      "negativePromptHints": ["score_4, score_3, drop shadow", "misaligned state variants"]
     },
     "icon": {
       "lighting": "flat",
@@ -67,14 +55,8 @@
       "requiredStates": [],
       "stateAlignment": "n/a",
       "paddingPx": 8,
-      "promptHints": [
-        "score_9, score_8_up, clean icon silhouette",
-        "high contrast shape, transparent background"
-      ],
-      "negativePromptHints": [
-        "score_4, score_3, shadow",
-        "background clutter, motion blur"
-      ]
+      "promptHints": ["score_9, score_8_up, clean icon silhouette", "high contrast shape, transparent background"],
+      "negativePromptHints": ["score_4, score_3, shadow", "background clutter, motion blur"]
     }
   },
   "validatorPolicy": {

@@ -65,7 +65,9 @@ async function seedProject(opts, dataRoot) {
   const exampleProject = path.join(examplesRoot, opts.projectId);
 
   if (!(await fileExists(exampleProject))) {
-    throw new Error(`No example found at ${exampleProject}. Available: ${(await fs.readdir(path.join(examplesRoot))).filter((d) => !d.startsWith(".") && d !== "README.md").join(", ")}`);
+    throw new Error(
+      `No example found at ${exampleProject}. Available: ${(await fs.readdir(path.join(examplesRoot))).filter((d) => !d.startsWith(".") && d !== "README.md").join(", ")}`,
+    );
   }
 
   const projectRoot = path.join(dataRoot, "projects", opts.projectId);

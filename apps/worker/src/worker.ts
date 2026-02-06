@@ -183,9 +183,10 @@ function resolveSeed(spec: AssetSpec, fallbackSeed: number) {
     return Number(spec.seedPolicy?.baseSeed);
   }
   if (mode === "derived") {
-    const derive = Array.isArray(spec.seedPolicy?.deriveFrom) && spec.seedPolicy?.deriveFrom.length > 0
-      ? spec.seedPolicy?.deriveFrom
-      : ["specId", "assetType", "checkpointId"];
+    const derive =
+      Array.isArray(spec.seedPolicy?.deriveFrom) && spec.seedPolicy?.deriveFrom.length > 0
+        ? spec.seedPolicy?.deriveFrom
+        : ["specId", "assetType", "checkpointId"];
     const raw = derive
       .map((key) => {
         if (key === "specId") return spec.id;
@@ -341,7 +342,9 @@ function resolveRoutingDecision(opts: {
   const rawDecision = opts.summaryStatus === "pass" ? onPass : opts.summaryStatus === "fail" ? onFail : onUncertain;
   const manualReviewFallbackEnabled = opts.runtimeFeedbackPolicy?.manualReviewFallbackEnabled === true;
   const decision =
-    rawDecision === "manual_review" && !manualReviewFallbackEnabled ? ("queue_decision_sprint" as RoutingDecision) : rawDecision;
+    rawDecision === "manual_review" && !manualReviewFallbackEnabled
+      ? ("queue_decision_sprint" as RoutingDecision)
+      : rawDecision;
   const queue =
     decision === "queue_decision_sprint"
       ? opts.runtimeFeedbackPolicy?.sprintQueueName?.trim() || "decision_sprint_queue"
@@ -440,7 +443,9 @@ export async function compilePromptPackage(opts: {
         : "weight";
   const orderSource = tagOrderMode === "explicit" ? explicitTagOrder : checkpointTagOrder;
   const canonicalInput = new Set(inputTags);
-  const orderedTags = orderSource.filter((tag: string, index: number) => canonicalInput.has(tag) && orderSource.indexOf(tag) === index);
+  const orderedTags = orderSource.filter(
+    (tag: string, index: number) => canonicalInput.has(tag) && orderSource.indexOf(tag) === index,
+  );
   const unorderedTags = inputTags.filter((tag) => !orderedTags.includes(tag));
   const tagFragments = [...orderedTags, ...unorderedTags]
     .map((tag) => {
@@ -765,7 +770,9 @@ async function buildValidatorReport(opts: {
         "state_alignment",
         maxDrift <= tol,
         0.8,
-        maxDrift <= tol ? `Alignment drift ${maxDrift.toFixed(2)}px <= ${tol}px` : `Alignment drift ${maxDrift.toFixed(2)}px > ${tol}px`,
+        maxDrift <= tol
+          ? `Alignment drift ${maxDrift.toFixed(2)}px <= ${tol}px`
+          : `Alignment drift ${maxDrift.toFixed(2)}px > ${tol}px`,
       );
     }
 
@@ -779,7 +786,9 @@ async function buildValidatorReport(opts: {
         "silhouette_consistency",
         drift <= tol,
         0.75,
-        drift <= tol ? `Silhouette drift ${drift.toFixed(3)} <= ${tol}` : `Silhouette drift ${drift.toFixed(3)} > ${tol}`,
+        drift <= tol
+          ? `Silhouette drift ${drift.toFixed(3)} <= ${tol}`
+          : `Silhouette drift ${drift.toFixed(3)} > ${tol}`,
       );
     }
 
@@ -964,7 +973,7 @@ export function classifyError(err: any): ErrorClass {
   )
     return "upstream_unavailable";
   // ComfyUI-specific: queue full, prompt execution error indicating transient state
-  if (msg.includes("queue full") || msg.includes("comfyui") && msg.includes("busy")) return "upstream_unavailable";
+  if (msg.includes("queue full") || (msg.includes("comfyui") && msg.includes("busy"))) return "upstream_unavailable";
 
   // ── Retryable transient errors ──
   if (code === "EPERM" || code === "EACCES" || code === "EBUSY" || code === "ENOLCK") return "retryable";
@@ -1019,11 +1028,7 @@ async function loadProjectRetryPolicy(dataRoot: string, projectId: string): Prom
   }
 }
 
-function resolveRetryPolicyForJob(
-  globalPolicy: RetryPolicy,
-  projectPolicy: any,
-  jobType: string,
-): RetryPolicy {
+function resolveRetryPolicyForJob(globalPolicy: RetryPolicy, projectPolicy: any, jobType: string): RetryPolicy {
   const perType = projectPolicy?.perJobType?.[jobType];
   if (!perType) return globalPolicy;
   return {
@@ -1055,7 +1060,8 @@ export function computeBackoffMs(policy: RetryPolicy, attempt: number): number {
 const DEFAULT_STUCK_THRESHOLD_MS = 15 * 60 * 1000; // 15 minutes
 
 async function recoverStuckJobs(projectDir: string, log: JsonlLogger, thresholdMs?: number): Promise<number> {
-  const stuckThreshold = thresholdMs ?? Number(process.env.ASSETGEN_WORKER_STUCK_THRESHOLD_MS || DEFAULT_STUCK_THRESHOLD_MS);
+  const stuckThreshold =
+    thresholdMs ?? Number(process.env.ASSETGEN_WORKER_STUCK_THRESHOLD_MS || DEFAULT_STUCK_THRESHOLD_MS);
   const jobsDir = path.join(projectDir, "jobs");
   let recovered = 0;
   try {
@@ -1083,7 +1089,8 @@ async function recoverStuckJobs(projectDir: string, log: JsonlLogger, thresholdM
 }
 
 async function recoverStuckAutomationRuns(projectDir: string, log: JsonlLogger, thresholdMs?: number): Promise<number> {
-  const stuckThreshold = thresholdMs ?? Number(process.env.ASSETGEN_WORKER_STUCK_THRESHOLD_MS || DEFAULT_STUCK_THRESHOLD_MS);
+  const stuckThreshold =
+    thresholdMs ?? Number(process.env.ASSETGEN_WORKER_STUCK_THRESHOLD_MS || DEFAULT_STUCK_THRESHOLD_MS);
   const runsDir = path.join(projectDir, "automation-runs");
   let recovered = 0;
   try {
@@ -2200,7 +2207,13 @@ async function runOnce(opts: {
         await upsertJobIndexEntry({
           projectsRoot,
           projectId: latest.projectId,
-          entry: { id: latest.id, type: latest.type, status: latest.status, createdAt: latest.createdAt, updatedAt: latest.updatedAt },
+          entry: {
+            id: latest.id,
+            type: latest.type,
+            status: latest.status,
+            createdAt: latest.createdAt,
+            updatedAt: latest.updatedAt,
+          },
         }).catch(() => undefined);
         await appendWorkerEvent(opts.dataRoot, {
           projectId: latest.projectId,
@@ -2294,11 +2307,13 @@ async function runOnce(opts: {
           const updated = await readJson<Job>(filePath);
           if (updated.status !== "canceled") {
             const errClass = classifyError(err);
-            const { policy: retryPolicy, raw: rawProjectPolicy } = await loadProjectRetryPolicy(opts.dataRoot, updated.projectId);
+            const { policy: retryPolicy, raw: rawProjectPolicy } = await loadProjectRetryPolicy(
+              opts.dataRoot,
+              updated.projectId,
+            );
             const effectivePolicy = resolveRetryPolicyForJob(retryPolicy, rawProjectPolicy, updated.type);
             const currentAttempt = updated.attempt ?? 1;
-            const canRetry =
-              effectivePolicy.retryOn.includes(errClass) && currentAttempt < effectivePolicy.maxAttempts;
+            const canRetry = effectivePolicy.retryOn.includes(errClass) && currentAttempt < effectivePolicy.maxAttempts;
 
             // Build retry history entry
             const historyEntry: RetryHistoryEntry = {
@@ -2398,7 +2413,9 @@ async function runOnce(opts: {
                   attempt: currentAttempt,
                   maxAttempts: effectivePolicy.maxAttempts,
                   retryHistory,
-                  reasonCode: effectivePolicy.retryOn.includes(errClass) ? "retries_exhausted" : `non_retryable:${errClass}`,
+                  reasonCode: effectivePolicy.retryOn.includes(errClass)
+                    ? "retries_exhausted"
+                    : `non_retryable:${errClass}`,
                 },
               }).catch(() => undefined);
               await log.error("job_failed_escalated", {

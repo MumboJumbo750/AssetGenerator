@@ -57,10 +57,7 @@ export function SpecDetailPage() {
     setLoading(true);
     setError(null);
     try {
-      const [s, c] = await Promise.all([
-        getSpec(selectedProjectId, specId),
-        listCheckpoints(selectedProjectId),
-      ]);
+      const [s, c] = await Promise.all([getSpec(selectedProjectId, specId), listCheckpoints(selectedProjectId)]);
       setSpec(s);
       setCheckpoints(c.checkpoints);
       setDraft({});
@@ -72,7 +69,9 @@ export function SpecDetailPage() {
     }
   }, [selectedProjectId, specId]);
 
-  useEffect(() => { loadData(); }, [loadData]);
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
 
   /* ---- patch helper: merges into draft ---- */
   function patch(field: string, value: unknown) {
@@ -134,9 +133,15 @@ export function SpecDetailPage() {
   if (error && !spec) {
     return (
       <Card withBorder radius="md" p="md" bg="red.9">
-        <Text c="white" fw={600}>Error</Text>
-        <Text c="white" size="sm">{error}</Text>
-        <Button mt="sm" variant="white" color="red" onClick={() => navigate(-1)}>Back</Button>
+        <Text c="white" fw={600}>
+          Error
+        </Text>
+        <Text c="white" size="sm">
+          {error}
+        </Text>
+        <Button mt="sm" variant="white" color="red" onClick={() => navigate(-1)}>
+          Back
+        </Button>
       </Card>
     );
   }
@@ -154,19 +159,29 @@ export function SpecDetailPage() {
         <div>
           <Group gap="xs" align="baseline">
             <Title order={3}>{spec.title}</Title>
-            <Badge color={statusColor(val("status"))} variant="light">{val("status") ?? "draft"}</Badge>
+            <Badge color={statusColor(val("status"))} variant="light">
+              {val("status") ?? "draft"}
+            </Badge>
           </Group>
-          <Text size="sm" c="dimmed">{spec.id} · {spec.assetType} · {spec.style}/{spec.scenario}</Text>
+          <Text size="sm" c="dimmed">
+            {spec.id} · {spec.assetType} · {spec.style}/{spec.scenario}
+          </Text>
         </div>
         <Group>
-          <Button variant="subtle" onClick={() => navigate(-1)}>Back</Button>
-          <Button loading={saving} disabled={!dirty} onClick={handleSave}>Save changes</Button>
+          <Button variant="subtle" onClick={() => navigate(-1)}>
+            Back
+          </Button>
+          <Button loading={saving} disabled={!dirty} onClick={handleSave}>
+            Save changes
+          </Button>
         </Group>
       </Group>
 
       {error && (
         <Card withBorder radius="md" p="sm" bg="red.9">
-          <Text c="white" size="sm">{error}</Text>
+          <Text c="white" size="sm">
+            {error}
+          </Text>
         </Card>
       )}
 
@@ -258,7 +273,8 @@ export function SpecDetailPage() {
             <Stack gap="md">
               <Text fw={600}>Prompt Policy</Text>
               <Text size="sm" c="dimmed">
-                Controls how the prompt compiler assembles the final prompt from checkpoint profile, tags, and spec overrides.
+                Controls how the prompt compiler assembles the final prompt from checkpoint profile, tags, and spec
+                overrides.
               </Text>
               <SimpleGrid cols={2}>
                 <Select
@@ -287,7 +303,10 @@ export function SpecDetailPage() {
                 placeholder="e.g. style, scenario, subject"
                 value={((nestedVal("promptPolicy", "tagOrder") as string[]) ?? []).join(", ")}
                 onChange={(e) => {
-                  const tags = e.currentTarget.value.split(",").map((s) => s.trim()).filter(Boolean);
+                  const tags = e.currentTarget.value
+                    .split(",")
+                    .map((s) => s.trim())
+                    .filter(Boolean);
                   patchNested("promptPolicy", "tagOrder", tags);
                 }}
               />
@@ -356,7 +375,10 @@ export function SpecDetailPage() {
                 placeholder="e.g. idle, run, attack"
                 value={((nestedVal("qualityContract", "requiredStates") as string[]) ?? []).join(", ")}
                 onChange={(e) => {
-                  const states = e.currentTarget.value.split(",").map((s) => s.trim()).filter(Boolean);
+                  const states = e.currentTarget.value
+                    .split(",")
+                    .map((s) => s.trim())
+                    .filter(Boolean);
                   patchNested("qualityContract", "requiredStates", states);
                 }}
               />
@@ -447,7 +469,10 @@ export function SpecDetailPage() {
                 placeholder="e.g. specId, assetType, checkpointId"
                 value={((nestedVal("seedPolicy", "deriveFrom") as string[]) ?? []).join(", ")}
                 onChange={(e) => {
-                  const fields = e.currentTarget.value.split(",").map((s) => s.trim()).filter(Boolean);
+                  const fields = e.currentTarget.value
+                    .split(",")
+                    .map((s) => s.trim())
+                    .filter(Boolean);
                   patchNested("seedPolicy", "deriveFrom", fields);
                 }}
               />
@@ -507,7 +532,10 @@ export function SpecDetailPage() {
                   placeholder="e.g. asset_001, asset_002"
                   value={((nestedVal("styleConsistency", "anchorRefs") as string[]) ?? []).join(", ")}
                   onChange={(e) => {
-                    const refs = e.currentTarget.value.split(",").map((s) => s.trim()).filter(Boolean);
+                    const refs = e.currentTarget.value
+                      .split(",")
+                      .map((s) => s.trim())
+                      .filter(Boolean);
                     patchNested("styleConsistency", "anchorRefs", refs);
                   }}
                 />

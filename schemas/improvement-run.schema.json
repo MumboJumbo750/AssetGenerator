@@ -43,8 +43,12 @@
         "type": {
           "type": "string",
           "enum": [
-            "rule_change", "baseline_update", "checkpoint_switch",
-            "prompt_tweak", "lora_swap", "validator_threshold_change"
+            "rule_change",
+            "baseline_update",
+            "checkpoint_switch",
+            "prompt_tweak",
+            "lora_swap",
+            "validator_threshold_change"
           ]
         },
         "ruleId": { "type": "string", "description": "Automation rule being tested" },

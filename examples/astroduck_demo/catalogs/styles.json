@@ -6,34 +6,22 @@
     {
       "id": "comic",
       "label": "Comic",
-      "promptTokens": [
-        "comic style",
-        "bold outlines",
-        "high contrast"
-      ]
+      "promptTokens": ["comic style", "bold outlines", "high contrast"]
     },
     {
       "id": "cartoon",
       "label": "Cartoon",
-      "promptTokens": [
-        "cartoon",
-        "clean shapes"
-      ]
+      "promptTokens": ["cartoon", "clean shapes"]
     },
     {
       "id": "pixel_art",
       "label": "Pixel Art",
-      "promptTokens": [
-        "pixel art",
-        "low-res"
-      ]
+      "promptTokens": ["pixel art", "low-res"]
     },
     {
       "id": "realistic",
       "label": "Realistic",
-      "promptTokens": [
-        "realistic"
-      ]
+      "promptTokens": ["realistic"]
     }
   ]
 }
